@@ -5,7 +5,7 @@ VisualStudioVersion = 17.0.32126.317
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turmerik.Core", "Turmerik.Core.csproj", "{B719E747-3AF7-4411-84E8-8B11C262E53D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turmerik.OneDriveExplorer.BlazorApp", "..\Turmerik.OneDriveExplorer.BlazorApp\Turmerik.OneDriveExplorer.BlazorApp.csproj", "{FE90AE67-49AF-4224-8006-FA5E539C9CE9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turmerik.OneDriveExplorer.WebApp", "..\Turmerik.OneDriveExplorer.WebApp\Turmerik.OneDriveExplorer.WebApp.csproj", "{9C55363F-1C32-4E52-95B4-74138D4D5430}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +17,10 @@ Global
 		{B719E747-3AF7-4411-84E8-8B11C262E53D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B719E747-3AF7-4411-84E8-8B11C262E53D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B719E747-3AF7-4411-84E8-8B11C262E53D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FE90AE67-49AF-4224-8006-FA5E539C9CE9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FE90AE67-49AF-4224-8006-FA5E539C9CE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FE90AE67-49AF-4224-8006-FA5E539C9CE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FE90AE67-49AF-4224-8006-FA5E539C9CE9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9C55363F-1C32-4E52-95B4-74138D4D5430}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C55363F-1C32-4E52-95B4-74138D4D5430}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C55363F-1C32-4E52-95B4-74138D4D5430}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C55363F-1C32-4E52-95B4-74138D4D5430}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
