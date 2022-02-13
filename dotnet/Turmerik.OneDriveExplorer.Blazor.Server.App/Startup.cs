@@ -21,6 +21,8 @@ using Turmerik.OneDriveExplorer.Blazor.Server.App.Graph;
 using System.Net.Http.Headers;
 using System.Net;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using Blazored.LocalStorage;
+using Turmerik.OneDriveExplorer.Blazor.Server.App.AppSettings;
 
 namespace Turmerik.OneDriveExplorer.Blazor.Server.App
 {
@@ -99,9 +101,7 @@ namespace Turmerik.OneDriveExplorer.Blazor.Server.App
 
                     options.Events.OnAuthenticationFailed = context => {
                         var error = WebUtility.UrlEncode(context.Exception.Message);
-                        context.Response
-                            .Redirect($"/Home/ErrorWithMessage?message=Authentication+error&debug={error}");
-                        context.HandleResponse();
+                        RedirectToAppError(context, "Authentication error", error);
 
                         return Task.FromResult(0);
                     };
@@ -111,9 +111,7 @@ namespace Turmerik.OneDriveExplorer.Blazor.Server.App
                         if (context.Failure is OpenIdConnectProtocolException)
                         {
                             var error = WebUtility.UrlEncode(context.Failure.Message);
-                            context.Response
-                                .Redirect($"/Home/ErrorWithMessage?message=Sign+in+error&debug={error}");
-                            context.HandleResponse();
+                            RedirectToAppError(context, "Sign in error", error);
                         }
 
                         return Task.FromResult(0);
@@ -151,6 +149,8 @@ namespace Turmerik.OneDriveExplorer.Blazor.Server.App
             services.AddRazorPages();
             services.AddServerSideBlazor()
                 .AddMicrosoftIdentityConsentHandler();
+            services.AddBlazoredLocalStorage();
+
             services.AddSingleton<WeatherForecastService>();
         }
 
@@ -182,6 +182,30 @@ namespace Turmerik.OneDriveExplorer.Blazor.Server.App
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
             });
+        }
+
+        private static string GetAppErrorUrl(string errName, string errMsg)
+        {
+            errName = Uri.EscapeDataString(errName);
+
+            string url = string.Format(
+                "{0}?{1}={2}&{3}={4}",
+                PageRoutes.APP_ERROR,
+                QueryStringKeys.ERR_NAME,
+                errName,
+                QueryStringKeys.ERR_MSG,
+                errMsg);
+
+            return url;
+        }
+
+        private static void RedirectToAppError<T>(HandleRequestContext<T> context, string errName, string errMsg)
+            where T : AuthenticationSchemeOptions
+        {
+            string url = GetAppErrorUrl(errName, errMsg);
+            context.Response.Redirect(url);
+
+            context.HandleResponse();
         }
     }
 }
