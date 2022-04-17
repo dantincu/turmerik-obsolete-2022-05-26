@@ -1,0 +1,14 @@
+﻿@page "/logout"
+
+@using Turmerik.OneDriveExplorer.Blazor.Server.App.Data
+@inject AuthService AuthSvc
+
+<h3>LogOut</h3>
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        // await base.OnInitializedAsync();
+        await AuthSvc.LogOut();
+    }
+}

@@ -16,8 +16,8 @@
         Uri = NavManager.ToAbsoluteUri(NavManager.Uri);
         QueryStrings = QueryHelpers.ParseQuery(Uri.Query);
 
-        ErrName = QueryStrings[QueryStringKeys.ERR_NAME];
-        ErrMsg = QueryStrings[QueryStringKeys.ERR_MSG];
+        ErrName = QueryStrings[QsKeys.ERR_NAME];
+        ErrMsg = QueryStrings[QsKeys.ERR_MSG];
     }
 }
 

@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="$(SolutionDir)/post-build.bat &quot;$(TargetDir)&quot; &quot;$(ProjectName)&quot; &quot;$(ConfigurationName)&quot;" />
+  </Target>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FsUtils.Core\FsUtils.Core.csproj" />
+  </ItemGroup>
+
+</Project>

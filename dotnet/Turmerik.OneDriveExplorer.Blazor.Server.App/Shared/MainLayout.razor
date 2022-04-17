@@ -1,4 +1,8 @@
-﻿@inherits LayoutComponentBase
+﻿@using Turmerik.OneDriveExplorer.Blazor.Server.App.AppSettings
+@inherits LayoutComponentBase
+
+@inject NavigationManager NavManager;
+@inject TrmrkAppSettings AppSettings;
 
 <div class="sidebar">
     <NavMenu />
@@ -14,3 +18,18 @@
         @Body
     </div>
 </div>
+
+@code {
+    [CascadingParameter] protected Task<AuthenticationState> AuthStat { get; set; }
+
+    protected async override Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        var user = (await AuthStat).User;
+
+        if(!user.Identity.IsAuthenticated || !user.Claims.Any())
+        {
+            NavManager.NavigateTo($"{AppSettings.LoginRelUrl}?{QsKeys.RET_URL}={Uri.EscapeDataString(NavManager.Uri)}");
+        }
+    }
+}

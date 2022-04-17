@@ -39,12 +39,21 @@ namespace Turmerik.OneDriveExplorer.Blazor.Server.App
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            var trmrkAppSettings = Configuration.GetObject<TrmrkAppSettings>(
+                ConfigKeys.TRMRK, typeof(TrmrkAppSettingsCore), s =>
+                {
+                    s.LoginUrl = $"{s.AppBaseUrl}/{s.LoginRelUrl}";
+                });
+
             // var initialScopes = GraphConstants.Scopes; // Configuration.GetValue<string>("DownstreamApi:Scopes")?.Split(' ');
+
+            services.AddSingleton(provider => Configuration.GetObject<TrmrkAppSettings>(ConfigKeys.TRMRK));
 
             services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
                 .AddMicrosoftIdentityWebApp(options =>
                 {
                     Configuration.Bind("AzureAd", options);
+                    options.AccessDeniedPath = $"/{trmrkAppSettings.LoginRelUrl}";
 
                     options.Prompt = "select_account";
 
@@ -116,6 +125,21 @@ namespace Turmerik.OneDriveExplorer.Blazor.Server.App
 
                         return Task.FromResult(0);
                     };
+
+                    options.Events.OnRemoteSignOut = context =>
+                    {
+                        return Task.FromResult(0);
+                    };
+
+                    options.Events.OnSignedOutCallbackRedirect = context =>
+                    {
+                        return Task.FromResult(0);
+                    };
+
+                    options.Events.OnRedirectToIdentityProviderForSignOut = context =>
+                    {
+                        return Task.FromResult(0);
+                    };
                 })
                 //.EnableTokenAcquisitionToCallDownstreamApi(GraphConstants.Scopes)
 
@@ -151,7 +175,10 @@ namespace Turmerik.OneDriveExplorer.Blazor.Server.App
                 .AddMicrosoftIdentityConsentHandler();
             services.AddBlazoredLocalStorage();
 
+            services.AddHttpContextAccessor();
+
             services.AddSingleton<WeatherForecastService>();
+            services.AddScoped<AuthService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -191,9 +218,9 @@ namespace Turmerik.OneDriveExplorer.Blazor.Server.App
             string url = string.Format(
                 "{0}?{1}={2}&{3}={4}",
                 PageRoutes.APP_ERROR,
-                QueryStringKeys.ERR_NAME,
+                QsKeys.ERR_NAME,
                 errName,
-                QueryStringKeys.ERR_MSG,
+                QsKeys.ERR_MSG,
                 errMsg);
 
             return url;

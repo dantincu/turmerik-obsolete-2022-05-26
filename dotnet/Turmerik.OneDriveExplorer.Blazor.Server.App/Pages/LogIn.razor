@@ -1,0 +1,14 @@
+﻿@page "/login"
+
+@using Turmerik.OneDriveExplorer.Blazor.Server.App.Data
+@inject AuthService AuthSvc
+
+<h3>LogIn</h3>
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        // await base.OnInitializedAsync();
+        await AuthSvc.LogIn();
+    }
+}
