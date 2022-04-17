@@ -5,9 +5,9 @@
 @inject Microsoft.Graph.GraphServiceClient GraphServiceClient
 @inject MicrosoftIdentityConsentAndConditionalAccessHandler ConsentHandler
 
-<h1>Me</h1>
+<h1>Your profile</h1>
 
-<p>This component demonstrates fetching data from a service.</p>
+<p>Here you can see your basic user info.</p>
 
 @if (user == null)
 {
@@ -15,14 +15,14 @@
 }
 else
 {
-    <table class="table table-striped table-condensed" style="font-family: monospace">
+    <table class="table table-striped table-condensed">
         <tr>
-            <th>Property</th>
-            <th>Value</th>
+            <td>Your name</td>
+            <td><b><i>@user.DisplayName</i></b></td>
         </tr>
         <tr>
-            <td>Name</td>
-            <td>@user.DisplayName</td>
+            <td>Your e-mail address</td>
+            <td><b><i>@user.UserPrincipalName</i></b></td>
         </tr>
         <tr>
             <td>Photo</td>
