@@ -11,12 +11,12 @@ namespace FsUtils.Core.Program
         where TArgsParser : ProgramArgsParserBase<TArgs>, new()
     {
         protected readonly string TypeName;
-        protected readonly ConsoleH ConsH;
+        protected readonly ConsoleComponent ConsH;
 
         public ProgramComponentBase()
         {
             TypeName = this.GetType().GetTypeFullDisplayName();
-            ConsH = ConsoleH.Instance.Value;
+            ConsH = ConsoleComponent.Instance.Value;
         }
 
         public void Run(string[] strArgs)

@@ -12,12 +12,15 @@ namespace Turmerik.Core.Reflection.Wrappers
         public TypeWrapper(Type data) : base(data)
         {
             FullName = data.FullName;
-            FullDisplayName = data.FullName.SubStr(
-                (str, len) => str.Find((c, i) => c == '`').Key).Item1;
+            FullDisplayName = data.GetTypeFullDisplayName();
+
+            AllTypeAttrs = new Lazy<TypeMappedCollection<object>>(
+                () => new TypeMappedCollection<object>(
+                    data.GetCustomAttributes(true)));
 
             TypeAttrs = new Lazy<TypeMappedCollection<object>>(
                 () => new TypeMappedCollection<object>(
-                    data.GetCustomAttributes(true)));
+                    data.GetCustomAttributes(false)));
 
             AllProps = new Lazy<IReadOnlyCollection<PropertyWrapper>>(
                 () => data.GetProperties().RdnlC(pi => new PropertyWrapper(pi)));
@@ -53,6 +56,7 @@ namespace Turmerik.Core.Reflection.Wrappers
         public readonly string FullName;
         public readonly string FullDisplayName;
 
+        public readonly Lazy<TypeMappedCollection<object>> AllTypeAttrs;
         public readonly Lazy<TypeMappedCollection<object>> TypeAttrs;
 
         public readonly Lazy<IReadOnlyCollection<PropertyWrapper>> AllProps;

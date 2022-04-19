@@ -3,20 +3,40 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Turmerik.Core.Infrastucture;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FsUtils.Core.Program
 {
-    public abstract class StringToValueConverterCoreBase<TResult>
+    public abstract class ValueConverterCoreBase<TInput, TResult> : ComponentBase
     {
-        public abstract bool TryParse(string argStr, out TResult parsedValue);
+        protected ValueConverterCoreBase(IServiceProvider services) : base(services)
+        {
+        }
+
+        public abstract bool TryParse(TInput arg, out TResult parsedValue);
     }
 
-    public abstract class StringToValueConverterCoreBase : StringToValueConverterCoreBase<object>
+    public abstract class StringToValueConverterCoreBase<TInput> : ValueConverterCoreBase<TInput, object>
     {
+        protected StringToValueConverterCoreBase(IServiceProvider services) : base(services)
+        {
+        }
+    }
+
+    public abstract class StringToValueConverterCoreBase : StringToValueConverterCoreBase<string>
+    {
+        protected StringToValueConverterCoreBase(IServiceProvider services) : base(services)
+        {
+        }
     }
 
     public class StringToStringConverterCore : StringToValueConverterCoreBase
     {
+        public StringToStringConverterCore(IServiceProvider services) : base(services)
+        {
+        }
+
         public override bool TryParse(string argStr, out object parsedValue)
         {
             parsedValue = argStr;
@@ -26,6 +46,10 @@ namespace FsUtils.Core.Program
 
     public class StringToIntConverter : StringToValueConverterCoreBase
     {
+        public StringToIntConverter(IServiceProvider services) : base(services)
+        {
+        }
+
         public override bool TryParse(string argStr, out object parsedValue)
         {
             int value;
@@ -38,6 +62,10 @@ namespace FsUtils.Core.Program
 
     public class StringToBoolConverter : StringToValueConverterCoreBase
     {
+        public StringToBoolConverter(IServiceProvider services) : base(services)
+        {
+        }
+
         public override bool TryParse(string argStr, out object parsedValue)
         {
             bool value;
@@ -48,29 +76,28 @@ namespace FsUtils.Core.Program
         }
     }
 
-    public class StringToEnumConverter : StringToValueConverterCoreBase
+    public class StringToEnumConverter : StringToValueConverterCoreBase<Tuple<string, Type>>
     {
-        private readonly Type type;
-
-        public StringToEnumConverter(Type type)
+        public StringToEnumConverter(IServiceProvider services) : base(services)
         {
-            this.type = type ?? throw new ArgumentNullException(nameof(type));
         }
 
-        public override bool TryParse(string argStr, out object parsedValue)
+        public override bool TryParse(Tuple<string, Type> arg, out object parsedValue)
         {
             bool retVal;
             int intVal;
 
-            if (int.TryParse(argStr, out intVal))
+            if (int.TryParse(arg.Item1, out intVal))
             {
                 parsedValue = intVal;
                 retVal = true;
             }
             else
             {
-                var match = EnumsH.Cache.Get(type).SingleOrDefault(
-                    kvp => kvp.Key.StrEquals(argStr, true));
+                var enumsCache = Services.GetRequiredService<EnumValuesStaticDataCache>();
+
+                var match = enumsCache.Get(arg.Item2).SingleOrDefault(
+                    kvp => kvp.Key.StrEquals(arg.Item1, true));
 
                 if (match.Key != null)
                 {
@@ -91,11 +118,11 @@ namespace FsUtils.Core.Program
     public class StringToEnumConverter<TEnum> : StringToEnumConverter
         where TEnum : struct
     {
-        public StringToEnumConverter() : base(typeof(TEnum))
+        public StringToEnumConverter(IServiceProvider services) : base(services)
         {
         }
 
-        public override bool TryParse(string argStr, out object parsedValue)
+        public bool TryParse(string argStr, out object parsedValue)
         {
             bool retVal;
             TEnum value;
@@ -107,7 +134,7 @@ namespace FsUtils.Core.Program
             }
             else
             {
-                retVal = base.TryParse(argStr, out parsedValue);
+                retVal = TryParse(new Tuple<string, Type>(argStr, typeof(TEnum)), out parsedValue);
             }
 
             return retVal;
@@ -123,6 +150,10 @@ namespace FsUtils.Core.Program
         {
             DATE_PREFIX, TIME_PREFIX
         }.RdnlC();
+
+        public StringToDateTimeConverter(IServiceProvider services) : base(services)
+        {
+        }
 
         public override bool TryParse(string argStr, out object parsedValue)
         {

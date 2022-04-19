@@ -7,34 +7,35 @@ using Turmerik.Core.Helpers;
 
 namespace Turmerik.Core.Collections
 {
-    public class TypeMappedCollection<TBaseType> : StaticDataCache<Type, IReadOnlyCollection<TBaseType>>
+    public class TypeMappedCollection<TBaseType> : StaticDataCache<Type, IReadOnlyCollection<Tuple<Type, TBaseType>>>
     {
-        private readonly IReadOnlyCollection<TBaseType> allItems;
+        private readonly IReadOnlyCollection<Tuple<Type, TBaseType>> allTuples;
 
-        public TypeMappedCollection(IEnumerable<TBaseType> allItems) : this(allItems.RdnlC())
+        public TypeMappedCollection(IEnumerable<TBaseType> allItems) : this(allItems.Select(
+            item => new Tuple<Type, TBaseType>(item.GetType(), item)).RdnlC())
         {
         }
 
-        public TypeMappedCollection(TBaseType[] allItems) : this(allItems.RdnlC())
+        protected TypeMappedCollection(
+            IReadOnlyCollection<Tuple<Type, TBaseType>> allTuples) : base(type => allTuples.RdnlC(
+                    item => type != null ? type.IsAssignableFrom(item.Item1) : false))
         {
+            this.allTuples = allTuples ?? throw new ArgumentNullException(nameof(allTuples));
+            this.AllItems = allTuples.Select(tuple => tuple.Item2).RdnlC();
         }
 
-        public TypeMappedCollection(
-            IReadOnlyCollection<TBaseType> allItems) : base(type => allItems.RdnlC(
-                    item => type != null ? type.IsAssignableFrom(item.GetType()) : false))
-        {
-            this.allItems = allItems ?? throw new ArgumentNullException(nameof(allItems));
-        }
+        public IReadOnlyCollection<TBaseType> AllItems { get; }
 
-        public TType Get<TType>()
+        public TType[] Get<TType>()
             where TType : TBaseType
         {
-            TType retVal;
+            TType[] retVal;
             var obj = Get(typeof(TType));
 
             if (obj != null)
             {
-                retVal = (TType)obj;
+                retVal = obj.Select(
+                    item => (TType)item.Item2).ToArray();
             }
             else
             {

@@ -117,7 +117,7 @@ namespace Turmerik.Core.Helpers
             return retLazy;
         }
 
-        public static IReadOnlyDictionary<TKey, TValue> RdnlD<TItem, TKey, TValue>(
+        public static ReadOnlyDictionary<TKey, TValue> RdnlD<TItem, TKey, TValue>(
             this IEnumerable<TItem> nmrbl,
             Func<TItem, TKey> keySelector,
             Func<TItem, TValue> valueSelector)
@@ -128,7 +128,7 @@ namespace Turmerik.Core.Helpers
             return rdnlDictnr;
         }
 
-        public static IDictionary<TKey, TValue> Dictnr<TKey, TValue>(
+        public static Dictionary<TKey, TValue> Dictnr<TKey, TValue>(
             this IEnumerable<KeyValuePair<TKey, TValue>> nmrbl)
         {
             var dictnr = nmrbl.ToDictionary(
@@ -137,14 +137,14 @@ namespace Turmerik.Core.Helpers
             return dictnr;
         }
 
-        public static IReadOnlyDictionary<TKey, TValue> RdnlD<TKey, TValue>(
+        public static ReadOnlyDictionary<TKey, TValue> RdnlD<TKey, TValue>(
             this IEnumerable<KeyValuePair<TKey, TValue>> nmrbl)
         {
             var dictnr = nmrbl.Dictnr().RdnlD();
             return dictnr;
         }
 
-        public static IDictionary<TKey, TValue> Dictnr<TItem, TKey, TValue>(
+        public static Dictionary<TKey, TValue> Dictnr<TItem, TKey, TValue>(
             this IEnumerable<TItem> nmrbl,
             Func<TItem, int, TKey> keySelector,
             Func<TItem, int, TValue> valueSelector)
@@ -161,7 +161,7 @@ namespace Turmerik.Core.Helpers
             return retDictnr;
         }
 
-        public static IReadOnlyDictionary<TKey, TValue> RdnlD<TItem, TKey, TValue>(
+        public static ReadOnlyDictionary<TKey, TValue> RdnlD<TItem, TKey, TValue>(
             this IEnumerable<TItem> nmrbl,
             Func<TItem, int, TKey> keySelector,
             Func<TItem, int, TValue> valueSelector)

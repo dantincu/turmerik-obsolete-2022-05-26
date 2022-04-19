@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+using System.IO;
 
 namespace FsUtils.Core.Logging
 {
@@ -18,17 +19,20 @@ namespace FsUtils.Core.Logging
         protected const int FILE_SIZE_LIMIT_BYTES = 1024 * 1024;
         protected const string LOG_FILE_NAME = "log-.json";
 
+        protected readonly string LogBasePath;
+        protected readonly AppStartInfo AppStartInfo;
         protected readonly string LoggerName;
         protected readonly ILogger logger;
-
-        public AppLogger(string loggerName)
+        
+        public AppLogger(
+            string logBasePath,
+            AppStartInfo appStartInfo,
+            string loggerName)
         {
+            LogBasePath = logBasePath;
+            AppStartInfo = appStartInfo;
             LoggerName = loggerName;
             logger = GetLogger();
-        }
-
-        public AppLogger(Type type) : this(type.GetTypeFullDisplayName())
-        {
         }
 
         protected virtual bool IsLoggerBuffered => false;
@@ -37,7 +41,7 @@ namespace FsUtils.Core.Logging
 
         public IAppLogger<TData> WithData<TData>(TData data)
         {
-            IAppLogger<TData> appLogger = new AppLogger<TData>(this.LoggerName, data);
+            IAppLogger<TData> appLogger = new AppLogger<TData>(LogBasePath, AppStartInfo, LoggerName, data);
             return appLogger;
         }
 
@@ -129,7 +133,7 @@ namespace FsUtils.Core.Logging
 
         protected virtual string GetAppExecutionDirName()
         {
-            var appStartInfo = AppStartInfo.Instance.Value;
+            var appStartInfo = AppStartInfo;
 
             long ticks = appStartInfo.AppStartTicks;
             Guid guid = appStartInfo.AppStartGuid;
@@ -171,8 +175,11 @@ namespace FsUtils.Core.Logging
             string logDirName = GetLogDirName();
             string logFileName = GetLogFileName();
 
-            string logFilePath = EnvDir.Logs.EnvPath(
-                appExecutionDirName, logDirName, logFileName);
+            string logFilePath = Path.Combine(
+                LogBasePath,
+                appExecutionDirName,
+                logDirName,
+                logFileName);
 
             return logFilePath;
         }
@@ -234,12 +241,7 @@ namespace FsUtils.Core.Logging
 
         protected readonly TData Data;
 
-        public AppLogger(string loggerName, TData data) : base(loggerName)
-        {
-            Data = data;
-        }
-
-        public AppLogger(Type type, TData data) : base(type)
+        public AppLogger(string logBasePath, AppStartInfo appStartInfo, string loggerName, TData data) : base(logBasePath, appStartInfo, loggerName)
         {
             Data = data;
         }

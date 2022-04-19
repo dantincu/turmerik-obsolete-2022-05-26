@@ -4,10 +4,15 @@ using System.Text;
 
 namespace FsUtils.Core.AppEnv
 {
-    public class AppStartInfo
+    public interface IAppStartInfo
     {
-        public static readonly Lazy<AppStartInfo> Instance = new Lazy<AppStartInfo>(() => new AppStartInfo());
+        DateTime AppStartTime { get; }
+        long AppStartTicks { get; }
+        Guid AppStartGuid { get; }
+    }
 
+    public class AppStartInfo : IAppStartInfo
+    {
         private AppStartInfo()
         {
             AppStartTime = DateTime.Now;

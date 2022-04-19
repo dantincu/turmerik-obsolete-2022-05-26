@@ -8,12 +8,12 @@ using Turmerik.Core.Reflection.Wrappers;
 
 namespace Turmerik.Core.Helpers
 {
-    public static class EnumsH
+    public interface IEnumValuesStaticDataCache : IStaticDataCache<Type, IReadOnlyDictionary<string, EnumMemberWrapper>>
     {
-        public static readonly EnumValuesStaticDataCache Cache = new EnumValuesStaticDataCache();
+        TEnum[] Get<TEnum>();
     }
 
-    public class EnumValuesStaticDataCache : StaticDataCache<Type, IReadOnlyDictionary<string, EnumMemberWrapper>>
+    public class EnumValuesStaticDataCache : StaticDataCache<Type, IReadOnlyDictionary<string, EnumMemberWrapper>>, IEnumValuesStaticDataCache
     {
         public EnumValuesStaticDataCache() : base(
             type => type.GetFields(

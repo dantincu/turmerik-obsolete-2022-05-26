@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Turmerik.Core.Infrastucture;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FsUtils.Core.AppEnv
 {
@@ -23,18 +25,21 @@ namespace FsUtils.Core.AppEnv
         public string[] PathParts { get; set; }
     }
 
-    public class EnvDirHelper
+    public interface IEnvDirHelper
     {
-        public static readonly Lazy<EnvDirHelper> Instance = new Lazy<EnvDirHelper>(() => new EnvDirHelper());
+        string GetPath(EnvDirOpts opts);
+    }
 
-        private EnvDirHelper()
+    public class EnvDirHelper : ComponentBase, IEnvDirHelper
+    {
+        public EnvDirHelper(IServiceProvider services) : base(services)
         {
         }
 
         public string GetPath(EnvDirOpts opts)
         {
             var data = new TempData(opts,
-                AppEnvDir.Instance.Value.BasePath);
+                Services.GetRequiredService<AppEnvDir>().BasePath);
 
             string path = GetPathCore(data);
             return path;

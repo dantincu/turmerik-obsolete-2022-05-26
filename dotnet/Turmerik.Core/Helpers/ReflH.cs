@@ -3,14 +3,25 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using System.Reflection;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Turmerik.Core.Helpers
 {
     public static class ReflH
     {
+        public static string GetTypeFullDisplayName(this IServiceProvider services, Type type)
+        {
+            var typesCache = services.GetRequiredService<TypesStaticDataCache>();
+            string typeFullName = typesCache.Get(type).FullDisplayName;
+
+            return typeFullName;
+        }
+
         public static string GetTypeFullDisplayName(this Type type)
         {
-            string typeFullName = TypesH.Cache.Get(type).FullDisplayName;
+            string typeFullName = type.FullName.SubStr(
+                (str, len) => str.Find((c, i) => c == '`').Key).Item1;
+
             return typeFullName;
         }
 

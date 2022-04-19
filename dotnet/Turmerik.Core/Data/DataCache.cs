@@ -4,14 +4,19 @@ using System.Text;
 
 namespace Turmerik.Core.Data
 {
-    public class DataCache<TKey, TValue>
+    public interface IDataCache<TKey, TValue>
+    {
+        TValue GetOrCreate(TKey key, Func<TKey, TValue> factory);
+    }
+
+    public class DataCache<TKey, TValue> : IDataCache<TKey, TValue>
     {
         private readonly IDictionary<TKey, TValue> dictnr;
         private readonly bool isThreadSafe;
 
-        public DataCache(bool isThreadSafe = false)
+        public DataCache(bool isThreadSafe = false, IEqualityComparer<TKey> keyEqCompr = null)
         {
-            dictnr = new Dictionary<TKey, TValue>();
+            dictnr = new Dictionary<TKey, TValue>(keyEqCompr ?? EqualityComparer<TKey>.Default);
             this.isThreadSafe = isThreadSafe;
         }
 

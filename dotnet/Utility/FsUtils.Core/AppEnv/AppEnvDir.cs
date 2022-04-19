@@ -6,13 +6,16 @@ using System.Text;
 
 namespace FsUtils.Core.AppEnv
 {
-    public class AppEnvDir
+    public interface IAppEnvDir
+    {
+        string BasePath { get; }
+    }
+
+    public class AppEnvDir : IAppEnvDir
     {
         private const string ENV_DIR_LOCATOR_FILE_NAME = "env-dir-locator.json";
 
-        public static readonly Lazy<AppEnvDir> Instance = new Lazy<AppEnvDir>(() => new AppEnvDir());
-
-        private AppEnvDir()
+        public AppEnvDir()
         {
             BasePath = GetBasePath();
         }

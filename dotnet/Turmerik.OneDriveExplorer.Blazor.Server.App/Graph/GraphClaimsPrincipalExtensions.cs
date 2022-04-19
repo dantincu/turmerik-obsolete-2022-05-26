@@ -1,7 +1,3 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// Licensed under the MIT license.
-
-// <GraphClaimsExtensionsSnippet>
 using Microsoft.Graph;
 using System;
 using System.IO;
@@ -63,11 +59,11 @@ namespace Turmerik.OneDriveExplorer.Blazor.Server.App.Graph
                 new Claim(GraphClaimTypes.TimeFormat, user.MailboxSettings.TimeFormat));
         }
 
-        public static void AddUserGraphPhoto(this ClaimsPrincipal claimsPrincipal, Stream photoStream)
+        public static void AddUserGraphPhoto(this ClaimsPrincipal claimsPrincipal, byte[]? photoBytes)
         {
             var identity = claimsPrincipal.Identity as ClaimsIdentity;
 
-            if (photoStream == null)
+            if (photoBytes == null)
             {
                 // Add the default profile photo
                 identity.AddClaim(
@@ -75,18 +71,28 @@ namespace Turmerik.OneDriveExplorer.Blazor.Server.App.Graph
                 return;
             }
 
-            // Copy the photo stream to a memory stream
-            // to get the bytes out of it
-            var memoryStream = new MemoryStream();
-            photoStream.CopyTo(memoryStream);
-            var photoBytes = memoryStream.ToArray();
-
             // Generate a date URI for the photo
             var photoUrl = $"data:image/png;base64,{Convert.ToBase64String(photoBytes)}";
 
             identity.AddClaim(
                 new Claim(GraphClaimTypes.Photo, photoUrl));
         }
+
+        public static byte[] AddUserGraphPhoto(this ClaimsPrincipal claimsPrincipal, Stream photoStream)
+        {
+            byte[] photoBytes = null;
+
+            if (photoStream != null)
+            {
+                using (var memoryStream = new MemoryStream())
+                {
+                    photoStream.CopyTo(memoryStream);
+                    photoBytes = memoryStream.ToArray();
+                }
+            }
+
+            AddUserGraphPhoto(claimsPrincipal, photoBytes);
+            return photoBytes;
+        }
     }
 }
-// </GraphClaimsExtensionsSnippet>

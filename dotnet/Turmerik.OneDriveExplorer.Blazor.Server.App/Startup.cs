@@ -45,8 +45,6 @@ namespace Turmerik.OneDriveExplorer.Blazor.Server.App
                     s.LoginUrl = $"{s.AppBaseUrl}/{s.LoginRelUrl}";
                 });
 
-            // var initialScopes = GraphConstants.Scopes; // Configuration.GetValue<string>("DownstreamApi:Scopes")?.Split(' ');
-
             services.AddSingleton(provider => Configuration.GetObject<TrmrkAppSettings>(ConfigKeys.TRMRK));
 
             services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
@@ -56,113 +54,26 @@ namespace Turmerik.OneDriveExplorer.Blazor.Server.App
                     options.AccessDeniedPath = $"/{trmrkAppSettings.LoginRelUrl}";
 
                     options.Prompt = "select_account";
+                    options.Events.OnTokenValidated = StartupH.OnTokenValidated;
 
-                    options.Events.OnTokenValidated = async context => {
-                        var tokenAcquisition = context.HttpContext.RequestServices
-                            .GetRequiredService<ITokenAcquisition>();
-
-                        var graphClient = new GraphServiceClient(
-                            new DelegateAuthenticationProvider(async (request) => {
-                                var token = await tokenAcquisition
-                                    .GetAccessTokenForUserAsync(GraphConstants.Scopes, user: context.Principal);
-                                request.Headers.Authorization =
-                                    new AuthenticationHeaderValue("Bearer", token);
-                            })
-                        );
-
-                        // Get user information from Graph
-                        var user = await graphClient.Me.Request()
-                            .Select(u => new {
-                                u.DisplayName,
-                                u.Mail,
-                                u.UserPrincipalName,
-                                u.MailboxSettings
-                            })
-                            .GetAsync();
-
-                        context.Principal.AddUserGraphInfo(user);
-
-                        // Get the user's photo
-                        // If the user doesn't have a photo, this throws
-                        try
-                        {
-                            var photo = await graphClient.Me
-                                .Photos["48x48"]
-                                .Content
-                                .Request()
-                                .GetAsync();
-
-                            context.Principal.AddUserGraphPhoto(photo);
-                        }
-                        catch (ServiceException ex)
-                        {
-                            if (ex.IsMatch("ErrorItemNotFound") ||
-                                ex.IsMatch("ConsumerPhotoIsNotSupported"))
-                            {
-                                context.Principal.AddUserGraphPhoto(null);
-                            }
-                            else
-                            {
-                                throw;
-                            }
-                        }
-                    };
-
-                    options.Events.OnAuthenticationFailed = context => {
-                        var error = WebUtility.UrlEncode(context.Exception.Message);
-                        RedirectToAppError(context, "Authentication error", error);
-
-                        return Task.FromResult(0);
-                    };
-
-                    options.Events.OnRemoteFailure = context =>
-                    {
-                        if (context.Failure is OpenIdConnectProtocolException)
-                        {
-                            var error = WebUtility.UrlEncode(context.Failure.Message);
-                            RedirectToAppError(context, "Sign in error", error);
-                        }
-
-                        return Task.FromResult(0);
-                    };
-
-                    options.Events.OnRemoteSignOut = context =>
-                    {
-                        return Task.FromResult(0);
-                    };
-
-                    options.Events.OnSignedOutCallbackRedirect = context =>
-                    {
-                        return Task.FromResult(0);
-                    };
-
-                    options.Events.OnRedirectToIdentityProviderForSignOut = context =>
-                    {
-                        return Task.FromResult(0);
-                    };
+                    options.Events.OnAuthenticationFailed = StartupH.OnAuthenticationFailed;
+                    options.Events.OnRemoteFailure = StartupH.OnRemoteFailure;
                 })
-                //.EnableTokenAcquisitionToCallDownstreamApi(GraphConstants.Scopes)
 
-                // </AddSignInSnippet>
                 // Add ability to call web API (Graph)
                 // and get access tokens
                 .EnableTokenAcquisitionToCallDownstreamApi(options => {
                     Configuration.Bind("AzureAd", options);
                 }, GraphConstants.Scopes)
-                // <AddGraphClientSnippet>
+
                 // Add a GraphServiceClient via dependency injection
                 .AddMicrosoftGraph(options => {
                     options.Scopes = string.Join(' ', GraphConstants.Scopes);
                 })
-                // </AddGraphClientSnippet>
+
                 // Use in-memory token cache
                 // See https://github.com/AzureAD/microsoft-identity-web/wiki/token-cache-serialization
                 .AddInMemoryTokenCaches();
-                //.AddMicrosoftGraph(Configuration.GetSection("DownstreamApi"))
-                // .AddMicrosoftGraph()
-                // .AddInMemoryTokenCaches();
-            // services.AddControllersWithViews()
-                // .AddMicrosoftIdentityUI();
 
             services.AddAuthorization(options =>
             {
@@ -175,10 +86,7 @@ namespace Turmerik.OneDriveExplorer.Blazor.Server.App
                 .AddMicrosoftIdentityConsentHandler();
             services.AddBlazoredLocalStorage();
 
-            services.AddHttpContextAccessor();
-
-            services.AddSingleton<WeatherForecastService>();
-            services.AddScoped<AuthService>();
+            services.RegisterAllServices();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -209,30 +117,6 @@ namespace Turmerik.OneDriveExplorer.Blazor.Server.App
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
             });
-        }
-
-        private static string GetAppErrorUrl(string errName, string errMsg)
-        {
-            errName = Uri.EscapeDataString(errName);
-
-            string url = string.Format(
-                "{0}?{1}={2}&{3}={4}",
-                PageRoutes.APP_ERROR,
-                QsKeys.ERR_NAME,
-                errName,
-                QsKeys.ERR_MSG,
-                errMsg);
-
-            return url;
-        }
-
-        private static void RedirectToAppError<T>(HandleRequestContext<T> context, string errName, string errMsg)
-            where T : AuthenticationSchemeOptions
-        {
-            string url = GetAppErrorUrl(errName, errMsg);
-            context.Response.Redirect(url);
-
-            context.HandleResponse();
         }
     }
 }

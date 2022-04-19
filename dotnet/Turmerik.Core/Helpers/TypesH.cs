@@ -7,12 +7,12 @@ using Turmerik.Core.Reflection.Wrappers;
 
 namespace Turmerik.Core.Helpers
 {
-    public static class TypesH
+    public interface ITypesStaticDataCache : IStaticDataCache<Type, TypeWrapper>
     {
-        public static readonly TypesStaticDataCache Cache = new TypesStaticDataCache();
+        TypeWrapper Get<T>();
     }
 
-    public class TypesStaticDataCache : StaticDataCache<Type, TypeWrapper>
+    public class TypesStaticDataCache : StaticDataCache<Type, TypeWrapper>, ITypesStaticDataCache
     {
         public TypesStaticDataCache() : base(
                 type => new TypeWrapper(type))

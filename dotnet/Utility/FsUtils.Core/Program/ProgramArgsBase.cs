@@ -9,6 +9,5 @@ namespace FsUtils.Core.Program
         public bool IsInteractiveShell { get; set; }
         public string CurrentDirPath { get; set; }
         public DateTime? TimeStamp { get; set; }
-
     }
 }
