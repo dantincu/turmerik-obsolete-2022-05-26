@@ -28,25 +28,25 @@ namespace Turmerik.OneDriveExplorer.Blazor.Server.App.AppSettings
             return obj;
         }
 
-        public static T GetObject<T>(this IConfiguration config, string objKey, T obj)
+        public static T GetObject<T>(this IConfiguration config, ITypesStaticDataCache typesCache, string objKey, T obj)
         {
-            obj = config.GetObject(objKey, obj, TypesH.Cache.Get<T>().InstPubGetPubSetProps.Value);
+            obj = config.GetObject(objKey, obj, typesCache.Get<T>().InstPubGetPubSetProps.Value);
             return obj;
         }
 
-        public static T GetObject<T>(this IConfiguration config, string objKey, Type type, Action<T> callback = null)
+        public static T GetObject<T>(this IConfiguration config, ITypesStaticDataCache typesCache, string objKey, Type type, Action<T> callback = null)
         {
             T obj = Activator.CreateInstance<T>();
-            obj = config.GetObject(objKey, obj, TypesH.Cache.Get(type).InstPubGetPubSetProps.Value);
+            obj = config.GetObject(objKey, obj, typesCache.Get(type).InstPubGetPubSetProps.Value);
 
             callback?.Invoke(obj);
             return obj;
         }
 
-        public static T GetObject<T>(this IConfiguration config, string objKey)
+        public static T GetObject<T>(this IConfiguration config, ITypesStaticDataCache typesCache, string objKey)
         {
             T obj = Activator.CreateInstance<T>();
-            obj = config.GetObject(objKey, obj);
+            obj = config.GetObject(typesCache, objKey, obj);
 
             return obj;
         }

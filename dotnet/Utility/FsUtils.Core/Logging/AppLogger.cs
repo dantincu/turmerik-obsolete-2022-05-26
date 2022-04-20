@@ -150,10 +150,10 @@ namespace FsUtils.Core.Logging
         protected virtual LoggerConfiguration Enrich(LoggerConfiguration loggerConfiguration)
         {
             loggerConfiguration = loggerConfiguration.Enrich.WithProperty(
-                nameof(AppStartInfo.Instance.Value.AppStartGuid),
-                AppStartInfo.Instance.Value.AppStartGuid).Enrich.WithProperty(
-                nameof(AppStartInfo.Instance.Value.AppStartTicks),
-                AppStartInfo.Instance.Value.AppStartTicks);
+                nameof(AppStartInfo.AppStartGuid),
+                AppStartInfo.AppStartGuid).Enrich.WithProperty(
+                nameof(AppStartInfo.AppStartTicks),
+                AppStartInfo.AppStartTicks);
 
             return loggerConfiguration;
         }

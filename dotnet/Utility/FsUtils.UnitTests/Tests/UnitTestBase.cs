@@ -19,7 +19,7 @@ namespace FsUtils.UnitTests.Tests
         private static void RegisterAllServices()
         {
             var services = new ServiceCollection();
-            ServiceCollectionBuilder.RegisterAllServices(services);
+            TrmrkCoreServiceCollectionBuilder.RegisterAll(services);
 
             ServiceProviderContainer.Instance.Value.RegisterServices(services);
         }

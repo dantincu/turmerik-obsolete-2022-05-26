@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ServiceCollectionBuilderCore = Turmerik.Core.Infrastucture.ServiceCollectionBuilder;
+using ServiceCollectionBuilderCore = Turmerik.Core.Infrastucture.TrmrkCoreServiceCollectionBuilder;
 
 namespace FsUtils.Core.Program
 {
@@ -12,7 +12,7 @@ namespace FsUtils.Core.Program
     {
         public static void RegisterAllServices(IServiceCollection services)
         {
-            ServiceCollectionBuilderCore.RegisterAllServices(services);
+            ServiceCollectionBuilderCore.RegisterAll(services);
 
             services.AddSingleton<IAppStartInfo, AppStartInfo>();
             services.AddSingleton<IAppEnvDir, AppEnvDir>();

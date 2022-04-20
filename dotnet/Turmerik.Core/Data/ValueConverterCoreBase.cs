@@ -6,37 +6,40 @@ using System.Text;
 using Turmerik.Core.Infrastucture;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace FsUtils.Core.Program
+namespace Turmerik.Core.Data
 {
-    public abstract class ValueConverterCoreBase<TInput, TResult> : ComponentBase
+    public interface IValueConverterCore<TInput, TResult>
     {
-        protected ValueConverterCoreBase(IServiceProvider services) : base(services)
-        {
-        }
+        bool TryParse(TInput arg, out TResult parsedValue);
+    }
 
+    public abstract class ValueConverterCoreBase<TInput, TResult> : IValueConverterCore<TInput, TResult>
+    {
         public abstract bool TryParse(TInput arg, out TResult parsedValue);
     }
 
-    public abstract class StringToValueConverterCoreBase<TInput> : ValueConverterCoreBase<TInput, object>
+    public interface IStringToValueConverterCore<TInput> : IValueConverterCore<TInput, object>
     {
-        protected StringToValueConverterCoreBase(IServiceProvider services) : base(services)
-        {
-        }
     }
 
-    public abstract class StringToValueConverterCoreBase : StringToValueConverterCoreBase<string>
+    public abstract class StringToValueConverterCoreBase<TInput> : ValueConverterCoreBase<TInput, object>, IStringToValueConverterCore<TInput>
     {
-        protected StringToValueConverterCoreBase(IServiceProvider services) : base(services)
-        {
-        }
     }
 
-    public class StringToStringConverterCore : StringToValueConverterCoreBase
+    public interface IStringToValueConverterCore : IStringToValueConverterCore<string>
     {
-        public StringToStringConverterCore(IServiceProvider services) : base(services)
-        {
-        }
+    }
 
+    public abstract class StringToValueConverterCoreBase : StringToValueConverterCoreBase<string>, IStringToValueConverterCore
+    {
+    }
+
+    public interface IStringToStringConverterCore : IStringToValueConverterCore
+    {
+    }
+
+    public class StringToStringConverterCore : StringToValueConverterCoreBase, IStringToStringConverterCore
+    {
         public override bool TryParse(string argStr, out object parsedValue)
         {
             parsedValue = argStr;
@@ -44,12 +47,12 @@ namespace FsUtils.Core.Program
         }
     }
 
-    public class StringToIntConverter : StringToValueConverterCoreBase
+    public interface IStringToIntConverter : IStringToValueConverterCore
     {
-        public StringToIntConverter(IServiceProvider services) : base(services)
-        {
-        }
+    }
 
+    public class StringToIntConverter : StringToValueConverterCoreBase, IStringToIntConverter
+    {
         public override bool TryParse(string argStr, out object parsedValue)
         {
             int value;
@@ -60,12 +63,12 @@ namespace FsUtils.Core.Program
         }
     }
 
-    public class StringToBoolConverter : StringToValueConverterCoreBase
+    public interface IStringToBoolConverter : IStringToValueConverterCore
     {
-        public StringToBoolConverter(IServiceProvider services) : base(services)
-        {
-        }
+    }
 
+    public class StringToBoolConverter : StringToValueConverterCoreBase, IStringToBoolConverter
+    {
         public override bool TryParse(string argStr, out object parsedValue)
         {
             bool value;
@@ -76,10 +79,17 @@ namespace FsUtils.Core.Program
         }
     }
 
-    public class StringToEnumConverter : StringToValueConverterCoreBase<Tuple<string, Type>>
+    public interface IStringToEnumConverter : IStringToValueConverterCore<Tuple<string, Type>>
     {
-        public StringToEnumConverter(IServiceProvider services) : base(services)
+    }
+
+    public class StringToEnumConverter : StringToValueConverterCoreBase<Tuple<string, Type>>, IStringToEnumConverter
+    {
+        private readonly IEnumValuesStaticDataCache enumsCache;
+
+        public StringToEnumConverter(IEnumValuesStaticDataCache enumsCache)
         {
+            enumsCache = enumsCache ?? throw new ArgumentNullException(nameof(enumsCache));
         }
 
         public override bool TryParse(Tuple<string, Type> arg, out object parsedValue)
@@ -94,8 +104,6 @@ namespace FsUtils.Core.Program
             }
             else
             {
-                var enumsCache = Services.GetRequiredService<EnumValuesStaticDataCache>();
-
                 var match = enumsCache.Get(arg.Item2).SingleOrDefault(
                     kvp => kvp.Key.StrEquals(arg.Item1, true));
 
@@ -115,10 +123,14 @@ namespace FsUtils.Core.Program
         }
     }
 
-    public class StringToEnumConverter<TEnum> : StringToEnumConverter
+    public interface IStringToEnumConverter<TEnum> : IStringToEnumConverter
+    {
+    }
+
+    public class StringToEnumConverter<TEnum> : StringToEnumConverter, IStringToEnumConverter<TEnum>
         where TEnum : struct
     {
-        public StringToEnumConverter(IServiceProvider services) : base(services)
+        public StringToEnumConverter(IEnumValuesStaticDataCache enumsCache) : base(enumsCache)
         {
         }
 
@@ -141,7 +153,11 @@ namespace FsUtils.Core.Program
         }
     }
 
-    public class StringToDateTimeConverter : StringToValueConverterCoreBase
+    public interface IStringToDateTimeConverter : IStringToValueConverterCore
+    {
+    }
+
+    public class StringToDateTimeConverter : StringToValueConverterCoreBase, IStringToDateTimeConverter
     {
         private const char DATE_PREFIX = 'D';
         private const char TIME_PREFIX = 'T';
@@ -150,10 +166,6 @@ namespace FsUtils.Core.Program
         {
             DATE_PREFIX, TIME_PREFIX
         }.RdnlC();
-
-        public StringToDateTimeConverter(IServiceProvider services) : base(services)
-        {
-        }
 
         public override bool TryParse(string argStr, out object parsedValue)
         {

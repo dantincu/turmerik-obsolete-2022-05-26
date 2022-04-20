@@ -65,7 +65,7 @@ namespace Turmerik.Core.Data.Cloneable
             {
                 SrcPropType = srcPropType,
                 TrgPropType = trgPropType,
-                SrcPropValue = (INestedObjWrpprCore)srcPropValue
+                SrcPropValue = (INestedObjWrppr)srcPropValue
             };
 
             var opts = new NestedObjMapOptsImmtbl(optsMtbl);

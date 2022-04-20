@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Graph;
 using Microsoft.Identity.Web;
@@ -8,6 +9,7 @@ using System;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using Turmerik.Core.Helpers;
 using Turmerik.Core.Infrastucture;
 using Turmerik.OneDriveExplorer.Blazor.Server.App.AppSettings;
 using Turmerik.OneDriveExplorer.Blazor.Server.App.Data;
@@ -124,13 +126,71 @@ namespace Turmerik.OneDriveExplorer.Blazor.Server.App
         {
         }
 
-        public static void RegisterAllServices(this IServiceCollection services)
+        public static IAppCoreServiceCollection RegisterCoreServices(
+            this IServiceCollection services, IConfiguration config)
+        {
+            var coreSvcs = TrmrkCoreServiceCollectionBuilder.RegisterAll(services);
+            var typesCache = coreSvcs.TypesStaticDataCache;
+
+            var trmrkAppSettings = config.GetObject<TrmrkAppSettings>(
+                typesCache,
+                ConfigKeys.TRMRK,
+                typeof(TrmrkAppSettingsCore),
+                s =>
+                {
+                    s.LoginUrl = $"{s.AppBaseUrl}/{s.LoginRelUrl}";
+                });
+
+            var appSvcsMtbl = new AppCoreServiceCollectionMtbl(coreSvcs)
+            {
+                TrmrkAppSettings = trmrkAppSettings
+            };
+
+            var appSvcsImmtbl = new AppCoreServiceCollectionImmtbl(appSvcsMtbl);
+            services.AddSingleton(provider => trmrkAppSettings);
+
+            return appSvcsImmtbl;
+        }
+
+        public static void RegisterServices(this IServiceCollection services)
         {
             services.AddHttpContextAccessor();
-            ServiceCollectionBuilder.RegisterAllServices(services);
 
             services.AddScoped<AuthService>();
             services.AddSingleton<TrmrkUserSessionsManager>();
         }
+    }
+
+    public interface IAppCoreServiceCollection : ITrmrkCoreServiceCollection
+    {
+        TrmrkAppSettings TrmrkAppSettings { get; }
+    }
+
+    public class AppCoreServiceCollectionImmtbl : TrmrkCoreServiceCollectionImmtbl, IAppCoreServiceCollection
+    {
+        public AppCoreServiceCollectionImmtbl(IAppCoreServiceCollection src) : base(src)
+        {
+            TrmrkAppSettings = src.TrmrkAppSettings;
+        }
+
+        public TrmrkAppSettings TrmrkAppSettings { get; protected set; }
+    }
+
+    public class AppCoreServiceCollectionMtbl : TrmrkCoreServiceCollectionMtbl, IAppCoreServiceCollection
+    {
+        public AppCoreServiceCollectionMtbl()
+        {
+        }
+
+        public AppCoreServiceCollectionMtbl(ITrmrkCoreServiceCollection src) : base(src)
+        {
+        }
+
+        public AppCoreServiceCollectionMtbl(IAppCoreServiceCollection src) : base(src)
+        {
+            TrmrkAppSettings = src.TrmrkAppSettings;
+        }
+
+        public TrmrkAppSettings TrmrkAppSettings { get; set; }
     }
 }

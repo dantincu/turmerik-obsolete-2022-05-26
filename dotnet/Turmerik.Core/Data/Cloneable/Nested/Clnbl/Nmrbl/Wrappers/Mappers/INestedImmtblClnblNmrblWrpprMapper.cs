@@ -5,19 +5,19 @@ using Turmerik.Core.Data.Cloneable.Nested.Wrappers.Mappers;
 
 namespace Turmerik.Core.Data.Cloneable.Nested.Clnbl.Nmrbl.Wrappers.Mappers
 {
-    public interface INestedMtblClnblWrpprMapper<TClnbl, TImmtbl, TMtbl> : INestedClnblWrpprMapper<TClnbl, TImmtbl, TMtbl>
+    public interface INestedImmtblClnblNmrblWrpprMapper<TClnbl, TImmtbl, TMtbl> : INestedClnblNmrblWrpprMapper<TClnbl, TImmtbl, TMtbl>
         where TClnbl : ICloneableObject
         where TImmtbl : TClnbl
         where TMtbl : TClnbl
     {
     }
 
-    public class NestedMtblClnblWrpprMapper<TClnbl, TImmtbl, TMtbl> : NestedClnblWrpprMapperBase<TClnbl, TImmtbl, TMtbl>, INestedMtblClnblWrpprMapper<TClnbl, TImmtbl, TMtbl>
+    public class NestedImmtblClnblNmrblWrpprMapper<TClnbl, TImmtbl, TMtbl> : NestedClnblNmrblWrpprMapperBase<TClnbl, TImmtbl, TMtbl>, INestedImmtblClnblNmrblWrpprMapper<TClnbl, TImmtbl, TMtbl>
         where TClnbl : ICloneableObject
         where TImmtbl : TClnbl
         where TMtbl : TClnbl
     {
-        public NestedMtblClnblWrpprMapper(IServiceProvider services) : base(services)
+        public NestedImmtblClnblNmrblWrpprMapper(IServiceProvider services) : base(services)
         {
         }
     }

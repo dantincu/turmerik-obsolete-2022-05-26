@@ -23,7 +23,7 @@ namespace Turmerik.Core.Data.Cloneable.Nested.Wrappers.Mappers
 
         public INestedObjWrpprCore GetTrgPropValue(INestedObjMapOpts opts)
         {
-            INestedObjWrpprMapper mapper;
+            /* INestedObjWrpprMapper mapper;
 
             if (typeof(INestedObjDictnrWrppr).IsAssignableFrom(opts.TrgPropType))
             {
@@ -43,11 +43,13 @@ namespace Turmerik.Core.Data.Cloneable.Nested.Wrappers.Mappers
             }
 
             INestedObjWrpprCore trgPropValue = mapper.GetTrgPropValue(opts);
-            return trgPropValue;
+            return trgPropValue; */
+
+            throw new NotImplementedException();
         }
 
-        protected abstract INestedObjDictnrWrpprMapper GetNestedObjDictnrWrpprMapper(INestedObjMapOpts opts);
+        /* protected abstract INestedObjDictnrWrpprMapper GetNestedObjDictnrWrpprMapper(INestedObjMapOpts opts);
         protected abstract INestedObjNmrblWrpprMapper GetNestedObjNmrblWrpprMapper(INestedObjMapOpts opts);
-        protected abstract INestedObjWrpprMapper GetNestedObjWrpprMapper(INestedObjMapOpts opts);
+        protected abstract INestedObjWrpprMapper GetNestedObjWrpprMapper(INestedObjMapOpts opts); */
     }
 }

@@ -39,19 +39,13 @@ namespace Turmerik.OneDriveExplorer.Blazor.Server.App
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            var trmrkAppSettings = Configuration.GetObject<TrmrkAppSettings>(
-                ConfigKeys.TRMRK, typeof(TrmrkAppSettingsCore), s =>
-                {
-                    s.LoginUrl = $"{s.AppBaseUrl}/{s.LoginRelUrl}";
-                });
-
-            services.AddSingleton(provider => Configuration.GetObject<TrmrkAppSettings>(ConfigKeys.TRMRK));
+            var appSvcs = services.RegisterCoreServices(Configuration);
 
             services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
                 .AddMicrosoftIdentityWebApp(options =>
                 {
                     Configuration.Bind("AzureAd", options);
-                    options.AccessDeniedPath = $"/{trmrkAppSettings.LoginRelUrl}";
+                    options.AccessDeniedPath = $"/{appSvcs.TrmrkAppSettings.LoginRelUrl}";
 
                     options.Prompt = "select_account";
                     options.Events.OnTokenValidated = StartupH.OnTokenValidated;
@@ -86,7 +80,7 @@ namespace Turmerik.OneDriveExplorer.Blazor.Server.App
                 .AddMicrosoftIdentityConsentHandler();
             services.AddBlazoredLocalStorage();
 
-            services.RegisterAllServices();
+            services.RegisterServices();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
