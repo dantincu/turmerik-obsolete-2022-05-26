@@ -16,12 +16,8 @@ namespace Turmerik.Core.Data.Cloneable
         void MapTarget(ObjMapOptsImmtbl opts);
     }
 
-    public abstract class CloneableMapperCoreBase : ComponentBase, ICloneableMapperCore
+    public abstract class CloneableMapperCoreBase : ICloneableMapperCore
     {
-        public CloneableMapperCoreBase(IServiceProvider services) : base(services)
-        {
-        }
-
         public void MapTarget(ObjMapOptsImmtbl opts)
         {
             foreach (var trgProp in opts.TrgProps)

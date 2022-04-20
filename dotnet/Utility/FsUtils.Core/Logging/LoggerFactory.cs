@@ -16,15 +16,14 @@ namespace FsUtils.Core.Logging
         IAppLogger<TData> GetLogger<TData>(Type logDirNameType, TData data);
     }
 
-    public class LoggerFactory : ComponentBase, ILoggerFactory
+    public class LoggerFactory : ILoggerFactory
     {
         private readonly EnvDirHelper envDirHelper;
         private readonly AppStartInfo appStartInfo;
 
         public LoggerFactory(
-            IServiceProvider services,
             EnvDirHelper envDirHelper,
-            AppStartInfo appStartInfo) : base(services)
+            AppStartInfo appStartInfo)
         {
             this.envDirHelper = envDirHelper ?? throw new ArgumentNullException(nameof(envDirHelper));
             this.appStartInfo = appStartInfo ?? throw new ArgumentNullException(nameof(appStartInfo));

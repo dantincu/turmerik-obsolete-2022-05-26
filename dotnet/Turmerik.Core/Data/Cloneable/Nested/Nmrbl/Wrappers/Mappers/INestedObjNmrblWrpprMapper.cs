@@ -64,14 +64,10 @@ namespace Turmerik.Core.Data.Cloneable.Nested.Nmrbl.Wrappers.Mappers
         }
     }
 
-    public abstract class NestedObjNmrblWrpprMapperBase<TObj, TImmtbl, TMtbl> : ComponentBase, INestedObjNmrblWrpprMapper<TObj, TImmtbl, TMtbl>
+    public abstract class NestedObjNmrblWrpprMapperBase<TObj, TImmtbl, TMtbl> : INestedObjNmrblWrpprMapper<TObj, TImmtbl, TMtbl>
         where TImmtbl : TObj
         where TMtbl : TObj
     {
-        public NestedObjNmrblWrpprMapperBase(IServiceProvider services) : base(services)
-        {
-        }
-
         public INestedObjNmrblWrppr<TObj, TImmtbl, TMtbl> GetTrgPropValue(INestedObjNmrblMapOpts<TObj, TImmtbl, TMtbl> opts)
         {
             throw new NotImplementedException();

@@ -15,12 +15,8 @@ namespace Turmerik.Core.Data.Cloneable.Nested.Wrappers.Mappers
         INestedObjWrpprCore GetTrgPropValue(INestedObjMapOpts opts);
     }
 
-    public abstract class NestedObjWrpprMainMapperBase : ComponentBase, INestedObjWrpprMainMapper
+    public abstract class NestedObjWrpprMainMapperBase : INestedObjWrpprMainMapper
     {
-        public NestedObjWrpprMainMapperBase(IServiceProvider services) : base(services)
-        {
-        }
-
         public INestedObjWrpprCore GetTrgPropValue(INestedObjMapOpts opts)
         {
             /* INestedObjWrpprMapper mapper;

@@ -30,16 +30,18 @@ namespace FsUtils.Core.AppEnv
         string GetPath(EnvDirOpts opts);
     }
 
-    public class EnvDirHelper : ComponentBase, IEnvDirHelper
+    public class EnvDirHelper : IEnvDirHelper
     {
-        public EnvDirHelper(IServiceProvider services) : base(services)
+        private readonly AppEnvDir appEnvDir;
+
+        public EnvDirHelper(AppEnvDir appEnvDir)
         {
+            appEnvDir = appEnvDir ?? throw new ArgumentNullException(nameof(appEnvDir));
         }
 
         public string GetPath(EnvDirOpts opts)
         {
-            var data = new TempData(opts,
-                Services.GetRequiredService<AppEnvDir>().BasePath);
+            var data = new TempData(opts, appEnvDir.BasePath);
 
             string path = GetPathCore(data);
             return path;

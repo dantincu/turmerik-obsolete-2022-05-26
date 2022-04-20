@@ -12,10 +12,6 @@ namespace Turmerik.Core.Data.Cloneable.Mappers
 
     public class CloneableMtblMapper : CloneableMapperCoreBase, ICloneableMtblMapper
     {
-        public CloneableMtblMapper(IServiceProvider services) : base(services)
-        {
-        }
-
         protected override INestedObjWrpprMapper GetNestedObjWrpprMapper(INestedObjMapOpts opts)
         {
             throw new NotImplementedException();

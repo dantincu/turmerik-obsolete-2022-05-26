@@ -17,8 +17,5 @@ namespace Turmerik.Core.Data.Cloneable.Nested.Clnbl.Nmrbl.Wrappers.Mappers
         where TImmtbl : TClnbl
         where TMtbl : TClnbl
     {
-        public NestedMtblClnblNmrblWrpprMapper(IServiceProvider services) : base(services)
-        {
-        }
     }
 }

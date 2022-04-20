@@ -65,15 +65,11 @@ namespace Turmerik.Core.Data.Cloneable.Nested.Clnbl.Wrappers.Mappers
         }
     }
 
-    public abstract class NestedClnblWrpprMapperBase<TClnbl, TImmtbl, TMtbl> : ComponentBase, INestedClnblWrpprMapper<TClnbl, TImmtbl, TMtbl>
+    public abstract class NestedClnblWrpprMapperBase<TClnbl, TImmtbl, TMtbl> : INestedClnblWrpprMapper<TClnbl, TImmtbl, TMtbl>
         where TClnbl : ICloneableObject
         where TImmtbl : TClnbl
         where TMtbl : TClnbl
     {
-        public NestedClnblWrpprMapperBase(IServiceProvider services) : base(services)
-        {
-        }
-
         public INestedClnblWrppr<TClnbl, TImmtbl, TMtbl> GetTrgPropValue(INestedClnblMapOpts<TClnbl, TImmtbl, TMtbl> opts)
         {
             throw new NotImplementedException();
