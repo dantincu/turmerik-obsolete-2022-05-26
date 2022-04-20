@@ -16,7 +16,7 @@ namespace Turmerik.Core.Data.Cloneable.Mappers
         {
         }
 
-        protected override INestedObjWrpprMapperCore GetNestedObjWrpprMapper(INestedObjMapOpts opts)
+        protected override INestedObjWrpprMapper GetNestedObjWrpprMapper(INestedObjMapOpts opts)
         {
             throw new NotImplementedException();
         }

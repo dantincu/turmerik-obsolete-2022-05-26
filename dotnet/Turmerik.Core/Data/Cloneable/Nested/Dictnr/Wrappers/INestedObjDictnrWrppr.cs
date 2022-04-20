@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Turmerik.Core.Data.Cloneable.Nested.Wrappers;
 
-namespace Turmerik.Core.Data.Cloneable.Nested.Wrappers.Mappers
+namespace Turmerik.Core.Data.Cloneable.Nested.Dictnr.Wrappers
 {
     public interface INestedObjDictnrWrppr : INestedObjWrpprCore
     {
@@ -26,16 +27,16 @@ namespace Turmerik.Core.Data.Cloneable.Nested.Wrappers.Mappers
             ImmtblWrppr = immtblWrppr;
             MtblWrppr = mtblWrppr;
 
-            ObjWrppr = new NestedObjDictnr<TKey, TObj>(mtblWrppr?.Mtbl.ToDictionary(
+            ObjWrpprCore = new NestedObjDictnr<TKey, TObj>(mtblWrppr?.Mtbl.ToDictionary(
                 kvp => kvp.Key, kvp => kvp.Value as INestedObj<TObj>) ?? immtblWrppr?.Immtbl.ToDictionary(
                     kvp => kvp.Key, kvp => kvp.Value as INestedObj<TObj>));
         }
 
-        public INestedObjDictnr<TKey, TObj> ObjWrppr { get; }
         public INestedObjRdnlDictnr<TKey, TObj, TImmtbl> ImmtblWrppr { get; }
         public INestedObjEdtblDictnr<TKey, TObj, TMtbl> MtblWrppr { get; }
+        protected INestedObjDictnr<TKey, TObj> ObjWrpprCore { get; }
 
-        public object GetObjWrppr() => ObjWrppr;
+        public object GetObjWrppr() => ObjWrpprCore;
         public object GetImmtblWrppr() => ImmtblWrppr;
         public object GetMtblWrppr() => MtblWrppr;
     }

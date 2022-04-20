@@ -2,12 +2,17 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Turmerik.Core.Data.Cloneable.Nested.Dictnr.Wrappers;
+using Turmerik.Core.Data.Cloneable.Nested.Dictnr.Wrappers.Mappers;
+using Turmerik.Core.Data.Cloneable.Nested.Nmrbl.Wrappers;
+using Turmerik.Core.Data.Cloneable.Nested.Nmrbl.Wrappers.Mappers;
 using Turmerik.Core.Infrastucture;
 
 namespace Turmerik.Core.Data.Cloneable.Nested.Wrappers.Mappers
 {
-    public interface INestedObjWrpprMainMapper : INestedObjWrpprMapperCore
+    public interface INestedObjWrpprMainMapper
     {
+        INestedObjWrpprCore GetTrgPropValue(INestedObjMapOpts opts);
     }
 
     public abstract class NestedObjWrpprMainMapperBase : ComponentBase, INestedObjWrpprMainMapper
@@ -18,7 +23,7 @@ namespace Turmerik.Core.Data.Cloneable.Nested.Wrappers.Mappers
 
         public INestedObjWrpprCore GetTrgPropValue(INestedObjMapOpts opts)
         {
-            INestedObjWrpprMapperCore mapper;
+            INestedObjWrpprMapper mapper;
 
             if (typeof(INestedObjDictnrWrppr).IsAssignableFrom(opts.TrgPropType))
             {

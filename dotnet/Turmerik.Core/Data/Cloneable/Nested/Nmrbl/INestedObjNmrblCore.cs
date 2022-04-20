@@ -5,22 +5,22 @@ using System.Linq;
 using System.Text;
 using Turmerik.Core.Helpers;
 
-namespace Turmerik.Core.Data.Cloneable.Nested
+namespace Turmerik.Core.Data.Cloneable.Nested.Nmrbl
 {
-    public interface INestedObjNmrbl<TObj, TNested> : INestedObjCore<IEnumerable<TNested>>
+    public interface INestedObjNmrblCore<TObj, TNested> : INestedObjCore<IEnumerable<TNested>>
     {
     }
 
-    public interface INestedObjNmrbl<TObj> : INestedObjNmrbl<TObj, INestedObj<TObj>>
+    public interface INestedObjNmrbl<TObj> : INestedObjNmrblCore<TObj, INestedObj<TObj>>
     {
     }
 
-    public interface INestedImmtblObjColcnt<TObj, TImmtbl> : INestedObjNmrbl<TObj, INestedImmtblObj<TObj, TImmtbl>>, INestedImmtblObjCore<IEnumerable<INestedImmtblObj<TObj, TImmtbl>>, ReadOnlyCollection<INestedImmtblObj<TObj, TImmtbl>>>
+    public interface INestedImmtblObjClctn<TObj, TImmtbl> : INestedObjNmrblCore<TObj, INestedImmtblObj<TObj, TImmtbl>>, INestedImmtblObjCore<IEnumerable<INestedImmtblObj<TObj, TImmtbl>>, ReadOnlyCollection<INestedImmtblObj<TObj, TImmtbl>>>
         where TImmtbl : TObj
     {
     }
 
-    public interface INestedMtblObjList<TObj, TMtbl> : INestedObjNmrbl<TObj, INestedMtblObj<TObj, TMtbl>>, INestedMtblObjCore<IEnumerable<INestedMtblObj<TObj, TMtbl>>, List<INestedMtblObj<TObj, TMtbl>>>
+    public interface INestedMtblObjList<TObj, TMtbl> : INestedObjNmrblCore<TObj, INestedMtblObj<TObj, TMtbl>>, INestedMtblObjCore<IEnumerable<INestedMtblObj<TObj, TMtbl>>, List<INestedMtblObj<TObj, TMtbl>>>
         where TMtbl : TObj
     {
     }
@@ -37,7 +37,7 @@ namespace Turmerik.Core.Data.Cloneable.Nested
         }
     }
 
-    public class NestedImmtblObjClctn<TObj, TImmtbl> : NestedImmtblObjCoreBase<IEnumerable<INestedImmtblObj<TObj, TImmtbl>>, ReadOnlyCollection<INestedImmtblObj<TObj, TImmtbl>>>, INestedImmtblObjColcnt<TObj, TImmtbl>
+    public class NestedImmtblObjClctn<TObj, TImmtbl> : NestedImmtblObjCoreBase<IEnumerable<INestedImmtblObj<TObj, TImmtbl>>, ReadOnlyCollection<INestedImmtblObj<TObj, TImmtbl>>>, INestedImmtblObjClctn<TObj, TImmtbl>
         where TImmtbl : TObj
     {
         public NestedImmtblObjClctn(IEnumerable<INestedImmtblObj<TObj, TImmtbl>> nmrbl) : this(nmrbl?.RdnlC())

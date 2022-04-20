@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
+using Turmerik.Core.Data.Cloneable.Nested.Nmrbl;
 using Turmerik.Core.Helpers;
 
-namespace Turmerik.Core.Data.Cloneable.Nested
+namespace Turmerik.Core.Data.Cloneable.Nested.Dictnr
 {
-    public interface INestedObjDictnrCore<TObj, TKvp> : INestedObjNmrbl<TObj, TKvp>
+    public interface INestedObjDictnrCore<TObj, TKvp> : INestedObjNmrblCore<TObj, TKvp>
     {
     }
 

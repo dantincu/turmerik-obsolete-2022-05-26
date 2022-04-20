@@ -2,14 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Turmerik.Core.Data.Cloneable.Nested.Wrappers;
 
-namespace Turmerik.Core.Data.Cloneable.Nested.Wrappers.Mappers
+namespace Turmerik.Core.Data.Cloneable.Nested.Nmrbl.Wrappers
 {
     public interface INestedObjNmrblWrppr : INestedObjWrpprCore
     {
     }
 
-    public interface INestedObjNmrblWrppr<TObj, TImmtbl, TMtbl> : INestedObjWrpprCore<INestedObjNmrbl<TObj>, INestedImmtblObjColcnt<TObj, TImmtbl>, INestedMtblObjList<TObj, TMtbl>>, INestedObjNmrblWrppr
+    public interface INestedObjNmrblWrppr<TObj, TImmtbl, TMtbl> : INestedObjWrpprCore<INestedObjNmrbl<TObj>, INestedImmtblObjClctn<TObj, TImmtbl>, INestedMtblObjList<TObj, TMtbl>>, INestedObjNmrblWrppr
         where TImmtbl : TObj
         where TMtbl : TObj
     {
@@ -19,21 +20,21 @@ namespace Turmerik.Core.Data.Cloneable.Nested.Wrappers.Mappers
         where TImmtbl : TObj
         where TMtbl : TObj
     {
-        public NestedObjNmrblWrppr(INestedImmtblObjColcnt<TObj, TImmtbl> immtblWrppr, INestedMtblObjList<TObj, TMtbl> mtblWrppr)
+        public NestedObjNmrblWrppr(INestedImmtblObjClctn<TObj, TImmtbl> immtblWrppr, INestedMtblObjList<TObj, TMtbl> mtblWrppr)
         {
             ImmtblWrppr = immtblWrppr;
             MtblWrppr = mtblWrppr;
 
-            ObjWrppr = new NestedObjNmrbl<TObj>(
+            ObjWrpprCore = new NestedObjNmrbl<TObj>(
                 mtblWrppr?.Mtbl.Cast<INestedObj<TObj>>(
                     ) ?? immtblWrppr?.Immtbl.Cast<INestedObj<TObj>>());
         }
 
-        public INestedObjNmrbl<TObj> ObjWrppr { get; }
-        public INestedImmtblObjColcnt<TObj, TImmtbl> ImmtblWrppr { get; }
+        public INestedImmtblObjClctn<TObj, TImmtbl> ImmtblWrppr { get; }
         public INestedMtblObjList<TObj, TMtbl> MtblWrppr { get; }
+        protected INestedObjNmrbl<TObj> ObjWrpprCore { get; }
 
-        public object GetObjWrppr() => ObjWrppr;
+        public object GetObjWrppr() => ObjWrpprCore;
         public object GetImmtblWrppr() => ImmtblWrppr;
         public object GetMtblWrppr() => MtblWrppr;
     }

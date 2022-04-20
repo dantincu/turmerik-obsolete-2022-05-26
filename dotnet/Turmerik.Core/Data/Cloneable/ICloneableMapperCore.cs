@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Turmerik.Core.Data.Cloneable.Nested.Wrappers;
 using Turmerik.Core.Data.Cloneable.Nested.Wrappers.Mappers;
 using Turmerik.Core.Infrastucture;
 using Turmerik.Core.Reflection.Wrappers;
@@ -53,7 +54,7 @@ namespace Turmerik.Core.Data.Cloneable
             }
         }
 
-        protected abstract INestedObjWrpprMapperCore GetNestedObjWrpprMapper(INestedObjMapOpts opts);
+        protected abstract INestedObjWrpprMapper GetNestedObjWrpprMapper(INestedObjMapOpts opts);
 
         private object GetNestedClonableWrapperTrgPropValue(
             object srcPropValue,

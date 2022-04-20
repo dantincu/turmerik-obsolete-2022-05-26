@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Turmerik.Core.Helpers;
 
-namespace Turmerik.Core.Data.Cloneable.Nested.Wrappers.Mappers
+namespace Turmerik.Core.Data.Cloneable.Nested.Wrappers
 {
     public interface INestedObjWrppr : INestedObjWrpprCore
     {
@@ -19,19 +19,19 @@ namespace Turmerik.Core.Data.Cloneable.Nested.Wrappers.Mappers
         where TImmtbl : TObj
         where TMtbl : TObj
     {
-        protected NestedObjWrppr(TImmtbl immtblWrppr, TMtbl mtblWrppr)
+        public NestedObjWrppr(TImmtbl immtblWrppr, TMtbl mtblWrppr)
         {
             ImmtblWrppr = immtblWrppr;
             MtblWrppr = mtblWrppr;
 
-            ObjWrppr = mtblWrppr != null ? (TObj)mtblWrppr : immtblWrppr;
+            ObjWrpprCore = mtblWrppr != null ? (TObj)mtblWrppr : immtblWrppr;
         }
 
         public TImmtbl ImmtblWrppr { get; }
         public TMtbl MtblWrppr { get; }
-        public TObj ObjWrppr { get; }
+        protected TObj ObjWrpprCore { get; }
 
-        public object GetObjWrppr() => ObjWrppr;
+        public object GetObjWrppr() => ObjWrpprCore;
         public object GetImmtblWrppr() => ImmtblWrppr;
         public object GetMtblWrppr() => MtblWrppr;
     }
