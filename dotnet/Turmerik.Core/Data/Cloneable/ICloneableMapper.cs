@@ -21,10 +21,14 @@ namespace Turmerik.Core.Data.Cloneable
     public class CloneableMapper : ICloneableMapper
     {
         private readonly ITypesStaticDataCache typesCache;
+        private readonly INestedObjWrpprMapperMainFactory mainFactory;
 
-        public CloneableMapper(ITypesStaticDataCache typesCache)
+        public CloneableMapper(
+            ITypesStaticDataCache typesCache,
+            INestedObjWrpprMapperMainFactory mainFactory)
         {
             this.typesCache = typesCache ?? throw new ArgumentNullException(nameof(typesCache));
+            this.mainFactory = mainFactory ?? throw new ArgumentNullException(nameof(mainFactory));
         }
 
         public void MapTarget(IObjMapOpts opts)
@@ -76,12 +80,43 @@ namespace Turmerik.Core.Data.Cloneable
             }
         }
 
-        private object GetNestedClonableWrapperTrgPropValue(
+        private INestedObjWrpprCore GetNestedClonableWrapperTrgPropValue(
             object srcPropValue,
             Type srcPropType,
             Type trgPropType)
         {
-            throw new NotImplementedException();
+            var factory = mainFactory.GetINestedObjWrpprMapperCore(
+                srcPropType, trgPropType);
+
+            var opts = GetNestedObjMapOptsCore(
+                srcPropValue,
+                srcPropType,
+                trgPropType);
+
+            var wrppr = factory.GetTrgPropValue(opts);
+            return wrppr;
+        }
+
+        private INestedObjMapOptsCore GetNestedObjMapOptsCore(
+            object srcPropValue,
+            Type srcPropType,
+            Type trgPropType)
+        {
+            Type genericType = typeof(NestedObjMapOptsMtbl<INestedObjWrpprCore>);
+            Type genericTypeArg = typesCache.Get(trgPropType).GenericTypeDef.Value;
+
+            Type retGenericType = genericType.MakeGenericType(genericTypeArg);
+            var optsMtbl = Activator.CreateInstance(retGenericType) as NestedObjMapOptsCoreMtblBase;
+
+            optsMtbl.SrcPropType = srcPropType;
+            optsMtbl.TrgPropType = trgPropType;
+
+            PropertyInfo srcValPropInfo = new LambdaH<NestedObjMapOptsMtbl<INestedObjWrpprCore>>().Prop(
+                obj => obj.SrcPropValue);
+
+            srcValPropInfo.SetValue(optsMtbl, srcPropValue);
+            
+            return optsMtbl as INestedObjMapOptsCore;
         }
     }
 

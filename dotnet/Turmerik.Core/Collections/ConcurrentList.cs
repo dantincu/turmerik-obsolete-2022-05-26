@@ -10,15 +10,14 @@ namespace Turmerik.Core.Collections
     public class ConcurrentList<T> : ICollection<T>, IEnumerable<T>, IEnumerable, IList<T>, IReadOnlyCollection<T>, IReadOnlyList<T>, ICollection, IList
     {
         private readonly List<T> list;
-        private readonly SynchronizerComponent synchronizer;
+        private readonly ISynchronizerComponent synchronizer;
 
-        public ConcurrentList()
+        public ConcurrentList(ISynchronizerFactory synchronizerFactory)
         {
             list = new List<T>();
+            var syncRoot = ((ICollection)list).SyncRoot;
 
-            synchronizer = new SynchronizerComponent(
-                ((ICollection)list).SyncRoot);
-
+            synchronizer = synchronizerFactory.GetSynchronizer(syncRoot);
             SyncRoot = synchronizer.SyncRoot;
         }
 

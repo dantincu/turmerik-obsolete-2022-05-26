@@ -18,21 +18,24 @@ namespace Turmerik.Core.Data.Cloneable
         protected CloneableObjectBase(
             ICloneableMapper mapper,
             ICloneableObject src,
-            Type trgType = null,
+            bool isMtbl,
             Type srcType = null,
-            Type intfType = null)
+            Type trgType = null)
         {
-            MapProps(mapper, src);
+            MapProps(
+                mapper,
+                src,
+                isMtbl,
+                srcType,
+                trgType);
         }
-
-        protected abstract bool IsMtbl { get; }
 
         protected virtual void MapProps(
             ICloneableMapper mapper,
             ICloneableObject src,
-            Type trgType = null,
+            bool isMtbl,
             Type srcType = null,
-            Type intfType = null)
+            Type trgType = null)
         {
             if (src != null)
             {
@@ -43,7 +46,7 @@ namespace Turmerik.Core.Data.Cloneable
                     SrcObj = src,
                     TrgObj = this,
                     PropValSetter = (propInfo, propVal) => propInfo.SetValue(this, propVal),
-                    TrgIsMtbl = IsMtbl
+                    TrgIsMtbl = isMtbl
                 };
 
                 var immtblOpts = new ObjMapOptsImmtbl(opts);
@@ -54,43 +57,37 @@ namespace Turmerik.Core.Data.Cloneable
 
     public abstract class CloneableObjectImmtblBase : CloneableObjectBase, ICloneableObject
     {
-        protected CloneableObjectImmtblBase(
+        public CloneableObjectImmtblBase(
             ICloneableMapper mapper,
             ICloneableObject src,
-            Type trgType = null,
             Type srcType = null,
-            Type intfType = null) : base(
+            Type trgType = null) : base(
                 mapper,
                 src,
-                trgType,
+                false,
                 srcType,
-                intfType)
+                trgType)
         {
         }
-
-        protected override bool IsMtbl => false;
     }
 
     public abstract class CloneableObjectMtblBase : CloneableObjectBase, ICloneableObject
     {
-        protected CloneableObjectMtblBase()
+        public CloneableObjectMtblBase()
         {
         }
 
-        protected CloneableObjectMtblBase(
+        public CloneableObjectMtblBase(
             ICloneableMapper mapper,
             ICloneableObject src,
-            Type trgType = null,
             Type srcType = null,
-            Type intfType = null) : base(
+            Type trgType = null) : base(
                 mapper,
                 src,
-                trgType,
+                true,
                 srcType,
-                intfType)
+                trgType)
         {
         }
-
-        protected override bool IsMtbl => true;
     }
 }

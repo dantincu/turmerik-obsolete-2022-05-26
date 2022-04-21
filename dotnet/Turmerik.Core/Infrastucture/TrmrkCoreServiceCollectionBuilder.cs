@@ -13,6 +13,8 @@ namespace Turmerik.Core.Infrastucture
     public interface ITrmrkCoreServiceCollection : ICloneableObject
     {
         ITypesStaticDataCache TypesStaticDataCache { get; }
+        IEnumValuesStaticDataCache EnumValuesStaticDataCache { get; }
+        ISynchronizerFactory SynchronizerFactory { get; }
     }
 
     public class TrmrkCoreServiceCollectionImmtbl : ITrmrkCoreServiceCollection
@@ -20,9 +22,13 @@ namespace Turmerik.Core.Infrastucture
         public TrmrkCoreServiceCollectionImmtbl(ITrmrkCoreServiceCollection src)
         {
             TypesStaticDataCache = src.TypesStaticDataCache;
+            EnumValuesStaticDataCache = src.EnumValuesStaticDataCache;
+            SynchronizerFactory = src.SynchronizerFactory;
         }
 
-        public ITypesStaticDataCache TypesStaticDataCache { get; protected set; }
+        public ITypesStaticDataCache TypesStaticDataCache { get; }
+        public IEnumValuesStaticDataCache EnumValuesStaticDataCache { get; }
+        public ISynchronizerFactory SynchronizerFactory { get; }
     }
 
     public class TrmrkCoreServiceCollectionMtbl : ITrmrkCoreServiceCollection
@@ -34,9 +40,13 @@ namespace Turmerik.Core.Infrastucture
         public TrmrkCoreServiceCollectionMtbl(ITrmrkCoreServiceCollection src)
         {
             TypesStaticDataCache = src.TypesStaticDataCache;
+            EnumValuesStaticDataCache = src.EnumValuesStaticDataCache;
+            SynchronizerFactory = src.SynchronizerFactory;
         }
 
         public ITypesStaticDataCache TypesStaticDataCache { get; set; }
+        public IEnumValuesStaticDataCache EnumValuesStaticDataCache { get; set; }
+        public ISynchronizerFactory SynchronizerFactory { get; set; }
     }
 
     public class TrmrkCoreServiceCollectionBuilder
@@ -45,16 +55,18 @@ namespace Turmerik.Core.Infrastucture
         {
             var mtbl = new TrmrkCoreServiceCollectionMtbl
             {
-                TypesStaticDataCache = new TypesStaticDataCache()
+                TypesStaticDataCache = new TypesStaticDataCache(),
+                EnumValuesStaticDataCache = new EnumValuesStaticDataCache(),
+                SynchronizerFactory = new SynchronizerFactory()
             };
 
             var immtbl = new TrmrkCoreServiceCollectionImmtbl(mtbl);
 
             services.AddSingleton(immtbl.TypesStaticDataCache);
-            services.AddSingleton<IEnumValuesStaticDataCache, EnumValuesStaticDataCache>();
+            services.AddSingleton(immtbl.EnumValuesStaticDataCache);
+            services.AddSingleton(immtbl.SynchronizerFactory);
 
             services.AddSingleton<IConsoleComponent, ConsoleComponent>();
-            services.AddSingleton<ISynchronizerComponent, SynchronizerComponent>();
 
             services.AddSingleton<IStringToStringConverterCore, StringToStringConverterCore>();
             services.AddSingleton<IStringToIntConverter, StringToIntConverter>();
@@ -63,7 +75,7 @@ namespace Turmerik.Core.Infrastucture
             services.AddSingleton<IStringToDateTimeConverter, StringToDateTimeConverter>();
 
             services.AddSingleton<IClonnerFactory, ClonnerFactory>();
-            services.AddSingleton<INestedObjWrpprMapperFactory, NestedObjWrpprMapperFactory>();
+            services.AddSingleton<INestedObjWrpprMapperMainFactory, NestedObjWrpprMapperFactory>();
             services.AddSingleton<ICloneableMapper, CloneableMapper>();
 
             return immtbl;

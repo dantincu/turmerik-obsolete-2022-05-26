@@ -6,7 +6,7 @@ namespace Turmerik.Core.Data.Cloneable
 {
     public interface IClonnerComponent
     {
-        object Clone(Type trgType, object srcObj, Type srcType = null, Type intfType = null);
+        object Clone(Type trgType, object srcObj, Type srcType = null);
     }
 
     public interface IClonnerComponent<TClnbl, TImmtbl, TMtbl>
@@ -29,7 +29,7 @@ namespace Turmerik.Core.Data.Cloneable
             this.Mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
-        public object Clone(Type trgType, object srcObj, Type srcType = null, Type intfType = null)
+        public object Clone(Type trgType, object srcObj, Type srcType = null)
         {
             object trgObj = null;
 
@@ -42,7 +42,7 @@ namespace Turmerik.Core.Data.Cloneable
                     Mapper,
                     srcObj,
                     srcType,
-                    intfType);
+                    trgType);
             }
 
             return trgObj;
@@ -63,7 +63,7 @@ namespace Turmerik.Core.Data.Cloneable
             srcType = srcType ?? srcObj?.GetType();
 
             TImmtbl trgObj = Clone(
-                typeof(TImmtbl), srcObj, srcType, typeof(TClnbl)) as TImmtbl;
+                typeof(TImmtbl), srcObj, srcType) as TImmtbl;
 
             return trgObj;
         }
@@ -73,7 +73,7 @@ namespace Turmerik.Core.Data.Cloneable
             srcType = srcType ?? srcObj?.GetType();
 
             TMtbl trgObj = Clone(
-                typeof(TMtbl), srcObj, srcType, typeof(TClnbl)) as TMtbl;
+                typeof(TMtbl), srcObj, srcType) as TMtbl;
 
             return trgObj;
         }

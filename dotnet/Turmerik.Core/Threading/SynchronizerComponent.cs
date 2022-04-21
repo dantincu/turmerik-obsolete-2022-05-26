@@ -6,6 +6,7 @@ namespace Turmerik.Core.Threading
 {
     public interface ISynchronizerComponent
     {
+        object SyncRoot { get; }
         void Invoke(Action action);
         T Invoke<T>(Func<T> action);
 
@@ -20,14 +21,19 @@ namespace Turmerik.Core.Threading
             Func<T> elseAction = null);
     }
 
+    public interface ISynchronizerFactory
+    {
+        ISynchronizerComponent GetSynchronizer(object syncRoot = null);
+    }
+
     public class SynchronizerComponent : ISynchronizerComponent
     {
-        public readonly object SyncRoot;
-
         public SynchronizerComponent(object syncRoot = null)
         {
             this.SyncRoot = syncRoot ?? new object();
         }
+
+        public object SyncRoot { get; }
 
         public void Invoke(Action action)
         {
@@ -103,6 +109,16 @@ namespace Turmerik.Core.Threading
             }
 
             return result;
+        }
+    }
+
+    public class SynchronizerFactory : ISynchronizerFactory
+    {
+        public ISynchronizerComponent GetSynchronizer(object syncRoot = null)
+        {
+            var synchronizer = new SynchronizerComponent(syncRoot);
+            return synchronizer;
+
         }
     }
 }
