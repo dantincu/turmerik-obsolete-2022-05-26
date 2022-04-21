@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using Turmerik.Core.Data;
 using Turmerik.Core.Data.Cloneable;
-using Turmerik.Core.Data.Cloneable.Mappers;
+using Turmerik.Core.Data.Cloneable.Nested.Wrappers.Mappers;
 using Turmerik.Core.Helpers;
 using Turmerik.Core.Threading;
 
@@ -15,7 +15,7 @@ namespace Turmerik.Core.Infrastucture
         ITypesStaticDataCache TypesStaticDataCache { get; }
     }
 
-    public class TrmrkCoreServiceCollectionImmtbl : CloneableObjectImmtblBase, ITrmrkCoreServiceCollection
+    public class TrmrkCoreServiceCollectionImmtbl : ITrmrkCoreServiceCollection
     {
         public TrmrkCoreServiceCollectionImmtbl(ITrmrkCoreServiceCollection src)
         {
@@ -25,7 +25,7 @@ namespace Turmerik.Core.Infrastucture
         public ITypesStaticDataCache TypesStaticDataCache { get; protected set; }
     }
 
-    public class TrmrkCoreServiceCollectionMtbl : CloneableObjectMtblBase, ITrmrkCoreServiceCollection
+    public class TrmrkCoreServiceCollectionMtbl : ITrmrkCoreServiceCollection
     {
         public TrmrkCoreServiceCollectionMtbl()
         {
@@ -62,8 +62,9 @@ namespace Turmerik.Core.Infrastucture
             services.AddSingleton<IStringToEnumConverter, StringToEnumConverter>();
             services.AddSingleton<IStringToDateTimeConverter, StringToDateTimeConverter>();
 
-            services.AddSingleton<ICloneableImmtblMapper, CloneableImmtblMapper>();
-            services.AddSingleton<ICloneableMtblMapper, CloneableMtblMapper>();
+            services.AddSingleton<IClonnerFactory, ClonnerFactory>();
+            services.AddSingleton<INestedObjWrpprMapperFactory, NestedObjWrpprMapperFactory>();
+            services.AddSingleton<ICloneableMapper, CloneableMapper>();
 
             return immtbl;
         }

@@ -14,7 +14,9 @@ namespace Turmerik.Core.Data.Cloneable.Nested.Wrappers.Mappers
 {
     public interface INestedObjWrpprMapperFactory
     {
-        INestedObjWrpprMapperCore GetINestedObjWrpprMapperCore(Type mapperType);
+        INestedObjWrpprMapperCore GetINestedObjWrpprMapperCore(
+            Type srcPropType,
+            Type trgPropType);
     }
 
     public class NestedObjWrpprMapperFactory : INestedObjWrpprMapperFactory
@@ -26,38 +28,57 @@ namespace Turmerik.Core.Data.Cloneable.Nested.Wrappers.Mappers
             this.typesCache = typesCache ?? throw new ArgumentNullException(nameof(typesCache));
         }
 
-        public INestedObjWrpprMapperCore GetINestedObjWrpprMapperCore(Type mapperType)
+        public INestedObjWrpprMapperCore GetINestedObjWrpprMapperCore(
+            Type srcPropType,
+            Type trgPropType)
         {
             INestedObjWrpprMapperCore mapper;
 
-            if (mapperType.IsGenericType)
+            if (srcPropType.IsGenericType)
             {
-                var type = typesCache.Get(mapperType);
+                var srcData = GetMapperTypeData(srcPropType);
+                var trgData = GetMapperTypeData(trgPropType);
 
-                var genericTypeDef = typesCache.Get(
-                    type.GenericTypeDef.Value);
-
-                var mapperData = new MapperTypeData
-                {
-                    Type = type,
-                    GenericTypeDef = genericTypeDef,
-                    GenericTypeParams = genericTypeDef.GenericTypeParams.Value.Select(
-                        t => typesCache.Get(t)).ToArray(),
-                    GenericTypeArgs = genericTypeDef.GenericTypeArgs.Value.Select(
-                        t => typesCache.Get(t)).ToArray()
-                };
-
-                mapper = GetINestedObjWrpprMapperCore(mapperData);
+                mapper = GetINestedObjWrpprMapperCore(
+                    srcData,
+                    trgData);
             }
             else
             {
-                throw new InvalidOperationException($"The provided type {mapperType.GetTypeFullDisplayName()} is not a generic type");
+                throw new InvalidOperationException($"The provided type {srcPropType.GetTypeFullDisplayName()} is not a generic type");
             }
 
             return mapper;
         }
 
-        private INestedObjWrpprMapperCore GetINestedObjWrpprMapperCore(MapperTypeData mapperData)
+        private MapperTypeData GetMapperTypeData(Type propValueType)
+        {
+            if (!propValueType.IsGenericType)
+            {
+                throw new InvalidOperationException($"The provided type {propValueType.GetTypeFullDisplayName()} is not a generic type");
+            }
+
+            var type = typesCache.Get(propValueType);
+
+            var genericTypeDef = typesCache.Get(
+                type.GenericTypeDef.Value);
+
+            var mapperData = new MapperTypeData
+            {
+                Type = type,
+                GenericTypeDef = genericTypeDef,
+                GenericTypeParams = genericTypeDef.GenericTypeParams.Value.Select(
+                    t => typesCache.Get(t)).ToArray(),
+                GenericTypeArgs = genericTypeDef.GenericTypeArgs.Value.Select(
+                    t => typesCache.Get(t)).ToArray()
+            };
+
+            return mapperData;
+        }
+
+        private INestedObjWrpprMapperCore GetINestedObjWrpprMapperCore(
+            MapperTypeData srcData,
+            MapperTypeData trgData)
         {
             throw new NotImplementedException();
         }

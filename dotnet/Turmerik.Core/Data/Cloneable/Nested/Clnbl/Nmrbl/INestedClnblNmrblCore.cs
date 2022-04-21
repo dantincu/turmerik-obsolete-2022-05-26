@@ -21,13 +21,13 @@ namespace Turmerik.Core.Data.Cloneable.Nested.Clnbl.Nmrbl
 
     public interface INestedImmtblClnblClctn<TClnbl, TImmtbl> : INestedClnblNmrblCore<TClnbl, INestedImmtblObj<TClnbl, TImmtbl>, ReadOnlyCollection<INestedImmtblClnbl<TClnbl, TImmtbl>>>, INestedImmtblObjCore<ReadOnlyCollection<INestedObj<TClnbl>>, ReadOnlyCollection<INestedObj<TClnbl>>>
         where TClnbl : ICloneableObject
-        where TImmtbl : TClnbl
+        where TImmtbl : class, TClnbl
     {
     }
 
     public interface INestedMtblClnblList<TClnbl, TMtbl> : INestedClnblNmrblCore<TClnbl, INestedMtblObj<TClnbl, TMtbl>, List<INestedMtblClnbl<TClnbl, TMtbl>>>, INestedMtblObjCore<List<INestedObj<TClnbl>>, List<INestedObj<TClnbl>>>
         where TClnbl : ICloneableObject
-        where TMtbl : TClnbl
+        where TMtbl : class, TClnbl
     {
     }
 
@@ -48,7 +48,7 @@ namespace Turmerik.Core.Data.Cloneable.Nested.Clnbl.Nmrbl
 
     public class NestedImmtblClnblClctn<TClnbl, TImmtbl> : NestedImmtblClnblCoreBase<ReadOnlyCollection<INestedImmtblClnbl<TClnbl, TImmtbl>>, ReadOnlyCollection<INestedImmtblClnbl<TClnbl, TImmtbl>>>, INestedImmtblClnblClctn<TClnbl, TImmtbl>
         where TClnbl : ICloneableObject
-        where TImmtbl : TClnbl
+        where TImmtbl : class, TClnbl
     {
         public NestedImmtblClnblClctn(IEnumerable<INestedImmtblClnbl<TClnbl, TImmtbl>> nmrbl) : this(nmrbl?.RdnlC())
         {
@@ -66,7 +66,7 @@ namespace Turmerik.Core.Data.Cloneable.Nested.Clnbl.Nmrbl
 
     public class NestedMtblClnblList<TClnbl, TMtbl> : NestedMtblClnblCoreBase<List<INestedMtblClnbl<TClnbl, TMtbl>>, List<INestedMtblClnbl<TClnbl, TMtbl>>>, INestedMtblClnblList<TClnbl, TMtbl>
         where TClnbl : ICloneableObject
-        where TMtbl : TClnbl
+        where TMtbl : class, TClnbl
     {
         public NestedMtblClnblList()
         {

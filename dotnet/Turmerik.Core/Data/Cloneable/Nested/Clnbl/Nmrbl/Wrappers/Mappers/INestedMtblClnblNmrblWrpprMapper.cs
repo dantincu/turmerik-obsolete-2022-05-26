@@ -14,17 +14,17 @@ namespace Turmerik.Core.Data.Cloneable.Nested.Clnbl.Nmrbl.Wrappers.Mappers
 
     public interface INestedMtblClnblNmrblWrpprMapper<TClnbl, TImmtbl, TMtbl> : INestedClnblNmrblWrpprMapper<TClnbl, TImmtbl, TMtbl>, INestedMtblClnblNmrblWrpprMapper
         where TClnbl : ICloneableObject
-        where TImmtbl : TClnbl
-        where TMtbl : TClnbl
+        where TImmtbl : class, TClnbl
+        where TMtbl : class, TClnbl
     {
     }
 
     public class NestedMtblClnblNmrblWrpprMapper<TClnbl, TImmtbl, TMtbl> : NestedClnblNmrblWrpprMapperBase<TClnbl, TImmtbl, TMtbl>, INestedMtblClnblNmrblWrpprMapper<TClnbl, TImmtbl, TMtbl>
         where TClnbl : ICloneableObject
-        where TImmtbl : TClnbl
-        where TMtbl : TClnbl
+        where TImmtbl : class, TClnbl
+        where TMtbl : class, TClnbl
     {
-        public NestedMtblClnblNmrblWrpprMapper(IClonnerComponent<TClnbl, TImmtbl, TMtbl> clonner) : base(clonner)
+        public NestedMtblClnblNmrblWrpprMapper(ICloneableMapper mapper, IClonnerFactory clonnerFactory) : base(mapper, clonnerFactory)
         {
         }
 

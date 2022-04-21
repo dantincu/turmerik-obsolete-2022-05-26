@@ -17,36 +17,36 @@ namespace Turmerik.Core.Data.Cloneable.Nested.Clnbl.Nmrbl.Wrappers.Mappers
         where TOpts : INestedObjMapOpts<TWrppr>
         where TClnbl : ICloneableObject
         where TWrppr : INestedClnblNmrblWrppr<TClnbl, TImmtbl, TMtbl>
-        where TImmtbl : TClnbl
-        where TMtbl : TClnbl
+        where TImmtbl : class, TClnbl
+        where TMtbl : class, TClnbl
     {
     }
 
     public interface INestedClnblNmrblWrpprMapper<TOpts, TClnbl, TImmtbl, TMtbl> : INestedClnblNmrblWrpprMapper<TOpts, INestedClnblNmrblWrppr<TClnbl, TImmtbl, TMtbl>, TClnbl, TImmtbl, TMtbl>
         where TOpts : INestedObjMapOpts<INestedClnblNmrblWrppr<TClnbl, TImmtbl, TMtbl>>
         where TClnbl : ICloneableObject
-        where TImmtbl : TClnbl
-        where TMtbl : TClnbl
+        where TImmtbl : class, TClnbl
+        where TMtbl : class, TClnbl
     {
     }
 
     public interface INestedClnblNmrblWrpprMapper<TClnbl, TImmtbl, TMtbl> : INestedClnblNmrblWrpprMapper<INestedObjMapOpts<INestedClnblNmrblWrppr<TClnbl, TImmtbl, TMtbl>>, TClnbl, TImmtbl, TMtbl>
         where TClnbl : ICloneableObject
-        where TImmtbl : TClnbl
-        where TMtbl : TClnbl
+        where TImmtbl : class, TClnbl
+        where TMtbl : class, TClnbl
     {
     }
 
     public abstract class NestedClnblNmrblWrpprMapperBase<TClnbl, TImmtbl, TMtbl> : INestedClnblNmrblWrpprMapper<TClnbl, TImmtbl, TMtbl>
         where TClnbl : ICloneableObject
-        where TImmtbl : TClnbl
-        where TMtbl : TClnbl
+        where TImmtbl : class, TClnbl
+        where TMtbl : class, TClnbl
     {
         protected readonly IClonnerComponent<TClnbl, TImmtbl, TMtbl> Clonner;
 
-        public NestedClnblNmrblWrpprMapperBase(IClonnerComponent<TClnbl, TImmtbl, TMtbl> clonner)
+        public NestedClnblNmrblWrpprMapperBase(ICloneableMapper mapper, IClonnerFactory clonnerFactory)
         {
-            this.Clonner = clonner ?? throw new ArgumentNullException(nameof(clonner));
+            Clonner = clonnerFactory.GetClonner<TClnbl, TImmtbl, TMtbl>(mapper);
         }
 
         public abstract INestedClnblNmrblWrppr<TClnbl, TImmtbl, TMtbl> GetTrgPropValue(INestedObjMapOpts<INestedClnblNmrblWrppr<TClnbl, TImmtbl, TMtbl>> opts);

@@ -16,9 +16,9 @@ namespace Turmerik.Core.Data.Cloneable.Nested.Nmrbl.Wrappers.Mappers
     {
     }
 
-    public class NestedMtblObjNmrblWrpprMapper<TObj> : INestedMtblObjNmrblWrpprMapper<TObj>
+    public class NestedMtblObjNmrblWrpprMapper<TObj> : NestedImmtblObjNmrblWrpprMapperBase<TObj>, INestedMtblObjNmrblWrpprMapper<TObj>
     {
-        public INestedObjNmrblWrppr<TObj> GetTrgPropValue(INestedObjMapOpts<INestedObjNmrblWrppr<TObj>> opts)
+        public override INestedObjNmrblWrppr<TObj> GetTrgPropValue(INestedObjMapOpts<INestedObjNmrblWrppr<TObj>> opts)
         {
             var wrppr = opts.SrcPropValue;
             INestedMtblObjList<TObj> mtblWrppr = wrppr?.Mtbl;
@@ -33,14 +33,6 @@ namespace Turmerik.Core.Data.Cloneable.Nested.Nmrbl.Wrappers.Mappers
                 null, mtblWrppr);
 
             return retWrppr;
-        }
-
-        public INestedObjWrpprCore GetTrgPropValue(INestedObjMapOptsCore opts)
-        {
-            var options = (INestedObjMapOpts<INestedObjNmrblWrppr<TObj>>)opts;
-            var wrppr = GetTrgPropValue(options);
-
-            return wrppr;
         }
     }
 }

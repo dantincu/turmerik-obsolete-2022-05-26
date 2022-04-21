@@ -29,13 +29,13 @@ namespace Turmerik.Core.Data.Cloneable.Nested.Clnbl.Dictnr
 
     public interface INestedClnblRdnlDictnr<TKey, TClnbl, TImmtbl> : INestedClnblDictnr<TKey, TClnbl, INestedImmtblClnbl<TClnbl, TImmtbl>, ReadOnlyDictionary<TKey, INestedImmtblClnbl<TClnbl, TImmtbl>>>, INestedImmtblClnblCore<ReadOnlyDictionary<TKey, INestedImmtblClnbl<TClnbl, TImmtbl>>, ReadOnlyDictionary<TKey, INestedImmtblClnbl<TClnbl, TImmtbl>>>
         where TClnbl : ICloneableObject
-        where TImmtbl : TClnbl
+        where TImmtbl : class, TClnbl
     {
     }
 
     public interface INestedClnblEdtblDictnr<TKey, TClnbl, TMtbl> : INestedClnblDictnr<TKey, TClnbl, INestedMtblClnbl<TClnbl, TMtbl>, Dictionary<TKey, INestedMtblClnbl<TClnbl, TMtbl>>>, INestedMtblClnblCore<Dictionary<TKey, INestedMtblClnbl<TClnbl, TMtbl>>, Dictionary<TKey, INestedMtblClnbl<TClnbl, TMtbl>>>
         where TClnbl : ICloneableObject
-        where TMtbl : TClnbl
+        where TMtbl : class, TClnbl
     {
     }
 
@@ -54,7 +54,7 @@ namespace Turmerik.Core.Data.Cloneable.Nested.Clnbl.Dictnr
 
     public class NestedClnblRdnlDictnr<TKey, TClnbl, TImmtbl> : NestedImmtblClnblCoreBase<ReadOnlyDictionary<TKey, INestedImmtblClnbl<TClnbl, TImmtbl>>, ReadOnlyDictionary<TKey, INestedImmtblClnbl<TClnbl, TImmtbl>>>, INestedClnblRdnlDictnr<TKey, TClnbl, TImmtbl>
         where TClnbl : ICloneableObject
-        where TImmtbl : TClnbl
+        where TImmtbl : class, TClnbl
     {
         public NestedClnblRdnlDictnr(IEnumerable<KeyValuePair<TKey, INestedImmtblClnbl<TClnbl, TImmtbl>>> kvpNmrbl) : this(kvpNmrbl?.RdnlD())
         {
@@ -69,7 +69,7 @@ namespace Turmerik.Core.Data.Cloneable.Nested.Clnbl.Dictnr
 
     public class NestedClnblEdtblDictnr<TKey, TClnbl, TMtbl> : NestedMtblClnblCoreBase<Dictionary<TKey, INestedMtblClnbl<TClnbl, TMtbl>>, Dictionary<TKey, INestedMtblClnbl<TClnbl, TMtbl>>>, INestedClnblEdtblDictnr<TKey, TClnbl, TMtbl>
         where TClnbl : ICloneableObject
-        where TMtbl : TClnbl
+        where TMtbl : class, TClnbl
     {
         public NestedClnblEdtblDictnr()
         {

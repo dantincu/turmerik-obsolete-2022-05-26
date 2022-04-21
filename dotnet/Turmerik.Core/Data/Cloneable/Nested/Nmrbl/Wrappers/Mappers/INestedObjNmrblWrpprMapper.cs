@@ -17,4 +17,21 @@ namespace Turmerik.Core.Data.Cloneable.Nested.Nmrbl.Wrappers.Mappers
         where TWrppr : INestedObjNmrblWrppr<TObj>
     {
     }
+
+    public interface INestedObjNmrblWrpprMapper<TObj> : INestedObjNmrblWrpprMapper<INestedObjMapOpts<INestedObjNmrblWrppr<TObj>>, INestedObjNmrblWrppr<TObj>, TObj>
+    {
+    }
+
+    public abstract class NestedImmtblObjNmrblWrpprMapperBase<TObj> : INestedObjNmrblWrpprMapper<TObj>
+    {
+        public INestedObjWrpprCore GetTrgPropValue(INestedObjMapOptsCore opts)
+        {
+            var options = (INestedObjMapOpts<INestedObjNmrblWrppr<TObj>>)opts;
+            var wrppr = GetTrgPropValue(options);
+
+            return wrppr;
+        }
+
+        public abstract INestedObjNmrblWrppr<TObj> GetTrgPropValue(INestedObjMapOpts<INestedObjNmrblWrppr<TObj>> opts);
+    }
 }

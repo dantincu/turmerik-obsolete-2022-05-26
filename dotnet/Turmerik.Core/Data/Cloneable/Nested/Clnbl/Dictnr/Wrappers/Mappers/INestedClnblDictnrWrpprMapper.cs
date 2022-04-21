@@ -15,36 +15,36 @@ namespace Turmerik.Core.Data.Cloneable.Nested.Clnbl.Dictnr.Wrappers.Mappers
         where TOpts : INestedObjMapOpts<TWrppr>
         where TClnbl : ICloneableObject
         where TWrppr : INestedClnblDictnrWrppr<TKey, TClnbl, TImmtbl, TMtbl>
-        where TImmtbl : TClnbl
-        where TMtbl : TClnbl
+        where TImmtbl : class, TClnbl
+        where TMtbl : class, TClnbl
     {
     }
 
     public interface INestedClnblDictnrWrpprMapper<TOpts, TKey, TClnbl, TImmtbl, TMtbl> : INestedClnblDictnrWrpprMapper<TOpts, INestedClnblDictnrWrppr<TKey, TClnbl, TImmtbl, TMtbl>, TKey, TClnbl, TImmtbl, TMtbl>
         where TOpts : INestedObjMapOpts<INestedClnblDictnrWrppr<TKey, TClnbl, TImmtbl, TMtbl>>
         where TClnbl : ICloneableObject
-        where TImmtbl : TClnbl
-        where TMtbl : TClnbl
+        where TImmtbl : class, TClnbl
+        where TMtbl : class, TClnbl
     {
     }
 
     public interface INestedClnblDictnrWrpprMapper<TKey, TClnbl, TImmtbl, TMtbl> : INestedClnblDictnrWrpprMapper<INestedObjMapOpts<INestedClnblDictnrWrppr<TKey, TClnbl, TImmtbl, TMtbl>>, TKey, TClnbl, TImmtbl, TMtbl>
         where TClnbl : ICloneableObject
-        where TImmtbl : TClnbl
-        where TMtbl : TClnbl
+        where TImmtbl : class, TClnbl
+        where TMtbl : class, TClnbl
     {
     }
 
     public abstract class NestedClnblDictnrWrpprMapperBase<TKey, TClnbl, TImmtbl, TMtbl> : INestedClnblDictnrWrpprMapper<TKey, TClnbl, TImmtbl, TMtbl>
         where TClnbl : ICloneableObject
-        where TImmtbl : TClnbl
-        where TMtbl : TClnbl
+        where TImmtbl : class, TClnbl
+        where TMtbl : class, TClnbl
     {
         protected readonly IClonnerComponent<TClnbl, TImmtbl, TMtbl> Clonner;
 
-        protected NestedClnblDictnrWrpprMapperBase(IClonnerComponent<TClnbl, TImmtbl, TMtbl> clonner)
+        protected NestedClnblDictnrWrpprMapperBase(ICloneableMapper mapper, IClonnerFactory clonnerFactory)
         {
-            this.Clonner = clonner ?? throw new ArgumentNullException(nameof(clonner));
+            Clonner = clonnerFactory.GetClonner<TClnbl, TImmtbl, TMtbl>(mapper);
         }
 
         public abstract INestedClnblDictnrWrppr<TKey, TClnbl, TImmtbl, TMtbl> GetTrgPropValue(INestedObjMapOpts<INestedClnblDictnrWrppr<TKey, TClnbl, TImmtbl, TMtbl>> opts);

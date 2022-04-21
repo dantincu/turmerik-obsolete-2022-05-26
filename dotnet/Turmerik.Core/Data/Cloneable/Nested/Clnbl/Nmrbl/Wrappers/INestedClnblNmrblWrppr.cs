@@ -13,15 +13,15 @@ namespace Turmerik.Core.Data.Cloneable.Nested.Clnbl.Nmrbl.Wrappers
 
     public interface INestedClnblNmrblWrppr<TClnbl, TImmtbl, TMtbl> : INestedClnblWrpprCore<INestedClnblNmrbl<TClnbl>, INestedImmtblClnblClctn<TClnbl, TImmtbl>, INestedMtblClnblList<TClnbl, TMtbl>>, INestedClnblNmrblWrppr
         where TClnbl : ICloneableObject
-        where TImmtbl : TClnbl
-        where TMtbl : TClnbl
+        where TImmtbl : class, TClnbl
+        where TMtbl : class, TClnbl
     {
     }
 
     public class NestedClnblNmrblWrppr<TClnbl, TImmtbl, TMtbl> : INestedClnblNmrblWrppr<TClnbl, TImmtbl, TMtbl>
         where TClnbl : ICloneableObject
-        where TImmtbl : TClnbl
-        where TMtbl : TClnbl
+        where TImmtbl : class, TClnbl
+        where TMtbl : class, TClnbl
     {
         public NestedClnblNmrblWrppr(INestedImmtblClnblClctn<TClnbl, TImmtbl> immtblWrppr, INestedMtblClnblList<TClnbl, TMtbl> mtblWrppr)
         {
@@ -50,7 +50,7 @@ namespace Turmerik.Core.Data.Cloneable.Nested.Clnbl.Nmrbl.Wrappers
     }
 
     public class NestedClnblNmrblWrppr<TClnbl> : NestedClnblNmrblWrppr<TClnbl, TClnbl, TClnbl>
-        where TClnbl : ICloneableObject
+        where TClnbl : class, ICloneableObject
     {
         public NestedClnblNmrblWrppr(INestedImmtblClnblClctn<TClnbl, TClnbl> immtblWrppr, INestedMtblClnblList<TClnbl, TClnbl> mtblWrppr) : base(immtblWrppr, mtblWrppr)
         {

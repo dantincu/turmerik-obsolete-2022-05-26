@@ -13,15 +13,15 @@ namespace Turmerik.Core.Data.Cloneable.Nested.Clnbl.Dictnr.Wrappers
 
     public interface INestedClnblDictnrWrppr<TKey, TClnbl, TImmtbl, TMtbl> : INestedClnblWrpprCore<INestedClnblDictnr<TKey, TClnbl>, INestedClnblRdnlDictnr<TKey, TClnbl, TImmtbl>, INestedClnblEdtblDictnr<TKey, TClnbl, TMtbl>>, INestedClnblDictnrWrppr
         where TClnbl : ICloneableObject
-        where TImmtbl : TClnbl
-        where TMtbl : TClnbl
+        where TImmtbl : class, TClnbl
+        where TMtbl : class, TClnbl
     {
     }
 
     public class NestedClnblDictnrWrppr<TKey, TClnbl, TImmtbl, TMtbl> : INestedClnblDictnrWrppr<TKey, TClnbl, TImmtbl, TMtbl>
         where TClnbl : ICloneableObject
-        where TImmtbl : TClnbl
-        where TMtbl : TClnbl
+        where TImmtbl : class, TClnbl
+        where TMtbl : class, TClnbl
     {
         public NestedClnblDictnrWrppr(
             INestedClnblRdnlDictnr<TKey, TClnbl, TImmtbl> immtblWrppr,

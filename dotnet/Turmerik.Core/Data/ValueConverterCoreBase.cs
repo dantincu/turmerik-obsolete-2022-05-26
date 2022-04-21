@@ -89,7 +89,7 @@ namespace Turmerik.Core.Data
 
         public StringToEnumConverter(IEnumValuesStaticDataCache enumsCache)
         {
-            enumsCache = enumsCache ?? throw new ArgumentNullException(nameof(enumsCache));
+            this.enumsCache = enumsCache ?? throw new ArgumentNullException(nameof(enumsCache));
         }
 
         public override bool TryParse(Tuple<string, Type> arg, out object parsedValue)
