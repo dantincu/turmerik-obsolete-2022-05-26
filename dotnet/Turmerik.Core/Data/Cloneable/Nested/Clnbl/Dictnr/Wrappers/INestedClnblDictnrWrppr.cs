@@ -27,20 +27,31 @@ namespace Turmerik.Core.Data.Cloneable.Nested.Clnbl.Dictnr.Wrappers
             INestedClnblRdnlDictnr<TKey, TClnbl, TImmtbl> immtblWrppr,
             INestedClnblEdtblDictnr<TKey, TClnbl, TMtbl> mtblWrppr)
         {
-            ImmtblWrppr = immtblWrppr;
-            MtblWrppr = mtblWrppr;
+            Immtbl = immtblWrppr;
+            Mtbl = mtblWrppr;
 
-            ObjWrpprCore = new NestedClnblDictnr<TKey, TClnbl>(mtblWrppr?.Mtbl.ToDictionary(
-                kvp => kvp.Key, kvp => kvp.Value as INestedObj<TClnbl>) ?? immtblWrppr?.Immtbl.ToDictionary(
-                    kvp => kvp.Key, kvp => kvp.Value as INestedObj<TClnbl>));
+            if (mtblWrppr != null)
+            {
+                ObjWrpprCore = new NestedClnblDictnr<TKey, TClnbl>(
+                    mtblWrppr.Mtbl.ToDictionary(
+                        kvp => kvp.Key, kvp => (INestedClnbl<TClnbl>)new NestedClnbl<TClnbl>(
+                            kvp.Value.Mtbl)));
+            }
+            else if (immtblWrppr != null)
+            {
+                ObjWrpprCore = new NestedClnblDictnr<TKey, TClnbl>(
+                    immtblWrppr.Immtbl.ToDictionary(
+                        kvp => kvp.Key, kvp => (INestedClnbl<TClnbl>)new NestedClnbl<TClnbl>(
+                            kvp.Value.Immtbl)));
+            }
         }
 
-        public INestedClnblRdnlDictnr<TKey, TClnbl, TImmtbl> ImmtblWrppr { get; }
-        public INestedClnblEdtblDictnr<TKey, TClnbl, TMtbl> MtblWrppr { get; }
+        public INestedClnblRdnlDictnr<TKey, TClnbl, TImmtbl> Immtbl { get; }
+        public INestedClnblEdtblDictnr<TKey, TClnbl, TMtbl> Mtbl { get; }
         protected INestedClnblDictnr<TKey, TClnbl> ObjWrpprCore { get; }
 
-        public object GetObjWrppr() => ObjWrpprCore;
-        public object GetImmtblWrppr() => ImmtblWrppr;
-        public object GetMtblWrppr() => MtblWrppr;
+        public object GetObj() => ObjWrpprCore;
+        public object GetImmtbl() => Immtbl;
+        public object GetMtbl() => Mtbl;
     }
 }

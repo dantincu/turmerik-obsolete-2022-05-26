@@ -7,25 +7,29 @@ using Turmerik.Core.Helpers;
 
 namespace Turmerik.Core.Data.Cloneable.Nested.Dictnr
 {
-    public interface INestedObjDictnrCore<TObj, TKvp> : INestedObjNmrblCore<TObj, TKvp>
+    public interface INestedObjDictnrCore<TObj, TKvp, TDictnr> : INestedObjNmrblCore<TObj, TKvp, TDictnr>
+        where TDictnr : IEnumerable<TKvp>
     {
     }
 
-    public interface INestedObjDictnr<TKey, TObj> : INestedObjDictnrCore<TObj, KeyValuePair<TKey, INestedObj<TObj>>>
+    public interface INestedObjDictnr<TKey, TObj, TDictnr> : INestedObjDictnrCore<TObj, KeyValuePair<TKey, INestedObj<TObj>>, TDictnr>
+        where TDictnr : IEnumerable<KeyValuePair<TKey, INestedObj<TObj>>>
     {
     }
 
-    public interface INestedObjRdnlDictnr<TKey, TObj, TImmtbl> : INestedObjDictnrCore<TObj, KeyValuePair<TKey, INestedImmtblObj<TObj, TImmtbl>>>, INestedImmtblObjCore<IEnumerable<KeyValuePair<TKey, INestedImmtblObj<TObj, TImmtbl>>>, ReadOnlyDictionary<TKey, INestedImmtblObj<TObj, TImmtbl>>>
-        where TImmtbl : TObj
+    public interface INestedObjDictnr<TKey, TObj> : INestedObjDictnr<TKey, TObj, IEnumerable<KeyValuePair<TKey, INestedObj<TObj>>>>
     {
     }
 
-    public interface INestedObjEdtblDictnr<TKey, TObj, TMtbl> : INestedObjDictnrCore<TObj, KeyValuePair<TKey, INestedMtblObj<TObj, TMtbl>>>, INestedMtblObjCore<IEnumerable<KeyValuePair<TKey, INestedMtblObj<TObj, TMtbl>>>, Dictionary<TKey, INestedMtblObj<TObj, TMtbl>>>
-        where TMtbl : TObj
+    public interface INestedObjRdnlDictnr<TKey, TObj> : INestedObjDictnrCore<TObj, KeyValuePair<TKey, INestedObj<TObj>>, ReadOnlyDictionary<TKey, INestedObj<TObj>>>, INestedImmtblObjCore<IEnumerable<KeyValuePair<TKey, INestedObj<TObj>>>, ReadOnlyDictionary<TKey, INestedObj<TObj>>>, INestedObjDictnr<TKey, TObj>
     {
     }
 
-    public class NestedObjDictnr<TKey, TObj> : NestedObjCoreBase<IEnumerable<KeyValuePair<TKey, INestedObj<TObj>>>>, INestedObjDictnr<TKey, TObj>
+    public interface INestedObjEdtblDictnr<TKey, TObj> : INestedObjDictnrCore<TObj, KeyValuePair<TKey, INestedObj<TObj>>, Dictionary<TKey, INestedObj<TObj>>>, INestedMtblObjCore<IEnumerable<KeyValuePair<TKey, INestedObj<TObj>>>, Dictionary<TKey, INestedObj<TObj>>>, INestedObjDictnr<TKey, TObj>
+    {
+    }
+
+    public class NestedObjDictnr<TKey, TObj> : NestedObjCoreBase<ReadOnlyDictionary<TKey, INestedObj<TObj>>>, INestedObjDictnr<TKey, TObj>
     {
         public NestedObjDictnr(IEnumerable<KeyValuePair<TKey, INestedObj<TObj>>> kvpNmrbl) : this(kvpNmrbl?.RdnlD())
         {
@@ -35,41 +39,46 @@ namespace Turmerik.Core.Data.Cloneable.Nested.Dictnr
         {
             ObjCore = dictnr;
         }
+
+        IEnumerable<KeyValuePair<TKey, INestedObj<TObj>>> INestedObjCore<IEnumerable<KeyValuePair<TKey, INestedObj<TObj>>>>.GetObj() => GetObj().RdnlD();
     }
 
-    public class NestedObjRdnlDictnr<TKey, TObj, TImmtbl> : NestedImmtblObjCoreBase<IEnumerable<KeyValuePair<TKey, INestedImmtblObj<TObj, TImmtbl>>>, ReadOnlyDictionary<TKey, INestedImmtblObj<TObj, TImmtbl>>>, INestedObjRdnlDictnr<TKey, TObj, TImmtbl>
-        where TImmtbl : TObj
+    public class NestedObjRdnlDictnr<TKey, TObj> : NestedImmtblObjCoreBase<ReadOnlyDictionary<TKey, INestedObj<TObj>>, ReadOnlyDictionary<TKey, INestedObj<TObj>>>, INestedObjRdnlDictnr<TKey, TObj>
     {
-        public NestedObjRdnlDictnr(IEnumerable<KeyValuePair<TKey, INestedImmtblObj<TObj, TImmtbl>>> kvpNmrbl) : this(kvpNmrbl.RdnlD())
+        public NestedObjRdnlDictnr(IEnumerable<KeyValuePair<TKey, INestedObj<TObj>>> kvpNmrbl) : this(kvpNmrbl?.RdnlD())
         {
         }
 
-        public NestedObjRdnlDictnr(ReadOnlyDictionary<TKey, INestedImmtblObj<TObj, TImmtbl>> dictnr)
+        public NestedObjRdnlDictnr(ReadOnlyDictionary<TKey, INestedObj<TObj>> dictnr)
         {
+            ObjCore = dictnr;
             ImmtblCore = dictnr;
         }
+
+        IEnumerable<KeyValuePair<TKey, INestedObj<TObj>>> INestedObjCore<IEnumerable<KeyValuePair<TKey, INestedObj<TObj>>>>.GetObj() => GetObj();
     }
 
-    public class NestedObjEdtblDictnr<TKey, TObj, TMtbl> : NestedMtblObjCoreBase<IEnumerable<KeyValuePair<TKey, INestedMtblObj<TObj, TMtbl>>>, Dictionary<TKey, INestedMtblObj<TObj, TMtbl>>>, INestedObjEdtblDictnr<TKey, TObj, TMtbl>
-        where TMtbl : TObj
+    public class NestedObjEdtblDictnr<TKey, TObj> : NestedMtblObjCoreBase<Dictionary<TKey, INestedObj<TObj>>, Dictionary<TKey, INestedObj<TObj>>>, INestedObjEdtblDictnr<TKey, TObj>
     {
         public NestedObjEdtblDictnr()
         {
         }
 
-        public NestedObjEdtblDictnr(IEnumerable<KeyValuePair<TKey, INestedMtblObj<TObj, TMtbl>>> kvpNmrbl) : this(kvpNmrbl?.Dictnr())
+        public NestedObjEdtblDictnr(IEnumerable<KeyValuePair<TKey, INestedObj<TObj>>> kvpNmrbl) : this(kvpNmrbl?.Dictnr())
         {
         }
 
-        public NestedObjEdtblDictnr(Dictionary<TKey, INestedMtblObj<TObj, TMtbl>> dictnr)
+        public NestedObjEdtblDictnr(Dictionary<TKey, INestedObj<TObj>> dictnr)
         {
             SetMtbl(dictnr);
         }
 
-        public override void SetMtbl(Dictionary<TKey, INestedMtblObj<TObj, TMtbl>> mtbl)
+        public override void SetMtbl(Dictionary<TKey, INestedObj<TObj>> mtbl)
         {
-            base.SetMtbl(mtbl);
+            MtblCore = mtbl;
             ObjCore = mtbl;
         }
+
+        IEnumerable<KeyValuePair<TKey, INestedObj<TObj>>> INestedObjCore<IEnumerable<KeyValuePair<TKey, INestedObj<TObj>>>>.GetObj() => GetObj();
     }
 }

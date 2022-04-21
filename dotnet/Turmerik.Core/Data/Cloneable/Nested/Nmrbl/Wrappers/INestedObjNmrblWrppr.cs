@@ -10,32 +10,40 @@ namespace Turmerik.Core.Data.Cloneable.Nested.Nmrbl.Wrappers
     {
     }
 
-    public interface INestedObjNmrblWrppr<TObj, TImmtbl, TMtbl> : INestedObjWrpprCore<INestedObjNmrbl<TObj>, INestedImmtblObjClctn<TObj, TImmtbl>, INestedMtblObjList<TObj, TMtbl>>, INestedObjNmrblWrppr
-        where TImmtbl : TObj
-        where TMtbl : TObj
+    public interface INestedObjNmrblWrppr<TObj> : INestedObjWrpprCore<INestedObjNmrbl<TObj>, INestedImmtblObjClctn<TObj>, INestedMtblObjList<TObj>>, INestedObjNmrblWrppr
     {
     }
 
-    public class NestedObjNmrblWrppr<TObj, TImmtbl, TMtbl> : INestedObjNmrblWrppr<TObj, TImmtbl, TMtbl>
-        where TImmtbl : TObj
-        where TMtbl : TObj
+    public class NestedObjNmrblWrppr<TObj> : INestedObjNmrblWrppr<TObj>
     {
-        public NestedObjNmrblWrppr(INestedImmtblObjClctn<TObj, TImmtbl> immtblWrppr, INestedMtblObjList<TObj, TMtbl> mtblWrppr)
+        public NestedObjNmrblWrppr(INestedImmtblObjClctn<TObj> immtblWrppr, INestedMtblObjList<TObj> mtblWrppr)
         {
-            ImmtblWrppr = immtblWrppr;
-            MtblWrppr = mtblWrppr;
+            Immtbl = immtblWrppr;
+            Mtbl = mtblWrppr;
 
-            ObjWrpprCore = new NestedObjNmrbl<TObj>(
-                mtblWrppr?.Mtbl.Cast<INestedObj<TObj>>(
-                    ) ?? immtblWrppr?.Immtbl.Cast<INestedObj<TObj>>());
+            IEnumerable<INestedObj<TObj>> nmrbl = null;
+
+            if (mtblWrppr != null)
+            {
+                nmrbl = mtblWrppr.GetObj();
+            }
+            else if (immtblWrppr != null)
+            {
+                nmrbl = immtblWrppr.GetObj();
+            }
+
+            if (nmrbl != null)
+            {
+                ObjWrpprCore = new NestedObjNmrbl<TObj>(nmrbl.Cast<INestedObj<TObj>>());
+            }
         }
 
-        public INestedImmtblObjClctn<TObj, TImmtbl> ImmtblWrppr { get; }
-        public INestedMtblObjList<TObj, TMtbl> MtblWrppr { get; }
+        public INestedImmtblObjClctn<TObj> Immtbl { get; }
+        public INestedMtblObjList<TObj> Mtbl { get; }
         protected INestedObjNmrbl<TObj> ObjWrpprCore { get; }
 
-        public object GetObjWrppr() => ObjWrpprCore;
-        public object GetImmtblWrppr() => ImmtblWrppr;
-        public object GetMtblWrppr() => MtblWrppr;
+        public object GetObj() => ObjWrpprCore;
+        public object GetImmtbl() => Immtbl;
+        public object GetMtbl() => Mtbl;
     }
 }

@@ -7,15 +7,37 @@ using Turmerik.Core.Infrastucture;
 
 namespace Turmerik.Core.Data.Cloneable.Nested.Dictnr.Wrappers.Mappers
 {
-    public interface INestedMtblObjDictnrWrpprMapper<TKey, TObj, TImmtbl, TMtbl> : INestedObjDictnrWrpprMapper<TKey, TObj, TImmtbl, TMtbl>
-        where TImmtbl : TObj
-        where TMtbl : TObj
+    public interface INestedMtblObjDictnrWrpprMapper : INestedObjDictnrWrpprMapper
     {
     }
 
-    public class NestedMtblObjDictnrWrpprMapper<TKey, TObj, TImmtbl, TMtbl> : NestedObjDictnrWrpprMapperBase<TKey, TObj, TImmtbl, TMtbl>, INestedMtblObjDictnrWrpprMapper<TKey, TObj, TImmtbl, TMtbl>
-        where TImmtbl : TObj
-        where TMtbl : TObj
+    public interface INestedMtblObjDictnrWrpprMapper<TKey, TObj> : INestedObjDictnrWrpprMapper<TKey, TObj>, INestedMtblObjDictnrWrpprMapper
     {
+    }
+
+    public class NestedMtblObjDictnrWrpprMapper<TKey, TObj> : INestedMtblObjDictnrWrpprMapper<TKey, TObj>
+    {
+        public INestedObjWrpprCore GetTrgPropValue(INestedObjMapOptsCore opts)
+        {
+            var options = (INestedObjMapOpts<INestedObjWrppr<INestedObjDictnrWrppr<TKey, TObj>>>)opts;
+            var wrppr = GetTrgPropValue(options);
+
+            return wrppr;
+        }
+
+        public INestedObjWrppr<INestedObjDictnrWrppr<TKey, TObj>> GetTrgPropValue(INestedObjMapOpts<INestedObjWrppr<INestedObjDictnrWrppr<TKey, TObj>>> opts)
+        {
+            var wrppr = opts.SrcPropValue;
+
+            var mtbl = wrppr?.Mtbl ?? new NestedObjDictnrWrppr<TKey, TObj>(
+                null,
+                new NestedObjEdtblDictnr<TKey, TObj>(
+                    wrppr?.Immtbl?.Immtbl?.Immtbl));
+
+            var retWrppr = new NestedObjWrppr<INestedObjDictnrWrppr<TKey, TObj>>(
+                mtbl, null);
+
+            return retWrppr;
+        }
     }
 }

@@ -8,31 +8,33 @@ using Turmerik.Core.Helpers;
 
 namespace Turmerik.Core.Data.Cloneable.Nested.Clnbl.Nmrbl
 {
-    public interface INestedClnblNmrblCore<TClnbl, TNested> : INestedClnblCore<IEnumerable<TNested>>, INestedObjNmrblCore<TClnbl, TNested>
+    public interface INestedClnblNmrblCore<TClnbl, TNested, TNmrbl> : INestedObjNmrblCore<TClnbl, TNested, TNmrbl>
+        where TClnbl : ICloneableObject
+        where TNmrbl : IEnumerable<TNested>
     {
     }
 
-    public interface INestedClnblNmrbl<TClnbl> : INestedClnblNmrblCore<TClnbl, INestedObj<TClnbl>>
+    public interface INestedClnblNmrbl<TClnbl> : INestedClnblNmrblCore<TClnbl, INestedObj<TClnbl>, IEnumerable<INestedObj<TClnbl>>>
         where TClnbl : ICloneableObject
     {
     }
 
-    public interface INestedImmtblClnblClctn<TClnbl, TImmtbl> : INestedClnblNmrblCore<TClnbl, INestedImmtblObj<TClnbl, TImmtbl>>, INestedImmtblClnblCore<IEnumerable<INestedImmtblObj<TClnbl, TImmtbl>>, ReadOnlyCollection<INestedImmtblClnbl<TClnbl, TImmtbl>>>
+    public interface INestedImmtblClnblClctn<TClnbl, TImmtbl> : INestedClnblNmrblCore<TClnbl, INestedImmtblObj<TClnbl, TImmtbl>, ReadOnlyCollection<INestedImmtblClnbl<TClnbl, TImmtbl>>>, INestedImmtblObjCore<ReadOnlyCollection<INestedObj<TClnbl>>, ReadOnlyCollection<INestedObj<TClnbl>>>
         where TClnbl : ICloneableObject
         where TImmtbl : TClnbl
     {
     }
 
-    public interface INestedMtblClnblList<TClnbl, TMtbl> : INestedClnblNmrblCore<TClnbl, INestedMtblObj<TClnbl, TMtbl>>, INestedMtblClnblCore<IEnumerable<INestedMtblObj<TClnbl, TMtbl>>, List<INestedMtblClnbl<TClnbl, TMtbl>>>
+    public interface INestedMtblClnblList<TClnbl, TMtbl> : INestedClnblNmrblCore<TClnbl, INestedMtblObj<TClnbl, TMtbl>, List<INestedMtblClnbl<TClnbl, TMtbl>>>, INestedMtblObjCore<List<INestedObj<TClnbl>>, List<INestedObj<TClnbl>>>
         where TClnbl : ICloneableObject
         where TMtbl : TClnbl
     {
     }
 
-    public class NestedClnblNmrbl<TClnbl> : NestedObjCoreBase<IEnumerable<INestedClnbl<TClnbl>>>, INestedClnblNmrbl<TClnbl>
+    public class NestedClnblNmrbl<TClnbl> : NestedClnblCoreBase<IEnumerable<INestedClnbl<TClnbl>>>, INestedClnblNmrbl<TClnbl>
         where TClnbl : ICloneableObject
     {
-        public NestedClnblNmrbl(IEnumerable<INestedClnbl<TClnbl>> nmrbl) : this(nmrbl.RdnlC())
+        public NestedClnblNmrbl(IEnumerable<INestedClnbl<TClnbl>> nmrbl) : this(nmrbl?.RdnlC())
         {
         }
 
@@ -41,31 +43,28 @@ namespace Turmerik.Core.Data.Cloneable.Nested.Clnbl.Nmrbl
             ObjCore = nmrbl;
         }
 
-        IEnumerable<INestedObj<TClnbl>> INestedObjCore<IEnumerable<INestedObj<TClnbl>>>.GetObj()
-        {
-            var obj = GetObj();
-            var retObj = obj.Cast<INestedObj<TClnbl>>();
-
-            return retObj;
-        }
+        IEnumerable<INestedObj<TClnbl>> INestedObjCore<IEnumerable<INestedObj<TClnbl>>>.GetObj() => GetObj().Cast<INestedObj<TClnbl>>();
     }
 
-    public class NestedImmtblClnblColctn<TClnbl, TImmtbl> : NestedImmtblObjClctn<TClnbl, TImmtbl>, INestedImmtblClnblClctn<TClnbl, TImmtbl>
+    public class NestedImmtblClnblClctn<TClnbl, TImmtbl> : NestedImmtblClnblCoreBase<ReadOnlyCollection<INestedImmtblClnbl<TClnbl, TImmtbl>>, ReadOnlyCollection<INestedImmtblClnbl<TClnbl, TImmtbl>>>, INestedImmtblClnblClctn<TClnbl, TImmtbl>
         where TClnbl : ICloneableObject
         where TImmtbl : TClnbl
     {
-        public NestedImmtblClnblColctn(IEnumerable<INestedImmtblClnbl<TClnbl, TImmtbl>> nmrbl) : base(nmrbl)
+        public NestedImmtblClnblClctn(IEnumerable<INestedImmtblClnbl<TClnbl, TImmtbl>> nmrbl) : this(nmrbl?.RdnlC())
         {
         }
 
-        public NestedImmtblClnblColctn(ReadOnlyCollection<INestedImmtblClnbl<TClnbl, TImmtbl>> immtblColctn) : base(immtblColctn)
+        public NestedImmtblClnblClctn(ReadOnlyCollection<INestedImmtblClnbl<TClnbl, TImmtbl>> immtblColctn)
         {
+            ImmtblCore = immtblColctn;
+            ObjCore = immtblColctn;
         }
 
-        ReadOnlyCollection<INestedImmtblClnbl<TClnbl, TImmtbl>> INestedImmtblObjCore<IEnumerable<INestedImmtblObj<TClnbl, TImmtbl>>, ReadOnlyCollection<INestedImmtblClnbl<TClnbl, TImmtbl>>>.Immtbl => Immtbl.Cast<INestedImmtblClnbl<TClnbl, TImmtbl>>().RdnlC();
+        ReadOnlyCollection<INestedObj<TClnbl>> INestedImmtblObjCore<ReadOnlyCollection<INestedObj<TClnbl>>, ReadOnlyCollection<INestedObj<TClnbl>>>.Immtbl => Immtbl.Cast<INestedObj<TClnbl>>().RdnlC();
+        ReadOnlyCollection<INestedObj<TClnbl>> INestedObjCore<ReadOnlyCollection<INestedObj<TClnbl>>>.GetObj() => GetObj().Cast<INestedObj<TClnbl>>().RdnlC();
     }
 
-    public class NestedMtblClnblList<TClnbl, TMtbl> : NestedMtblObjList<TClnbl, TMtbl>, INestedMtblClnblList<TClnbl, TMtbl>
+    public class NestedMtblClnblList<TClnbl, TMtbl> : NestedMtblClnblCoreBase<List<INestedMtblClnbl<TClnbl, TMtbl>>, List<INestedMtblClnbl<TClnbl, TMtbl>>>, INestedMtblClnblList<TClnbl, TMtbl>
         where TClnbl : ICloneableObject
         where TMtbl : TClnbl
     {
@@ -73,20 +72,29 @@ namespace Turmerik.Core.Data.Cloneable.Nested.Clnbl.Nmrbl
         {
         }
 
-        public NestedMtblClnblList(IEnumerable<INestedMtblClnbl<TClnbl, TMtbl>> nmrbl) : base(nmrbl)
+        public NestedMtblClnblList(IEnumerable<INestedMtblClnbl<TClnbl, TMtbl>> nmrbl) : this(nmrbl.ToList())
         {
         }
 
-        public NestedMtblClnblList(List<INestedMtblClnbl<TClnbl, TMtbl>> mtblList) : base(mtblList)
+        public NestedMtblClnblList(List<INestedMtblClnbl<TClnbl, TMtbl>> mtblList)
         {
+            SetMtbl(mtblList);
         }
 
-        List<INestedMtblClnbl<TClnbl, TMtbl>> INestedMtblObjCore<IEnumerable<INestedMtblObj<TClnbl, TMtbl>>, List<INestedMtblClnbl<TClnbl, TMtbl>>>.Mtbl => Mtbl.Cast<INestedMtblClnbl<TClnbl, TMtbl>>().ToList();
+        List<INestedObj<TClnbl>> INestedObjCore<List<INestedObj<TClnbl>>>.GetObj() => GetObj().Cast<INestedObj<TClnbl>>().ToList();
 
-        public void SetMtbl(List<INestedMtblClnbl<TClnbl, TMtbl>> mtbl)
+        List<INestedObj<TClnbl>> INestedMtblObjCore<List<INestedObj<TClnbl>>, List<INestedObj<TClnbl>>>.Mtbl => Mtbl.Cast<INestedObj<TClnbl>>().ToList();
+
+        public void SetMtbl(List<INestedObj<TClnbl>> mtbl)
         {
-            var baseMtbl = mtbl.Cast<INestedMtblObj<TClnbl, TMtbl>>().ToList();
-            base.SetMtbl(baseMtbl);
+            var list = mtbl.Cast<INestedMtblClnbl<TClnbl, TMtbl>>().ToList();
+            SetMtbl(list);
+        }
+
+        public override void SetMtbl(List<INestedMtblClnbl<TClnbl, TMtbl>> mtbl)
+        {
+            MtblCore = mtbl;
+            ObjCore = mtbl;
         }
     }
 }

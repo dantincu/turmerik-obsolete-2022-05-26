@@ -16,40 +16,25 @@ using Turmerik.Core.Infrastucture;
 
 namespace Turmerik.Core.Data.Cloneable.Nested.Wrappers.Mappers
 {
-    public interface INestedObjWrpprMapper<TOpts, TWrppr>
+    public interface INestedObjWrpprMapperCore
+    {
+        INestedObjWrpprCore GetTrgPropValue(INestedObjMapOptsCore opts);
+    }
+
+    public interface INestedObjWrpprMapper<TOpts, TWrppr> : INestedObjWrpprMapperCore
         where TOpts : INestedObjMapOpts<TWrppr>
         where TWrppr : INestedObjWrpprCore
     {
         TWrppr GetTrgPropValue(TOpts opts);
     }
 
-    public interface INestedObjWrpprMapper<TOpts> : INestedObjWrpprMapper<TOpts, INestedObjWrppr>
-        where TOpts : INestedObjMapOpts<INestedObjWrppr>
+    public interface INestedObjWrpprMapper<TOpts, TWrppr, TObj> : INestedObjWrpprMapper<TOpts, TWrppr>
+        where TOpts : INestedObjMapOpts<TWrppr>
+        where TWrppr : INestedObjWrpprCore<TObj>
     {
     }
 
-    public interface INestedObjWrpprMapper : INestedObjWrpprMapper<INestedObjMapOpts>
-    {
-    }
-
-    public interface INestedObjWrpprMapper<TOpts, TWrppr, TObj, TImmtbl, TMtbl> : INestedObjWrpprMapper<TOpts, TWrppr>
-        where TOpts : INestedObjMapOpts<TWrppr, TObj, TImmtbl, TMtbl>
-        where TWrppr : INestedObjWrppr<TObj, TImmtbl, TMtbl>
-        where TImmtbl : TObj
-        where TMtbl : TObj
-    {
-    }
-
-    public interface INestedObjWrpprMapper<TOpts, TObj, TImmtbl, TMtbl> : INestedObjWrpprMapper<TOpts, INestedObjWrppr<TObj, TImmtbl, TMtbl>, TObj, TImmtbl, TMtbl>
-        where TOpts : INestedObjMapOpts<INestedObjWrppr<TObj, TImmtbl, TMtbl>, TObj, TImmtbl, TMtbl>
-        where TImmtbl : TObj
-        where TMtbl : TObj
-    {
-    }
-
-    public interface INestedObjWrpprMapper<TObj, TImmtbl, TMtbl> : INestedObjWrpprMapper<INestedObjMapOpts<TObj, TImmtbl, TMtbl>, TObj, TImmtbl, TMtbl>
-        where TImmtbl : TObj
-        where TMtbl : TObj
+    public interface INestedObjWrpprMapper<TObj> : INestedObjWrpprMapper<INestedObjMapOpts<INestedObjWrppr<TObj>>, INestedObjWrppr<TObj>>
     {
     }
 
@@ -63,23 +48,6 @@ namespace Turmerik.Core.Data.Cloneable.Nested.Wrappers.Mappers
         where TWrppr : INestedObjWrpprCore
     {
         TWrppr SrcPropValue { get; }
-    }
-
-    public interface INestedObjMapOpts<TWrppr, TObj, TImmtbl, TMtbl> : INestedObjMapOpts<TWrppr>
-        where TWrppr : INestedObjWrpprCore<TObj, TImmtbl, TMtbl>
-        where TImmtbl : TObj
-        where TMtbl : TObj
-    {
-    }
-
-    public interface INestedObjMapOpts<TObj, TImmtbl, TMtbl> : INestedObjMapOpts<INestedObjWrppr<TObj, TImmtbl, TMtbl>>, INestedObjMapOpts<INestedObjWrppr<TObj, TImmtbl, TMtbl>, TObj, TImmtbl, TMtbl>
-        where TImmtbl : TObj
-        where TMtbl : TObj
-    {
-    }
-
-    public interface INestedObjMapOpts : INestedObjMapOpts<INestedObjWrppr>
-    {
     }
 
     public abstract class NestedObjMapOptsCoreImmtblBase : INestedObjMapOptsCore
@@ -136,55 +104,23 @@ namespace Turmerik.Core.Data.Cloneable.Nested.Wrappers.Mappers
         public TWrppr SrcPropValue { get; set; }
     }
 
-    public class NestedObjMapOptsImmtbl : NestedObjMapOptsCoreImmtblBase, INestedObjMapOpts
+    public class NestedObjWrpprMapper<TObj> : INestedObjWrpprMapper<TObj>
     {
-        public NestedObjMapOptsImmtbl(INestedObjMapOpts src) : base(src)
+        public INestedObjWrppr<TObj> GetTrgPropValue(INestedObjMapOpts<INestedObjWrppr<TObj>> opts)
         {
-            SrcPropValue = src.SrcPropValue;
+            var wrppr = new NestedObjWrppr<TObj>(
+                opts.SrcPropValue.Immtbl,
+                opts.SrcPropValue.Mtbl);
+
+            return wrppr;
         }
 
-        public INestedObjWrppr SrcPropValue { get; }
-    }
-
-    public class NestedObjMapOptsMtbl : NestedObjMapOptsCoreMtblBase, INestedObjMapOpts
-    {
-        public NestedObjMapOptsMtbl()
+        public INestedObjWrpprCore GetTrgPropValue(INestedObjMapOptsCore opts)
         {
-        }
+            var options = (INestedObjMapOpts<INestedObjWrppr<TObj>>)opts;
+            var retVal = GetTrgPropValue(options);
 
-        public NestedObjMapOptsMtbl(INestedObjMapOpts src) : base(src)
-        {
-            SrcPropValue = src.SrcPropValue;
-        }
-
-        public INestedObjWrppr SrcPropValue { get; set; }
-    }
-
-    public class NestedObjMapOptsImmtbl<TObj, TImmtbl, TMtbl> : NestedObjMapOptsImmtbl<INestedObjWrppr<TObj, TImmtbl, TMtbl>>, INestedObjMapOpts<TObj, TImmtbl, TMtbl>
-        where TImmtbl : TObj
-        where TMtbl : TObj
-    {
-        public NestedObjMapOptsImmtbl(INestedObjMapOpts<INestedObjWrppr<TObj, TImmtbl, TMtbl>, TObj, TImmtbl, TMtbl> src) : base(src)
-        {
-        }
-    }
-
-    public class NestedObjMapOptsMtbl<TObj, TImmtbl, TMtbl> : NestedObjMapOptsMtbl<INestedObjWrppr<TObj, TImmtbl, TMtbl>>, INestedObjMapOpts<TObj, TImmtbl, TMtbl>
-        where TImmtbl : TObj
-        where TMtbl : TObj
-    {
-        public NestedObjMapOptsMtbl(INestedObjMapOpts<INestedObjWrppr<TObj, TImmtbl, TMtbl>, TObj, TImmtbl, TMtbl> src) : base(src)
-        {
-        }
-    }
-
-    public abstract class NestedObjWrpprMapperBase<TObj, TImmtbl, TMtbl> : INestedObjWrpprMapper<TObj, TImmtbl, TMtbl>
-        where TImmtbl : TObj
-        where TMtbl : TObj
-    {
-        public INestedObjWrppr<TObj, TImmtbl, TMtbl> GetTrgPropValue(INestedObjMapOpts<TObj, TImmtbl, TMtbl> opts)
-        {
-            throw new NotImplementedException();
+            return retVal;
         }
     }
 }

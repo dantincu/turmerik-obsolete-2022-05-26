@@ -5,78 +5,69 @@ using System.Linq;
 using System.Text;
 using Turmerik.Core.Data.Cloneable.Nested.Clnbl.Nmrbl;
 using Turmerik.Core.Data.Cloneable.Nested.Dictnr;
+using Turmerik.Core.Helpers;
 
 namespace Turmerik.Core.Data.Cloneable.Nested.Clnbl.Dictnr
 {
-    public interface INestedClnblDictnrCore<TClnbl, TKvp> : INestedObjDictnrCore<TClnbl, TKvp>, INestedClnblNmrblCore<TClnbl, TKvp>
+    public interface INestedClnblDictnrCore<TClnbl, TKvp, TDictnr> : INestedObjDictnrCore<TClnbl, TKvp, TDictnr>, INestedClnblNmrblCore<TClnbl, TKvp, TDictnr>
+        where TClnbl : ICloneableObject
+        where TDictnr : IEnumerable<TKvp>
     {
     }
 
-    public interface INestedClnblDictnr<TKey, TClnbl> : INestedObjDictnr<TKey, TClnbl>, INestedClnblDictnrCore<TClnbl, KeyValuePair<TKey, INestedClnbl<TClnbl>>>
+    public interface INestedClnblDictnr<TKey, TClnbl, TNested, TDictnr> : INestedClnblDictnrCore<TClnbl, KeyValuePair<TKey, TNested>, TDictnr>
+        where TClnbl : ICloneableObject
+        where TNested : INestedClnblCore<TClnbl>
+        where TDictnr : IEnumerable<KeyValuePair<TKey, TNested>>
+    {
+    }
+
+    public interface INestedClnblDictnr<TKey, TClnbl> : INestedClnblDictnr<TKey, TClnbl, INestedClnbl<TClnbl>, ReadOnlyDictionary<TKey, INestedClnbl<TClnbl>>>
         where TClnbl : ICloneableObject
     {
     }
 
-    public interface INestedClnblRdnlDictnr<TKey, TClnbl, TImmtbl> : INestedObjRdnlDictnr<TKey, TClnbl, TImmtbl>, INestedClnblDictnrCore<TClnbl, KeyValuePair<TKey, INestedImmtblClnbl<TClnbl, TImmtbl>>>
+    public interface INestedClnblRdnlDictnr<TKey, TClnbl, TImmtbl> : INestedClnblDictnr<TKey, TClnbl, INestedImmtblClnbl<TClnbl, TImmtbl>, ReadOnlyDictionary<TKey, INestedImmtblClnbl<TClnbl, TImmtbl>>>, INestedImmtblClnblCore<ReadOnlyDictionary<TKey, INestedImmtblClnbl<TClnbl, TImmtbl>>, ReadOnlyDictionary<TKey, INestedImmtblClnbl<TClnbl, TImmtbl>>>
         where TClnbl : ICloneableObject
         where TImmtbl : TClnbl
     {
     }
 
-    public interface INestedClnblEdtblDictnr<TKey, TClnbl, TMtbl> : INestedObjEdtblDictnr<TKey, TClnbl, TMtbl>, INestedClnblDictnrCore<TClnbl, KeyValuePair<TKey, INestedMtblClnbl<TClnbl, TMtbl>>>
+    public interface INestedClnblEdtblDictnr<TKey, TClnbl, TMtbl> : INestedClnblDictnr<TKey, TClnbl, INestedMtblClnbl<TClnbl, TMtbl>, Dictionary<TKey, INestedMtblClnbl<TClnbl, TMtbl>>>, INestedMtblClnblCore<Dictionary<TKey, INestedMtblClnbl<TClnbl, TMtbl>>, Dictionary<TKey, INestedMtblClnbl<TClnbl, TMtbl>>>
         where TClnbl : ICloneableObject
         where TMtbl : TClnbl
     {
     }
 
-    public class NestedClnblDictnr<TKey, TClnbl> : NestedObjDictnr<TKey, TClnbl>, INestedClnblDictnr<TKey, TClnbl>
+    public class NestedClnblDictnr<TKey, TClnbl> : NestedClnblCoreBase<ReadOnlyDictionary<TKey, INestedClnbl<TClnbl>>>, INestedClnblDictnr<TKey, TClnbl>
         where TClnbl : ICloneableObject
     {
-        public NestedClnblDictnr(IEnumerable<KeyValuePair<TKey, INestedObj<TClnbl>>> kvpNmrbl) : base(kvpNmrbl)
+        public NestedClnblDictnr(IEnumerable<KeyValuePair<TKey, INestedClnbl<TClnbl>>> kvpNmrbl)
         {
         }
 
-        public NestedClnblDictnr(ReadOnlyDictionary<TKey, INestedObj<TClnbl>> dictnr) : base(dictnr)
+        public NestedClnblDictnr(ReadOnlyDictionary<TKey, INestedClnbl<TClnbl>> dictnr)
         {
-        }
-
-        IEnumerable<KeyValuePair<TKey, INestedClnbl<TClnbl>>> INestedObjCore<IEnumerable<KeyValuePair<TKey, INestedClnbl<TClnbl>>>>.GetObj()
-        {
-            var kvpNmrbl = GetObj();
-
-            var retKvpNmrbl = kvpNmrbl.Select(
-                kvp => new KeyValuePair<TKey, INestedClnbl<TClnbl>>(
-                    kvp.Key, (INestedClnbl<TClnbl>)kvp.Value));
-
-            return retKvpNmrbl;
+            ObjCore = dictnr;
         }
     }
 
-    public class NestedClnblRdnlDictnr<TKey, TClnbl, TImmtbl> : NestedObjRdnlDictnr<TKey, TClnbl, TImmtbl>, INestedClnblRdnlDictnr<TKey, TClnbl, TImmtbl>
+    public class NestedClnblRdnlDictnr<TKey, TClnbl, TImmtbl> : NestedImmtblClnblCoreBase<ReadOnlyDictionary<TKey, INestedImmtblClnbl<TClnbl, TImmtbl>>, ReadOnlyDictionary<TKey, INestedImmtblClnbl<TClnbl, TImmtbl>>>, INestedClnblRdnlDictnr<TKey, TClnbl, TImmtbl>
         where TClnbl : ICloneableObject
         where TImmtbl : TClnbl
     {
-        public NestedClnblRdnlDictnr(IEnumerable<KeyValuePair<TKey, INestedImmtblObj<TClnbl, TImmtbl>>> kvpNmrbl) : base(kvpNmrbl)
+        public NestedClnblRdnlDictnr(IEnumerable<KeyValuePair<TKey, INestedImmtblClnbl<TClnbl, TImmtbl>>> kvpNmrbl) : this(kvpNmrbl?.RdnlD())
         {
         }
 
-        public NestedClnblRdnlDictnr(ReadOnlyDictionary<TKey, INestedImmtblObj<TClnbl, TImmtbl>> dictnr) : base(dictnr)
+        public NestedClnblRdnlDictnr(ReadOnlyDictionary<TKey, INestedImmtblClnbl<TClnbl, TImmtbl>> dictnr)
         {
-        }
-
-        IEnumerable<KeyValuePair<TKey, INestedImmtblClnbl<TClnbl, TImmtbl>>> INestedObjCore<IEnumerable<KeyValuePair<TKey, INestedImmtblClnbl<TClnbl, TImmtbl>>>>.GetObj()
-        {
-            var kvpNmrbl = GetObj();
-
-            var retKvpNmrbl = kvpNmrbl.Select(
-                kvp => new KeyValuePair<TKey, INestedImmtblClnbl<TClnbl, TImmtbl>>(
-                    kvp.Key, (INestedImmtblClnbl<TClnbl, TImmtbl>)kvp.Value));
-
-            return retKvpNmrbl;
+            ImmtblCore = dictnr;
+            ObjCore = dictnr;
         }
     }
 
-    public class NestedClnblEdtblDictnr<TKey, TClnbl, TMtbl> : NestedObjEdtblDictnr<TKey, TClnbl, TMtbl>, INestedClnblEdtblDictnr<TKey, TClnbl, TMtbl>
+    public class NestedClnblEdtblDictnr<TKey, TClnbl, TMtbl> : NestedMtblClnblCoreBase<Dictionary<TKey, INestedMtblClnbl<TClnbl, TMtbl>>, Dictionary<TKey, INestedMtblClnbl<TClnbl, TMtbl>>>, INestedClnblEdtblDictnr<TKey, TClnbl, TMtbl>
         where TClnbl : ICloneableObject
         where TMtbl : TClnbl
     {
@@ -84,23 +75,13 @@ namespace Turmerik.Core.Data.Cloneable.Nested.Clnbl.Dictnr
         {
         }
 
-        public NestedClnblEdtblDictnr(IEnumerable<KeyValuePair<TKey, INestedMtblObj<TClnbl, TMtbl>>> kvpNmrbl) : base(kvpNmrbl)
+        public NestedClnblEdtblDictnr(IEnumerable<KeyValuePair<TKey, INestedMtblClnbl<TClnbl, TMtbl>>> kvpNmrbl) : this(kvpNmrbl?.Dictnr())
         {
         }
 
-        public NestedClnblEdtblDictnr(Dictionary<TKey, INestedMtblObj<TClnbl, TMtbl>> dictnr) : base(dictnr)
+        public NestedClnblEdtblDictnr(Dictionary<TKey, INestedMtblClnbl<TClnbl, TMtbl>> dictnr)
         {
-        }
-
-        IEnumerable<KeyValuePair<TKey, INestedMtblClnbl<TClnbl, TMtbl>>> INestedObjCore<IEnumerable<KeyValuePair<TKey, INestedMtblClnbl<TClnbl, TMtbl>>>>.GetObj()
-        {
-            var kvpNmrbl = GetObj();
-
-            var retKvpNmrbl = kvpNmrbl.Select(
-                kvp => new KeyValuePair<TKey, INestedMtblClnbl<TClnbl, TMtbl>>(
-                    kvp.Key, (INestedMtblClnbl<TClnbl, TMtbl>)kvp.Value));
-
-            return retKvpNmrbl;
+            SetMtbl(dictnr);
         }
     }
 }

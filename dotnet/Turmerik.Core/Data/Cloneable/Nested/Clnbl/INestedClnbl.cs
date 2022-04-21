@@ -21,6 +21,14 @@ namespace Turmerik.Core.Data.Cloneable.Nested.Clnbl
     {
     }
 
+    public class NestedClnbl<TClnbl> : NestedObj<TClnbl>, INestedClnbl<TClnbl>
+        where TClnbl : ICloneableObject
+    {
+        public NestedClnbl(TClnbl obj) : base(obj)
+        {
+        }
+    }
+
     public class NestedImmtblClnbl<TClnbl, TImmtbl> : NestedImmtblObj<TClnbl, TImmtbl>, INestedImmtblClnbl<TClnbl, TImmtbl>
         where TClnbl : ICloneableObject
         where TImmtbl : TClnbl

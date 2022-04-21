@@ -16,6 +16,11 @@ namespace Turmerik.Core.Data.Cloneable.Nested.Clnbl.Wrappers
     {
     }
 
+    public interface INestedClnblWrppr<TClnbl> : INestedClnblWrppr<TClnbl, TClnbl, TClnbl>
+        where TClnbl : ICloneableObject
+    {
+    }
+
     public class NestedClnblWrppr<TClnbl, TImmtbl, TMtbl> : INestedClnblWrppr<TClnbl, TImmtbl, TMtbl>
         where TClnbl : ICloneableObject
         where TImmtbl : TClnbl
@@ -23,18 +28,26 @@ namespace Turmerik.Core.Data.Cloneable.Nested.Clnbl.Wrappers
     {
         public NestedClnblWrppr(TImmtbl immtblWrppr, TMtbl mtblWrppr)
         {
-            ImmtblWrppr = immtblWrppr;
-            MtblWrppr = mtblWrppr;
+            Immtbl = immtblWrppr;
+            Mtbl = mtblWrppr;
 
             ObjWrpprCore = mtblWrppr != null ? (TClnbl)mtblWrppr : immtblWrppr;
         }
 
-        public TImmtbl ImmtblWrppr { get; }
-        public TMtbl MtblWrppr { get; }
+        public TImmtbl Immtbl { get; }
+        public TMtbl Mtbl { get; }
         protected TClnbl ObjWrpprCore { get; }
 
-        public object GetObjWrppr() => ObjWrpprCore;
-        public object GetImmtblWrppr() => ImmtblWrppr;
-        public object GetMtblWrppr() => MtblWrppr;
+        public object GetObj() => ObjWrpprCore;
+        public object GetImmtbl() => Immtbl;
+        public object GetMtbl() => Mtbl;
+    }
+
+    public class NestedClnblWrppr<TClnbl> : NestedClnblWrppr<TClnbl, TClnbl, TClnbl>, INestedClnblWrppr<TClnbl>
+        where TClnbl : ICloneableObject
+    {
+        public NestedClnblWrppr(TClnbl immtblWrppr, TClnbl mtblWrppr) : base(immtblWrppr, mtblWrppr)
+        {
+        }
     }
 }

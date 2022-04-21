@@ -25,20 +25,35 @@ namespace Turmerik.Core.Data.Cloneable.Nested.Clnbl.Nmrbl.Wrappers
     {
         public NestedClnblNmrblWrppr(INestedImmtblClnblClctn<TClnbl, TImmtbl> immtblWrppr, INestedMtblClnblList<TClnbl, TMtbl> mtblWrppr)
         {
-            ImmtblWrppr = immtblWrppr;
-            MtblWrppr = mtblWrppr;
+            Immtbl = immtblWrppr;
+            Mtbl = mtblWrppr;
 
-            ObjWrpprCore = new NestedClnblNmrbl<TClnbl>(
-                mtblWrppr?.Mtbl.Cast<INestedClnbl<TClnbl>>(
-                    ) ?? immtblWrppr?.Immtbl.Cast<INestedClnbl<TClnbl>>());
+            if (mtblWrppr != null)
+            {
+                ObjWrpprCore = new NestedClnblNmrbl<TClnbl>(
+                    mtblWrppr?.Mtbl?.Cast<INestedClnbl<TClnbl>>());
+            }
+            else if (immtblWrppr != null)
+            {
+                ObjWrpprCore = new NestedClnblNmrbl<TClnbl>(
+                    immtblWrppr?.Immtbl?.Cast<INestedClnbl<TClnbl>>());
+            }
         }
 
-        public INestedImmtblClnblClctn<TClnbl, TImmtbl> ImmtblWrppr { get; }
-        public INestedMtblClnblList<TClnbl, TMtbl> MtblWrppr { get; }
+        public INestedImmtblClnblClctn<TClnbl, TImmtbl> Immtbl { get; }
+        public INestedMtblClnblList<TClnbl, TMtbl> Mtbl { get; }
         protected INestedClnblNmrbl<TClnbl> ObjWrpprCore { get; }
 
-        public object GetObjWrppr() => ObjWrpprCore;
-        public object GetImmtblWrppr() => ImmtblWrppr;
-        public object GetMtblWrppr() => MtblWrppr;
+        public object GetObj() => ObjWrpprCore;
+        public object GetImmtbl() => Immtbl;
+        public object GetMtbl() => Mtbl;
+    }
+
+    public class NestedClnblNmrblWrppr<TClnbl> : NestedClnblNmrblWrppr<TClnbl, TClnbl, TClnbl>
+        where TClnbl : ICloneableObject
+    {
+        public NestedClnblNmrblWrppr(INestedImmtblClnblClctn<TClnbl, TClnbl> immtblWrppr, INestedMtblClnblList<TClnbl, TClnbl> mtblWrppr) : base(immtblWrppr, mtblWrppr)
+        {
+        }
     }
 }

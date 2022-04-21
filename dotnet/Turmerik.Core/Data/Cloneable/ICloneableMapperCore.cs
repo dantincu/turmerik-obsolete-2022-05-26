@@ -50,13 +50,13 @@ namespace Turmerik.Core.Data.Cloneable
             }
         }
 
-        protected abstract INestedObjWrpprMapper GetNestedObjWrpprMapper(INestedObjMapOpts opts);
+        // protected abstract INestedObjWrpprCore GetNestedObjWrpprMapper(INestedObjMapOpts opts);
 
-        private object GetNestedClonableWrapperTrgPropValue(
+        protected abstract object GetNestedClonableWrapperTrgPropValue(
             object srcPropValue,
             Type srcPropType,
-            Type trgPropType)
-        {
+            Type trgPropType);
+        /* {
             var optsMtbl = new NestedObjMapOptsMtbl
             {
                 SrcPropType = srcPropType,
@@ -69,7 +69,7 @@ namespace Turmerik.Core.Data.Cloneable
 
             object trgPropValue = mapper.GetTrgPropValue(opts);
             return trgPropValue;
-        }
+        } */
     }
 
     public interface IObjMapOpts

@@ -7,14 +7,18 @@ namespace Turmerik.Core.Data.Cloneable.Nested.Wrappers
 {
     public interface INestedObjWrpprCore
     {
-        object GetObjWrppr();
-        object GetImmtblWrppr();
-        object GetMtblWrppr();
+        object GetObj();
+        object GetImmtbl();
+        object GetMtbl();
     }
 
-    public interface INestedObjWrpprCore<TNestedObj, TNestedImmtbl, TNestedMtbl> : INestedObjWrpprCore
+    public interface INestedObjWrpprCore<TNestedObj> : INestedObjWrpprCore
     {
-        TNestedImmtbl ImmtblWrppr { get; }
-        TNestedMtbl MtblWrppr { get; }
+    }
+
+    public interface INestedObjWrpprCore<TNestedObj, TNestedImmtbl, TNestedMtbl> : INestedObjWrpprCore<TNestedObj>
+    {
+        TNestedImmtbl Immtbl { get; }
+        TNestedMtbl Mtbl { get; }
     }
 }

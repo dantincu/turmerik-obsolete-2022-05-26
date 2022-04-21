@@ -18,11 +18,20 @@ namespace Turmerik.Core.Data.Cloneable.Nested
     {
     }
 
+    public class NestedObj<TObj> : NestedObjCoreBase<TObj>, INestedObj<TObj>
+    {
+        public NestedObj(TObj obj)
+        {
+            ObjCore = obj;
+        }
+    }
+
     public class NestedImmtblObj<TObj, TImmtbl> : NestedImmtblObjCoreBase<TObj, TImmtbl>, INestedImmtblObj<TObj, TImmtbl>
         where TImmtbl : TObj
     {
         public NestedImmtblObj(TImmtbl immtbl)
         {
+            ImmtblCore = immtbl;
             ObjCore = immtbl;
         }
     }
@@ -41,7 +50,7 @@ namespace Turmerik.Core.Data.Cloneable.Nested
 
         public override void SetMtbl(TMtbl mtbl)
         {
-            base.SetMtbl(mtbl);
+            MtblCore = mtbl;
             ObjCore = mtbl;
         }
     }

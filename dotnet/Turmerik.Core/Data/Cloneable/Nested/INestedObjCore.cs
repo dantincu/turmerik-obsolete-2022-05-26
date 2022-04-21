@@ -28,8 +28,8 @@ namespace Turmerik.Core.Data.Cloneable.Nested
 
     public abstract class NestedObjCoreBase<TObj> : INestedObjCore<TObj>
     {
-        protected TObj ObjCore { get; set; }
         public TObj GetObj() => ObjCore;
+        protected TObj ObjCore { get; set; }
     }
 
     public abstract class NestedImmtblObjCoreBase<TObj, TImmtbl> : NestedObjCoreBase<TObj>, INestedImmtblObjCore<TObj, TImmtbl>
@@ -38,10 +38,11 @@ namespace Turmerik.Core.Data.Cloneable.Nested
         protected TImmtbl ImmtblCore { get; set; }
     }
 
-    public abstract class NestedMtblObjCoreBase<TClnbl, TMtbl> : NestedObjCoreBase<TClnbl>, INestedMtblObjCore<TClnbl, TMtbl>
+    public abstract class NestedMtblObjCoreBase<TObj, TMtbl> : NestedObjCoreBase<TObj>, INestedMtblObjCore<TObj, TMtbl>
     {
         public TMtbl Mtbl => MtblCore;
         protected TMtbl MtblCore { get; set; }
-        public virtual void SetMtbl(TMtbl mtbl) => MtblCore = mtbl;
+
+        public abstract void SetMtbl(TMtbl mtbl);
     }
 }

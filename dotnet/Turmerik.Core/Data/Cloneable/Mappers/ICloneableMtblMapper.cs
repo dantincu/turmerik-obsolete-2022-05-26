@@ -12,7 +12,7 @@ namespace Turmerik.Core.Data.Cloneable.Mappers
 
     public class CloneableMtblMapper : CloneableMapperCoreBase, ICloneableMtblMapper
     {
-        protected override INestedObjWrpprMapper GetNestedObjWrpprMapper(INestedObjMapOpts opts)
+        protected override object GetNestedClonableWrapperTrgPropValue(object srcPropValue, Type srcPropType, Type trgPropType)
         {
             throw new NotImplementedException();
         }

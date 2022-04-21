@@ -14,6 +14,11 @@ namespace Turmerik.Core.Reflection.Wrappers
             FullName = data.FullName;
             FullDisplayName = data.GetTypeFullDisplayName();
 
+            IsGeneric = data.IsGenericType;
+            GenericTypeDef = new Lazy<Type>(() => IsGeneric ? data.GetGenericTypeDefinition() : null);
+            GenericTypeParams = new Lazy<IReadOnlyCollection<Type>>(() => IsGeneric ? data.GetGenericParameterConstraints().RdnlC() : null);
+            GenericTypeArgs = new Lazy<IReadOnlyCollection<Type>>(() => IsGeneric ? data.GetGenericArguments().RdnlC() : null);
+
             AllTypeAttrs = new Lazy<TypeMappedCollection<object>>(
                 () => new TypeMappedCollection<object>(
                     data.GetCustomAttributes(true)));
@@ -55,6 +60,11 @@ namespace Turmerik.Core.Reflection.Wrappers
 
         public readonly string FullName;
         public readonly string FullDisplayName;
+
+        public readonly bool IsGeneric;
+        public readonly Lazy<Type> GenericTypeDef;
+        public readonly Lazy<IReadOnlyCollection<Type>> GenericTypeParams;
+        public readonly Lazy<IReadOnlyCollection<Type>> GenericTypeArgs;
 
         public readonly Lazy<TypeMappedCollection<object>> AllTypeAttrs;
         public readonly Lazy<TypeMappedCollection<object>> TypeAttrs;

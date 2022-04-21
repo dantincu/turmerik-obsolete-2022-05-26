@@ -3,13 +3,18 @@ using System.Collections.Generic;
 using System.Text;
 using Turmerik.Core.Data.Cloneable.Nested.Clnbl.Wrappers;
 using Turmerik.Core.Data.Cloneable.Nested.Clnbl.Wrappers.Mappers;
+using Turmerik.Core.Data.Cloneable.Nested.Wrappers;
 using Turmerik.Core.Data.Cloneable.Nested.Wrappers.Mappers;
 using Turmerik.Core.Infrastucture;
 
 namespace Turmerik.Core.Data.Cloneable.Nested.Clnbl.Nmrbl.Wrappers.Mappers
 {
-    public interface INestedClnblNmrblWrpprMapper<TOpts, TWrppr, TClnbl, TImmtbl, TMtbl> : INestedObjWrpprMapper<TOpts, TWrppr>
-        where TOpts : INestedClnblNmrblMapOpts<TWrppr, TClnbl, TImmtbl, TMtbl>
+    public interface INestedClnblNmrblWrpprMapper : INestedObjWrpprMapperCore
+    {
+    }
+
+    public interface INestedClnblNmrblWrpprMapper<TOpts, TWrppr, TClnbl, TImmtbl, TMtbl> : INestedObjWrpprMapper<TOpts, TWrppr>, INestedClnblNmrblWrpprMapper
+        where TOpts : INestedObjMapOpts<TWrppr>
         where TClnbl : ICloneableObject
         where TWrppr : INestedClnblNmrblWrppr<TClnbl, TImmtbl, TMtbl>
         where TImmtbl : TClnbl
@@ -18,53 +23,18 @@ namespace Turmerik.Core.Data.Cloneable.Nested.Clnbl.Nmrbl.Wrappers.Mappers
     }
 
     public interface INestedClnblNmrblWrpprMapper<TOpts, TClnbl, TImmtbl, TMtbl> : INestedClnblNmrblWrpprMapper<TOpts, INestedClnblNmrblWrppr<TClnbl, TImmtbl, TMtbl>, TClnbl, TImmtbl, TMtbl>
-        where TOpts : INestedClnblNmrblMapOpts<TClnbl, TImmtbl, TMtbl>
+        where TOpts : INestedObjMapOpts<INestedClnblNmrblWrppr<TClnbl, TImmtbl, TMtbl>>
         where TClnbl : ICloneableObject
         where TImmtbl : TClnbl
         where TMtbl : TClnbl
     {
     }
 
-    public interface INestedClnblNmrblWrpprMapper<TClnbl, TImmtbl, TMtbl> : INestedClnblNmrblWrpprMapper<INestedClnblNmrblMapOpts<TClnbl, TImmtbl, TMtbl>, TClnbl, TImmtbl, TMtbl>
+    public interface INestedClnblNmrblWrpprMapper<TClnbl, TImmtbl, TMtbl> : INestedClnblNmrblWrpprMapper<INestedObjMapOpts<INestedClnblNmrblWrppr<TClnbl, TImmtbl, TMtbl>>, TClnbl, TImmtbl, TMtbl>
         where TClnbl : ICloneableObject
         where TImmtbl : TClnbl
         where TMtbl : TClnbl
     {
-    }
-
-    public interface INestedClnblNmrblMapOpts<TWrppr, TClnbl, TImmtbl, TMtbl> : INestedObjMapOpts<TWrppr>
-        where TClnbl : ICloneableObject
-        where TWrppr : INestedClnblNmrblWrppr<TClnbl, TImmtbl, TMtbl>
-        where TImmtbl : TClnbl
-        where TMtbl : TClnbl
-    {
-    }
-
-    public interface INestedClnblNmrblMapOpts<TClnbl, TImmtbl, TMtbl> : INestedClnblNmrblMapOpts<INestedClnblNmrblWrppr<TClnbl, TImmtbl, TMtbl>, TClnbl, TImmtbl, TMtbl>
-        where TClnbl : ICloneableObject
-        where TImmtbl : TClnbl
-        where TMtbl : TClnbl
-    {
-    }
-
-    public class NestedClnblNmrblMapOptsImmtbl<TClnbl, TImmtbl, TMtbl> : NestedObjMapOptsImmtbl<INestedClnblNmrblWrppr<TClnbl, TImmtbl, TMtbl>>, INestedClnblNmrblMapOpts<TClnbl, TImmtbl, TMtbl>
-        where TClnbl : ICloneableObject
-        where TImmtbl : TClnbl
-        where TMtbl : TClnbl
-    {
-        public NestedClnblNmrblMapOptsImmtbl(INestedClnblNmrblMapOpts<TClnbl, TImmtbl, TMtbl> src) : base(src)
-        {
-        }
-    }
-
-    public class NestedClnblNmrblMapOptsMtbl<TClnbl, TImmtbl, TMtbl> : NestedObjMapOptsMtbl<INestedClnblNmrblWrppr<TClnbl, TImmtbl, TMtbl>>, INestedClnblNmrblMapOpts<TClnbl, TImmtbl, TMtbl>
-        where TClnbl : ICloneableObject
-        where TImmtbl : TClnbl
-        where TMtbl : TClnbl
-    {
-        public NestedClnblNmrblMapOptsMtbl(INestedClnblNmrblMapOpts<TClnbl, TImmtbl, TMtbl> src) : base(src)
-        {
-        }
     }
 
     public abstract class NestedClnblNmrblWrpprMapperBase<TClnbl, TImmtbl, TMtbl> : INestedClnblNmrblWrpprMapper<TClnbl, TImmtbl, TMtbl>
@@ -72,9 +42,21 @@ namespace Turmerik.Core.Data.Cloneable.Nested.Clnbl.Nmrbl.Wrappers.Mappers
         where TImmtbl : TClnbl
         where TMtbl : TClnbl
     {
-        public INestedClnblNmrblWrppr<TClnbl, TImmtbl, TMtbl> GetTrgPropValue(INestedClnblNmrblMapOpts<TClnbl, TImmtbl, TMtbl> opts)
+        protected readonly IClonnerComponent<TClnbl, TImmtbl, TMtbl> Clonner;
+
+        public NestedClnblNmrblWrpprMapperBase(IClonnerComponent<TClnbl, TImmtbl, TMtbl> clonner)
         {
-            throw new NotImplementedException();
+            this.Clonner = clonner ?? throw new ArgumentNullException(nameof(clonner));
+        }
+
+        public abstract INestedClnblNmrblWrppr<TClnbl, TImmtbl, TMtbl> GetTrgPropValue(INestedObjMapOpts<INestedClnblNmrblWrppr<TClnbl, TImmtbl, TMtbl>> opts);
+
+        public INestedObjWrpprCore GetTrgPropValue(INestedObjMapOptsCore opts)
+        {
+            var options = (INestedObjMapOpts<INestedClnblNmrblWrppr<TClnbl, TImmtbl, TMtbl>>)opts;
+            var wrppr = GetTrgPropValue(options);
+
+            return wrppr;
         }
     }
 }
