@@ -12,6 +12,7 @@ namespace Turmerik.Core.Infrastucture
 {
     public interface ITrmrkCoreServiceCollection : ICloneableObject
     {
+        ILambdaExprHelperFactory LambdaExprHelperFactory { get; }
         ITypesStaticDataCache TypesStaticDataCache { get; }
         IEnumValuesStaticDataCache EnumValuesStaticDataCache { get; }
         ISynchronizerFactory SynchronizerFactory { get; }
@@ -21,11 +22,13 @@ namespace Turmerik.Core.Infrastucture
     {
         public TrmrkCoreServiceCollectionImmtbl(ITrmrkCoreServiceCollection src)
         {
+            LambdaExprHelperFactory = src.LambdaExprHelperFactory;
             TypesStaticDataCache = src.TypesStaticDataCache;
             EnumValuesStaticDataCache = src.EnumValuesStaticDataCache;
             SynchronizerFactory = src.SynchronizerFactory;
         }
 
+        public ILambdaExprHelperFactory LambdaExprHelperFactory { get; }
         public ITypesStaticDataCache TypesStaticDataCache { get; }
         public IEnumValuesStaticDataCache EnumValuesStaticDataCache { get; }
         public ISynchronizerFactory SynchronizerFactory { get; }
@@ -39,11 +42,13 @@ namespace Turmerik.Core.Infrastucture
 
         public TrmrkCoreServiceCollectionMtbl(ITrmrkCoreServiceCollection src)
         {
+            LambdaExprHelperFactory = src.LambdaExprHelperFactory;
             TypesStaticDataCache = src.TypesStaticDataCache;
             EnumValuesStaticDataCache = src.EnumValuesStaticDataCache;
             SynchronizerFactory = src.SynchronizerFactory;
         }
 
+        public ILambdaExprHelperFactory LambdaExprHelperFactory { get; set; }
         public ITypesStaticDataCache TypesStaticDataCache { get; set; }
         public IEnumValuesStaticDataCache EnumValuesStaticDataCache { get; set; }
         public ISynchronizerFactory SynchronizerFactory { get; set; }
@@ -55,6 +60,7 @@ namespace Turmerik.Core.Infrastucture
         {
             var mtbl = new TrmrkCoreServiceCollectionMtbl
             {
+                LambdaExprHelperFactory = new LambdaExprHelperFactory(),
                 TypesStaticDataCache = new TypesStaticDataCache(),
                 EnumValuesStaticDataCache = new EnumValuesStaticDataCache(),
                 SynchronizerFactory = new SynchronizerFactory()
@@ -62,6 +68,7 @@ namespace Turmerik.Core.Infrastucture
 
             var immtbl = new TrmrkCoreServiceCollectionImmtbl(mtbl);
 
+            services.AddSingleton(immtbl.LambdaExprHelperFactory);
             services.AddSingleton(immtbl.TypesStaticDataCache);
             services.AddSingleton(immtbl.EnumValuesStaticDataCache);
             services.AddSingleton(immtbl.SynchronizerFactory);

@@ -5,13 +5,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using Turmerik.Core.Data.Cloneable.Nested.Wrappers;
-using Turmerik.Core.Data.Cloneable.Nested.Wrappers.Mappers;
+using Turmerik.Core.Cloneable.Nested.Clnbl.Mappers;
+using Turmerik.Core.Cloneable.Nested.Mappers;
 using Turmerik.Core.Helpers;
 using Turmerik.Core.Infrastucture;
 using Turmerik.Core.Reflection.Wrappers;
 
-namespace Turmerik.Core.Data.Cloneable
+namespace Turmerik.Core.Cloneable
 {
     public interface ICloneableMapper
     {
@@ -21,14 +21,14 @@ namespace Turmerik.Core.Data.Cloneable
     public class CloneableMapper : ICloneableMapper
     {
         private readonly ITypesStaticDataCache typesCache;
-        private readonly INestedObjWrpprMapperMainFactory mainFactory;
+        // private readonly INestedObjWrpprMapperMainFactory mainFactory;
 
         public CloneableMapper(
-            ITypesStaticDataCache typesCache,
-            INestedObjWrpprMapperMainFactory mainFactory)
+            ITypesStaticDataCache typesCache/*,
+            INestedObjWrpprMapperMainFactory mainFactory*/)
         {
             this.typesCache = typesCache ?? throw new ArgumentNullException(nameof(typesCache));
-            this.mainFactory = mainFactory ?? throw new ArgumentNullException(nameof(mainFactory));
+            // this.mainFactory = mainFactory ?? throw new ArgumentNullException(nameof(mainFactory));
         }
 
         public void MapTarget(IObjMapOpts opts)
@@ -62,8 +62,8 @@ namespace Turmerik.Core.Data.Cloneable
 
                     object srcPropValue = srcProp.Data.GetValue(opts.SrcObj);
                     object trgPropValue;
-                    
-                    if (typeof(INestedObjWrpprCore).IsAssignableFrom(trgPropType))
+
+                    /* if (typeof(INestedObjWrpprCore).IsAssignableFrom(trgPropType))
                     {
                         trgPropValue = GetNestedClonableWrapperTrgPropValue(
                             srcPropValue,
@@ -75,12 +75,12 @@ namespace Turmerik.Core.Data.Cloneable
                         trgPropValue = srcPropValue;
                     }
 
-                    opts.PropValSetter(trgProp.Data, trgPropValue);
+                    opts.PropValSetter(trgProp.Data, trgPropValue); */
                 }
             }
         }
 
-        private INestedObjWrpprCore GetNestedClonableWrapperTrgPropValue(
+        /* private INestedObjWrpprCore GetNestedClonableWrapperTrgPropValue(
             object srcPropValue,
             Type srcPropType,
             Type trgPropType)
@@ -117,7 +117,7 @@ namespace Turmerik.Core.Data.Cloneable
             srcValPropInfo.SetValue(optsMtbl, srcPropValue);
             
             return optsMtbl as INestedObjMapOptsCore;
-        }
+        } */
     }
 
     public interface IObjMapOpts

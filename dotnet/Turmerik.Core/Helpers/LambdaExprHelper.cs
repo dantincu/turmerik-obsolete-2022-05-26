@@ -7,7 +7,22 @@ using System.Text;
 
 namespace Turmerik.Core.Helpers
 {
-    public class LambdaH<TSource>
+    public interface ILambdaExprHelperFactory
+    {
+        ILambdaExprHelper<TSource> GetHelper<TSource>();
+    }
+
+    public interface ILambdaExprHelper<TSource>
+    {
+        PropertyInfo Prop<TProperty>(
+            Expression<Func<TSource, TProperty>> propertyLambda,
+            Type type = null, bool checkReflectedType = false);
+        string Name<TProperty>(
+            Expression<Func<TSource, TProperty>> propertyLambda,
+            Type type = null, bool checkReflectedType = false);
+    }
+
+    public class LambdaExprHelper<TSource> : ILambdaExprHelper<TSource>
     {
         public PropertyInfo Prop<TProperty>(
             Expression<Func<TSource, TProperty>> propertyLambda,
@@ -63,6 +78,15 @@ namespace Turmerik.Core.Helpers
                 ThrowErr<object, TProperty>(
                     propertyLambda, messageFactory);
             }
+        }
+    }
+
+    public class LambdaExprHelperFactory : ILambdaExprHelperFactory
+    {
+        public ILambdaExprHelper<TSource> GetHelper<TSource>()
+        {
+            var helper = new LambdaExprHelper<TSource>();
+            return helper;
         }
     }
 }
