@@ -3,8 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Turmerik.Core.Data;
-using Turmerik.Core.Data.Cloneable;
-using Turmerik.Core.Data.Cloneable.Nested.Wrappers.Mappers;
+using Turmerik.Core.Cloneable;
+using Turmerik.Core.Cloneable.Nested;
 using Turmerik.Core.Helpers;
 using Turmerik.Core.Threading;
 
@@ -82,9 +82,9 @@ namespace Turmerik.Core.Infrastucture
             services.AddSingleton<IStringToDateTimeConverter, StringToDateTimeConverter>();
 
             services.AddSingleton<IClonnerFactory, ClonnerFactory>();
-            services.AddSingleton<INestedObjWrpprMapperMainFactory, NestedObjWrpprMapperFactory>();
             services.AddSingleton<ICloneableMapper, CloneableMapper>();
-
+            services.AddSingleton<INestedObjMapperMainFactory, NestedObjMapperMainFactory>();
+            
             return immtbl;
         }
     }

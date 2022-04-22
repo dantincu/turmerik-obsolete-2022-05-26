@@ -17,7 +17,11 @@ namespace Turmerik.Core.Cloneable
 {
     public interface INestedObjMapperMainFactory
     {
-        INestedObjMapper GetMapper(INestedObj obj, Type propType, bool isMtbl);
+        INestedObjMapper GetMapper(
+            ICloneableMapper mapper,
+            INestedObj obj,
+            Type propType,
+            bool isMtbl);
     }
 
     public class NestedObjMapperFactoryTypesTuple
@@ -41,21 +45,19 @@ namespace Turmerik.Core.Cloneable
     {
         private readonly ITypesStaticDataCache typesCache;
         private readonly IClonnerFactory clonnerFactory;
-        private readonly ICloneableMapper mapper;
         private readonly ReadOnlyDictionary<Type, NestedObjMapperFactoryTypesTuple> mapperFactoryGenericTypesDictnr;
 
         public NestedObjMapperMainFactory(
             ITypesStaticDataCache typesCache,
-            IClonnerFactory clonnerFactory,
-            ICloneableMapper mapper)
+            IClonnerFactory clonnerFactory)
         {
             this.typesCache = typesCache ?? throw new ArgumentNullException(nameof(typesCache));
             this.clonnerFactory = clonnerFactory ?? throw new ArgumentNullException(nameof(clonnerFactory));
-            this.mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             mapperFactoryGenericTypesDictnr = GetMapperFactoryGenericTypesDictnr(typesCache);
         }
 
         public INestedObjMapper GetMapper(
+            ICloneableMapper mapper,
             INestedObj obj,
             Type propType,
             bool isMtbl)
