@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Turmerik.Core.Collections
+namespace Turmerik.Core.Collections.Builders
 {
     public static class ListBuilder
     {

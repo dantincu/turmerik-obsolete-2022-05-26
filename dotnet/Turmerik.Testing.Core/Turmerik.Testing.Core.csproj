@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FsUtils.Core\FsUtils.Core.csproj" />
+    <ProjectReference Include="..\Turmerik.Core\Turmerik.Core.csproj" />
   </ItemGroup>
 
 </Project>

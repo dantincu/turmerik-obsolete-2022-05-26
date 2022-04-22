@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
-using Turmerik.Core.Data;
+using Turmerik.Core.Collections.Cache;
 using Turmerik.Core.Reflection.Wrappers;
 
 namespace Turmerik.Core.Helpers

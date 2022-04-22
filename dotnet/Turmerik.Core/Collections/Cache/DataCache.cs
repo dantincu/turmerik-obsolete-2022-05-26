@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Turmerik.Core.Data
+namespace Turmerik.Core.Collections.Cache
 {
     public interface IDataCache<TKey, TValue>
     {

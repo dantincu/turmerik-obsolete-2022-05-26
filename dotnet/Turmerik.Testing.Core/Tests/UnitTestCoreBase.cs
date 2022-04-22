@@ -1,21 +1,15 @@
-﻿using FsUtils.Core.Logging;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using Xunit;
 
-namespace FsUtils.Testing.Core.Tests
+namespace Turmerik.Testing.Core.Tests
 {
     public class UnitTestCoreBase
     {
-        protected readonly ILoggerFactory LoggerFactory;
-        protected readonly IAppLogger Logger;
-
         public UnitTestCoreBase()
         {
-            LoggerFactory = ServiceProviderContainer.Instance.Value.Services.GetRequiredService<ILoggerFactory>();
-            Logger = LoggerFactory.GetLogger(this.GetType());
         }
 
         protected T AssertEqual<T>(Func<T> valueFactory, T expectedValue, IEqualityComparer<T> comparer = null)
@@ -34,6 +28,20 @@ namespace FsUtils.Testing.Core.Tests
 
             Assert.True(isValid);
             return actualValue;
+        }
+
+        protected void AssertEqualCore<T>(T expected, T actual)
+           where T : class
+        {
+            if (expected != null)
+            {
+                Assert.NotNull(actual);
+                Assert.Equal(expected, actual);
+            }
+            else
+            {
+                Assert.Null(actual);
+            }
         }
     }
 }

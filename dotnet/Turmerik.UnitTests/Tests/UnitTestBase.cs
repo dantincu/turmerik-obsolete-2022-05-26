@@ -1,15 +1,15 @@
-﻿using FsUtils.Testing.Core.Tests;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Turmerik.Core.Infrastucture;
+using Turmerik.Testing.Core.Tests;
 
-namespace FsUtils.UnitTests.Tests
+namespace Turmerik.UnitTests.Tests
 {
-    internal class UnitTestBase : UnitTestCoreBase
+    public class UnitTestBase : UnitTestCoreBase
     {
         static UnitTestBase()
         {

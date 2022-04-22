@@ -5,7 +5,7 @@ using System.Text;
 using Turmerik.Core.Infrastucture;
 using Turmerik.Core.Threading;
 
-namespace FsUtils.Testing.Core.Tests
+namespace Turmerik.Testing.Core.Tests
 {
     public class ServiceProviderContainer : SimpleServiceProviderContainer
     {

@@ -1,10 +1,10 @@
-using FsUtils.Testing.Core.Tests;
 using Turmerik.Core.Data;
+using Turmerik.Testing.Core.Tests;
 using Xunit;
 
-namespace FsUtils.UnitTests.Tests
+namespace Turmerik.UnitTests.Tests
 {
-    public class StringToDateTimeConverterUnitTest : UnitTestCoreBase
+    public class StringToDateTimeConverterUnitTest : UnitTestBase
     {
         private readonly StringToDateTimeConverter converter;
 

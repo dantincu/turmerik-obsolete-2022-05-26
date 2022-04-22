@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
-using Turmerik.Core.Collections;
+using Turmerik.Core.Collections.TypeMapped;
 
 namespace Turmerik.Core.Reflection.Wrappers
 {
@@ -17,13 +17,19 @@ namespace Turmerik.Core.Reflection.Wrappers
             Name = data.Name;
             DeclaringType = new Lazy<TypeWrapper>(() => new TypeWrapper(data.DeclaringType));
 
-            Attrs = new Lazy<TypeMappedCollection<Attribute>>(
-                () => new TypeMappedCollection<Attribute>(
-                    data.GetCustomAttributes()));
+            AllAttrs = new Lazy<HcyTypeMappedCollection<object>>(
+                () => new HcyTypeMappedCollection<object>(
+                    data.GetCustomAttributes(true)));
+
+            Attrs = new Lazy<HcyTypeMappedCollection<object>>(
+                () => new HcyTypeMappedCollection<object>(
+                    data.GetCustomAttributes(false)));
         }
 
         public readonly string Name;
         public readonly Lazy<TypeWrapper> DeclaringType;
-        public readonly Lazy<TypeMappedCollection<Attribute>> Attrs;
+
+        public readonly Lazy<HcyTypeMappedCollection<object>> AllAttrs;
+        public readonly Lazy<HcyTypeMappedCollection<object>> Attrs;
     }
 }

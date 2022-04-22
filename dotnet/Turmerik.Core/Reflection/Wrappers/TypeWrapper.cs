@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using Turmerik.Core.Collections;
+using Turmerik.Core.Collections.TypeMapped;
 using Turmerik.Core.Helpers;
 
 namespace Turmerik.Core.Reflection.Wrappers
@@ -19,13 +21,9 @@ namespace Turmerik.Core.Reflection.Wrappers
             GenericTypeParams = new Lazy<IReadOnlyCollection<Type>>(() => IsGeneric ? data.GetGenericParameterConstraints().RdnlC() : null);
             GenericTypeArgs = new Lazy<IReadOnlyCollection<Type>>(() => IsGeneric ? data.GetGenericArguments().RdnlC() : null);
 
-            AllTypeAttrs = new Lazy<TypeMappedCollection<object>>(
-                () => new TypeMappedCollection<object>(
-                    data.GetCustomAttributes(true)));
-
-            TypeAttrs = new Lazy<TypeMappedCollection<object>>(
-                () => new TypeMappedCollection<object>(
-                    data.GetCustomAttributes(false)));
+            Interfaces = new Lazy<IReadOnlyCollection<Type>>(() => data.GetInterfaces());
+            InterfaceMappings = new Lazy<InterfaceMappingsCache>(
+                () => new InterfaceMappingsCache(Data));
 
             AllProps = new Lazy<IReadOnlyCollection<PropertyWrapper>>(
                 () => data.GetProperties().RdnlC(pi => new PropertyWrapper(pi)));
@@ -66,8 +64,8 @@ namespace Turmerik.Core.Reflection.Wrappers
         public readonly Lazy<IReadOnlyCollection<Type>> GenericTypeParams;
         public readonly Lazy<IReadOnlyCollection<Type>> GenericTypeArgs;
 
-        public readonly Lazy<TypeMappedCollection<object>> AllTypeAttrs;
-        public readonly Lazy<TypeMappedCollection<object>> TypeAttrs;
+        public readonly Lazy<IReadOnlyCollection<Type>> Interfaces;
+        public readonly Lazy<InterfaceMappingsCache> InterfaceMappings;
 
         public readonly Lazy<IReadOnlyCollection<PropertyWrapper>> AllProps;
         public readonly Lazy<IReadOnlyCollection<PropertyWrapper>> InstGetProps;

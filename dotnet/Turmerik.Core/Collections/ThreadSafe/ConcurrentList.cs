@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using Turmerik.Core.Threading;
 
-namespace Turmerik.Core.Collections
+namespace Turmerik.Core.Collections.ThreadSafe
 {
     public class ConcurrentList<T> : ICollection<T>, IEnumerable<T>, IEnumerable, IList<T>, IReadOnlyCollection<T>, IReadOnlyList<T>, ICollection, IList
     {

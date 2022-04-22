@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FsUtils.Testing.Core\FsUtils.Testing.Core.csproj" />
+    <ProjectReference Include="..\Turmerik.Testing.Core\Turmerik.Testing.Core.csproj" />
   </ItemGroup>
 
 </Project>
