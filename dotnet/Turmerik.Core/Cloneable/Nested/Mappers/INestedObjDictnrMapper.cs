@@ -21,12 +21,10 @@ namespace Turmerik.Core.Cloneable.Nested.Mappers
     public class NestedImmtblObjDictnrMapper<TKey, TObj> : NestedImmtblObjMapperBase<INestedObjDictnr<TKey, TObj>, ReadOnlyDictionary<TKey, TObj>, Dictionary<TKey, TObj>>, INestedImmtblObjDictnrMapper<TKey, TObj>
     {
         protected override ReadOnlyDictionary<TKey, TObj> GetImmtbl(Dictionary<TKey, TObj> mtbl) => mtbl.RdnlD();
-        protected override INestedObjDictnr<TKey, TObj> GetNested(ReadOnlyDictionary<TKey, TObj> immtbl) => new NestedObjDictnr<TKey, TObj>(immtbl);
     }
 
     public class NestedMtblObjDictnrMapper<TKey, TObj> : NestedMtblObjMapperBase<INestedObjDictnr<TKey, TObj>, ReadOnlyDictionary<TKey, TObj>, Dictionary<TKey, TObj>>, INestedMtblObjDictnrMapper<TKey, TObj>
     {
         protected override Dictionary<TKey, TObj> GetMtbl(ReadOnlyDictionary<TKey, TObj> immtbl) => immtbl.Dictnr();
-        protected override INestedObjDictnr<TKey, TObj> GetNested(Dictionary<TKey, TObj> mtbl) => new NestedObjDictnr<TKey, TObj>(null, mtbl);
     }
 }

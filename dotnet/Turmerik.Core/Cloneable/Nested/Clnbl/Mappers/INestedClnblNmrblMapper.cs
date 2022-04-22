@@ -46,9 +46,6 @@ namespace Turmerik.Core.Cloneable.Nested.Clnbl.Mappers
         protected override ReadOnlyCollection<TImmtbl> GetImmtbl(
             List<TMtbl> mtbl) => mtbl.RdnlC(
             obj => clonner.ToImmtbl(obj));
-
-        protected override INestedClnblNmrbl<TClnbl, TImmtbl, TMtbl> GetNested(
-            ReadOnlyCollection<TImmtbl> immtbl) => new NestedClnblNmrbl<TClnbl, TImmtbl, TMtbl>(immtbl);
     }
 
     public class NestedMtblClnblNmrblMapper<TClnbl, TImmtbl, TMtbl> : NestedMtblObjMapperBase<INestedClnblNmrbl<TClnbl, TImmtbl, TMtbl>, ReadOnlyCollection<TImmtbl>, List<TMtbl>>, INestedMtblClnblNmrblMapper<TClnbl, TImmtbl, TMtbl>
@@ -68,8 +65,5 @@ namespace Turmerik.Core.Cloneable.Nested.Clnbl.Mappers
         protected override List<TMtbl> GetMtbl(
             ReadOnlyCollection<TImmtbl> immtbl) => immtbl.Select(
                 obj => clonner.ToMtbl(obj)).ToList();
-
-        protected override INestedClnblNmrbl<TClnbl, TImmtbl, TMtbl> GetNested(
-            List<TMtbl> mtbl) => new NestedClnblNmrbl<TClnbl, TImmtbl, TMtbl>(null, mtbl);
     }
 }

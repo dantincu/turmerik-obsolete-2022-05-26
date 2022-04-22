@@ -92,8 +92,31 @@ namespace Turmerik.Core.Cloneable
                 trgPropType,
                 isMtbl);
 
-            var wrppr = mapper.GetObj(srcPropValue);
+            var trgType = GetTrgType(trgPropType, isMtbl);
+            var wrppr = mapper.GetObj(srcPropValue, trgType);
+
             return wrppr;
+        }
+
+        private Type GetTrgType(
+            Type trgPropType,
+            bool isMtbl)
+        {
+            var typeAttrs = typesCache.Get(trgPropType).Attrs.Value;
+            CloneableBaseAttribute attr;
+
+            if (isMtbl)
+            {
+                attr = (CloneableMtblAttribute)typeAttrs.Get(
+                    typeof(CloneableMtblAttribute)).Single().Data;
+            }
+            else
+            {
+                attr = (CloneableImmtblAttribute)typeAttrs.Get(
+                    typeof(CloneableImmtblAttribute)).Single().Data;
+            }
+
+            return attr.Type;
         }
     }
 

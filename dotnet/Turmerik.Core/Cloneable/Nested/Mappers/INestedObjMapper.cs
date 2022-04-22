@@ -7,26 +7,26 @@ namespace Turmerik.Core.Cloneable.Nested.Mappers
 {
     public interface INestedObjMapper
     {
-        INestedObj GetObj(INestedObj nested);
+        INestedObj GetObj(INestedObj nested, Type trgType);
     }
 
     public interface INestedObjMapper<TNested> : INestedObjMapper
         where TNested : INestedObj
     {
-        TNested GetObjInstn(TNested nested);
+        TNested GetObjInstn(TNested nested, Type trgType);
     }
 
     public abstract class NestedObjMapperBase<TNested, TImmtbl, TMtbl> : INestedObjMapper<TNested>
         where TNested : INestedObj<TImmtbl, TMtbl>
     {
-        public INestedObj GetObj(INestedObj nested)
+        public INestedObj GetObj(INestedObj nested, Type trgType)
         {
             TNested nestedObj;
 
             if (nested != null)
             {
                 nestedObj = (TNested)nested;
-                nestedObj = MapObjCore(nestedObj);
+                nestedObj = GetObjCore(nestedObj, trgType);
             }
             else
             {
@@ -36,13 +36,13 @@ namespace Turmerik.Core.Cloneable.Nested.Mappers
             return nestedObj;
         }
 
-        public TNested GetObjInstn(TNested nested)
+        public TNested GetObjInstn(TNested nested, Type trgType)
         {
             TNested retNested;
 
             if (nested != null)
             {
-                retNested = MapObjCore(nested);
+                retNested = GetObjCore(nested, trgType);
             }
             else
             {
@@ -52,13 +52,15 @@ namespace Turmerik.Core.Cloneable.Nested.Mappers
             return retNested;
         }
 
-        protected abstract TNested MapObjCore(TNested nested);
+        protected abstract TNested GetObjCore(TNested nested, Type trgType);
     }
 
     public abstract class NestedImmtblObjMapperBase<TNested, TImmtbl, TMtbl> : NestedObjMapperBase<TNested, TImmtbl, TMtbl>, INestedObjMapper<TNested>
         where TNested : INestedObj<TImmtbl, TMtbl>
     {
-        protected override TNested MapObjCore(TNested nested)
+        protected abstract TImmtbl GetImmtbl(TMtbl mtbl);
+
+        protected override TNested GetObjCore(TNested nested, Type trgType)
         {
             var immtbl = nested.Immtbl;
 
@@ -67,18 +69,23 @@ namespace Turmerik.Core.Cloneable.Nested.Mappers
                 immtbl = GetImmtbl(nested.Mtbl);
             }
 
-            var retNested = GetNested(immtbl);
+            var retNested = GetNested(immtbl, trgType);
             return retNested;
         }
 
-        protected abstract TImmtbl GetImmtbl(TMtbl mtbl);
-        protected abstract TNested GetNested(TImmtbl immtbl);
+        protected TNested GetNested(TImmtbl immtbl, Type trgType)
+        {
+            var nested = (TNested)Activator.CreateInstance(trgType, immtbl);
+            return nested;
+        }
     }
 
     public abstract class NestedMtblObjMapperBase<TNested, TImmtbl, TMtbl> : NestedObjMapperBase<TNested, TImmtbl, TMtbl>, INestedObjMapper<TNested>
         where TNested : INestedObj<TImmtbl, TMtbl>
     {
-        protected override TNested MapObjCore(TNested nested)
+        protected abstract TMtbl GetMtbl(TImmtbl immtbl);
+
+        protected override TNested GetObjCore(TNested nested, Type trgType)
         {
             var mtbl = nested.Mtbl;
 
@@ -87,11 +94,14 @@ namespace Turmerik.Core.Cloneable.Nested.Mappers
                 mtbl = GetMtbl(nested.Immtbl);
             }
 
-            var retNested = GetNested(mtbl);
+            var retNested = GetNested(mtbl, trgType);
             return retNested;
         }
 
-        protected abstract TMtbl GetMtbl(TImmtbl immtbl);
-        protected abstract TNested GetNested(TMtbl mtbl);
+        protected TNested GetNested(TMtbl mtbl, Type trgType)
+        {
+            var nested = (TNested)Activator.CreateInstance(trgType, null, mtbl);
+            return nested;
+        }
     }
 }
