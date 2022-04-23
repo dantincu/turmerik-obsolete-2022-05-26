@@ -12,6 +12,7 @@ using Turmerik.Core.Cloneable.Nested.Mappers.Factories;
 using Turmerik.Core.Collections.Builders;
 using Turmerik.Core.Collections.Cache;
 using Turmerik.Core.Helpers;
+using Turmerik.Core.Reflection;
 using Turmerik.Core.Reflection.Wrappers;
 
 namespace Turmerik.Core.Cloneable
@@ -83,12 +84,10 @@ namespace Turmerik.Core.Cloneable
 
             Type mapperFactoryType = mapperFactoryGenericType.Data.MakeGenericType(genericTypeArgs);
 
-            var mapperFactoryObj = Activator.CreateInstance(
-                mapperFactoryType,
+            var mapperFactory = mapperFactoryType.Create<INestedObjMapper>(
                 clonnerFactory,
                 mapper);
 
-            var mapperFactory = (INestedObjMapper)mapperFactoryObj;
             return mapperFactory;
         }
 

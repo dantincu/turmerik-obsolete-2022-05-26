@@ -92,35 +92,51 @@ namespace Turmerik.Core.Cloneable
 
     public abstract class CloneableBaseAttribute : Attribute
     {
-        public CloneableBaseAttribute(Type type)
+        public CloneableBaseAttribute(
+            Type type,
+            Type clnblTypeFactoryType)
         {
-            Type = type ?? throw new ArgumentNullException(nameof(type));
+            Type = type;
+            ClnblTypeFactoryType = clnblTypeFactoryType;
         }
 
         public Type Type { get; }
+        public Type ClnblTypeFactoryType { get; }
     }
 
     public class CloneableAttribute : CloneableBaseAttribute
     {
-        public CloneableAttribute(Type type) : base(type)
+        public CloneableAttribute(
+            Type type,
+            Type clnblTypeFactoryType) : base(
+                type,
+                clnblTypeFactoryType)
         {
         }
     }
 
     public class CloneableImmtblAttribute : CloneableBaseAttribute
     {
-        public CloneableImmtblAttribute(Type type) : base(type)
+        public CloneableImmtblAttribute(Type type,
+            Type clnblTypeFactoryType) : base(
+                type,
+                clnblTypeFactoryType)
         {
         }
     }
 
     public class CloneableMtblAttribute : CloneableBaseAttribute
     {
-        public CloneableMtblAttribute(Type type, Type optionsType = null) : base(type)
+        public CloneableMtblAttribute(Type type,
+            Type clnblTypeFactoryType) : base(
+                type,
+                clnblTypeFactoryType)
         {
-            OptionsType = optionsType;
         }
+    }
 
-        public Type OptionsType { get; }
+    public abstract class CloneableTypeFactoryBase
+    {
+        public abstract Type GetType(Type trgPropType);
     }
 }

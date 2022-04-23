@@ -16,9 +16,7 @@ namespace Turmerik.Cloneable.UnitTests.Tests
             var list = GetTestObjList();
             var rdnlClctn = list.RdnlC();
 
-            PerformNestedObjNmrblTestAssertions(rdnlClctn, list);
-            PerformNestedObjNmrblTestAssertions(rdnlClctn, null);
-            PerformNestedObjNmrblTestAssertions(null, list);
+            PerformNestedObjTestAssertions<NestedObjNmrbl<TestObj>, ReadOnlyCollection<TestObj>, List<TestObj>>(rdnlClctn, list);
         }
 
         [Fact]
@@ -27,31 +25,34 @@ namespace Turmerik.Cloneable.UnitTests.Tests
             var dictnr = GetTestObjDictnr();
             var rdnlDictnr = dictnr.RdnlD();
 
-            PerformNestedObjDictnrTestAssertions(rdnlDictnr, dictnr);
-            PerformNestedObjDictnrTestAssertions(rdnlDictnr, null);
-            PerformNestedObjDictnrTestAssertions(null, dictnr);
+            PerformNestedObjTestAssertions<NestedObjDictnr<int, TestObj>, ReadOnlyDictionary<int, TestObj>, Dictionary<int, TestObj>>(rdnlDictnr, dictnr);
         }
 
-        private void PerformNestedObjNmrblTestAssertions(
-            ReadOnlyCollection<TestObj>? rdnlClctn,
-            List<TestObj>? list)
+        [Fact]
+        public void NestedClnblTest()
         {
-            var nested = new NestedObjNmrbl<TestObj>(
-                rdnlClctn, list);
+            var mtbl = GetTestClnblMtbl(1);
+            var immtbl = new MockClnblTestObjImmtbl(mtbl);
 
-            AssertEqualCore(rdnlClctn, nested.Immtbl);
-            AssertEqualCore(list, nested.Mtbl);
+            PerformNestedObjTestAssertions<NestedMockClnblTestObj, MockClnblTestObjImmtbl, MockClnblTestObjMtbl>(immtbl, mtbl);
         }
 
-        private void PerformNestedObjDictnrTestAssertions(
-            ReadOnlyDictionary<int, TestObj>? rdnlDictnr,
-            Dictionary<int, TestObj>? dictnr)
+        [Fact]
+        public void NestedClnblNmrblTest()
         {
-            var nested = new NestedObjDictnr<int, TestObj>(
-                rdnlDictnr, dictnr);
+            var list = GetTestClnblList(3);
+            var rdnlClctn = list.RdnlC(mtbl => new MockClnblTestObjImmtbl(mtbl));
 
-            AssertEqualCore(rdnlDictnr, nested.Immtbl);
-            AssertEqualCore(dictnr, nested.Mtbl);
+            PerformNestedObjTestAssertions<NestedMockClnblTestObjNmrbl, ReadOnlyCollection<MockClnblTestObjImmtbl>, List<MockClnblTestObjMtbl>>(rdnlClctn, list);
+        }
+
+        [Fact]
+        public void NestedClnblDictnrTest()
+        {
+            var dictnr = GetTestClnblDictnr(3);
+            var rdnlDictnr = dictnr.RdnlD(kvp => kvp.Key, kvp => new MockClnblTestObjImmtbl(kvp.Value));
+
+            PerformNestedObjTestAssertions<NestedMockClnblTestObjDictnr<int>, ReadOnlyDictionary<int, MockClnblTestObjImmtbl>, Dictionary<int, MockClnblTestObjMtbl>>(rdnlDictnr, dictnr);
         }
     }
 }

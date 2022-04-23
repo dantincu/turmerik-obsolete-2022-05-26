@@ -7,18 +7,6 @@ using Turmerik.Core.Cloneable;
 
 namespace Turmerik.Cloneable.UnitTests.Data
 {
-    public class TestObj
-    {
-        public TestObj(int key, int value)
-        {
-            Key = key;
-            Value = value;
-        }
-
-        public int Key { get; }
-        public int Value { get; }
-    }
-
     public interface IMockClnblTestObj : ICloneableObject
     {
         int Key { get; }
@@ -49,7 +37,7 @@ namespace Turmerik.Cloneable.UnitTests.Data
             Value = src.Value;
         }
 
-        public int Key { get; }
-        public int Value { get; }
+        public int Key { get; set; }
+        public int Value { get; set; }
     }
 }

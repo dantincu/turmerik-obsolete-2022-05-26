@@ -116,7 +116,25 @@ namespace Turmerik.Core.Cloneable
                     typeof(CloneableImmtblAttribute)).Single().Data;
             }
 
-            return attr.Type;
+            Type retType = attr.Type;
+
+            if (retType == null)
+            {
+                if (attr.ClnblTypeFactoryType != null)
+                {
+                    var factory = (CloneableTypeFactoryBase)Activator.CreateInstance(
+                        attr.ClnblTypeFactoryType);
+
+                    retType = factory.GetType();
+                }
+                else
+                {
+                    throw new InvalidOperationException(
+                        $"Either cloneable type or cloneable type factory type must be provided");
+                }
+            }
+
+            return retType;
         }
     }
 

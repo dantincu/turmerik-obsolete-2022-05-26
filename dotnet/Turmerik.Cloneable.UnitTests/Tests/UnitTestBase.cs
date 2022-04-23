@@ -5,7 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Turmerik.Cloneable.UnitTests.Data;
+using Turmerik.Core.Cloneable.Nested;
 using Turmerik.Core.Infrastucture;
+using Turmerik.Core.Reflection;
 using Turmerik.Testing.Core.Tests;
 
 namespace Turmerik.Cloneable.UnitTests.Tests
@@ -19,24 +21,51 @@ namespace Turmerik.Cloneable.UnitTests.Tests
             RegisterAllServices();
         }
 
-        protected List<TestObj> GetTestObjList(int count = LIST_COUNT)
-        {
-            var list = Enumerable.Range(
-                1, count).Select(GetTestObj).ToList();
+        protected List<MockClnblTestObjMtbl> GetTestClnblList(
+            int count = LIST_COUNT) => GetTestDataList(GetTestClnblMtbl, count);
 
-            return list;
-        }
+        protected Dictionary<int, MockClnblTestObjMtbl> GetTestClnblDictnr(
+            int count = LIST_COUNT) => GetTestDataDictrn(GetTestClnblMtbl, count);
 
-        protected Dictionary<int, TestObj> GetTestObjDictnr(int count = LIST_COUNT)
-        {
-            var dictnr = Enumerable.Range(
-                1, count).ToDictionary(
-                key => key, GetTestObj);
+        protected List<TestObj> GetTestObjList(
+            int count = LIST_COUNT) => GetTestDataList(GetTestObj, count);
 
-            return dictnr;
-        }
+        protected Dictionary<int, TestObj> GetTestObjDictnr(
+            int count = LIST_COUNT) => GetTestDataDictrn(GetTestObj, count);
+
+        protected List<T> GetTestDataList<T>(
+            Func<int, T> factory,
+            int count = LIST_COUNT) => Enumerable.Range(
+            1, count).Select(factory).ToList();
+
+        protected Dictionary<int, T> GetTestDataDictrn<T>(
+            Func<int, T> factory,
+            int count = LIST_COUNT) => Enumerable.Range(
+            1, count).ToDictionary(key => key, factory);
 
         protected TestObj GetTestObj(int key) => new TestObj(key, key * 1000);
+
+        protected MockClnblTestObjMtbl GetTestClnblMtbl(int key) => new MockClnblTestObjMtbl
+        {
+            Key = key,
+            Value = key * 1001
+        };
+
+        protected void PerformNestedObjTestAssertions<TNested, TImmtbl, TMtbl>(
+            TImmtbl immtbl, TMtbl mtbl)
+            where TNested : NestedObjBase<TImmtbl, TMtbl>
+            where TImmtbl : class
+            where TMtbl : class
+        {
+            var component = new NestedObjTestAssertionsComponent<TNested, TImmtbl, TMtbl>();
+
+            component.PerformTestAssertions(immtbl, mtbl, immtbl, mtbl);
+            component.PerformTestAssertions(immtbl, null, immtbl, null);
+            component.PerformTestAssertions(immtbl, null, immtbl);
+            component.PerformTestAssertions(null, null, null, null);
+            component.PerformTestAssertions(null, null, null);
+            component.PerformTestAssertions(null, null);
+        }
 
         private static void RegisterAllServices()
         {

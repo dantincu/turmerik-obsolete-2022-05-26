@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Turmerik.Core.Helpers;
+using Turmerik.Core.Reflection;
 
 namespace Turmerik.Core.Cloneable.Nested.Mappers
 {
@@ -73,11 +74,7 @@ namespace Turmerik.Core.Cloneable.Nested.Mappers
             return retNested;
         }
 
-        protected TNested GetNested(TImmtbl immtbl, Type trgType)
-        {
-            var nested = (TNested)Activator.CreateInstance(trgType, immtbl);
-            return nested;
-        }
+        protected TNested GetNested(TImmtbl immtbl, Type trgType) => trgType.Create<TNested>(immtbl);
     }
 
     public abstract class NestedMtblObjMapperBase<TNested, TImmtbl, TMtbl> : NestedObjMapperBase<TNested, TImmtbl, TMtbl>, INestedObjMapper<TNested>
@@ -98,10 +95,6 @@ namespace Turmerik.Core.Cloneable.Nested.Mappers
             return retNested;
         }
 
-        protected TNested GetNested(TMtbl mtbl, Type trgType)
-        {
-            var nested = (TNested)Activator.CreateInstance(trgType, null, mtbl);
-            return nested;
-        }
+        protected TNested GetNested(TMtbl mtbl, Type trgType) => trgType.Create<TNested>(null, mtbl);
     }
 }
