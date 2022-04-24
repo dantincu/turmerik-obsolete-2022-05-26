@@ -51,22 +51,6 @@ namespace Turmerik.Cloneable.UnitTests.Tests
             Value = key * 1001
         };
 
-        protected void PerformNestedObjTestAssertions<TNested, TImmtbl, TMtbl>(
-            TImmtbl immtbl, TMtbl mtbl)
-            where TNested : NestedObjBase<TImmtbl, TMtbl>
-            where TImmtbl : class
-            where TMtbl : class
-        {
-            var component = new NestedObjTestAssertionsComponent<TNested, TImmtbl, TMtbl>();
-
-            component.PerformTestAssertions(immtbl, mtbl, immtbl, mtbl);
-            component.PerformTestAssertions(immtbl, null, immtbl, null);
-            component.PerformTestAssertions(immtbl, null, immtbl);
-            component.PerformTestAssertions(null, null, null, null);
-            component.PerformTestAssertions(null, null, null);
-            component.PerformTestAssertions(null, null);
-        }
-
         private static void RegisterAllServices()
         {
             var services = new ServiceCollection();

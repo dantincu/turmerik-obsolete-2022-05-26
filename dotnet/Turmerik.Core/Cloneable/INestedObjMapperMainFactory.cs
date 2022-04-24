@@ -20,8 +20,7 @@ namespace Turmerik.Core.Cloneable
     public interface INestedObjMapperMainFactory
     {
         INestedObjMapper GetMapper(
-            ICloneableMapper mapper,
-            INestedObj obj,
+            ICloneableMapper mainMapper,
             Type propType,
             bool isMtbl);
     }
@@ -45,50 +44,86 @@ namespace Turmerik.Core.Cloneable
 
     public class NestedObjMapperMainFactory : INestedObjMapperMainFactory
     {
+        private readonly ITypesStaticDataCache typesCache;
         private readonly IClonnerFactory clonnerFactory;
         private readonly ReadOnlyDictionary<Type, NestedObjMapperFactoryTypesTuple> mapperFactoryGenericTypesDictnr;
-        private readonly StaticDataCache<Type, TypeWrapper> nestedObjTypesMappings;
+        private readonly StaticDataCache<Type, NestedObjMapperFactoryTypesTuple> nestedObjTypesMappings;
 
         public NestedObjMapperMainFactory(
             ITypesStaticDataCache typesCache,
             IClonnerFactory clonnerFactory)
         {
+            this.typesCache = typesCache ?? throw new ArgumentNullException(nameof(typesCache));
             this.clonnerFactory = clonnerFactory ?? throw new ArgumentNullException(nameof(clonnerFactory));
 
             mapperFactoryGenericTypesDictnr = GetMapperFactoryGenericTypesDictnr(typesCache);
-            nestedObjTypesMappings = GetNestedObjTypesMappings(mapperFactoryGenericTypesDictnr);
+            nestedObjTypesMappings = GetNestedObjTypesMappings(typesCache);
         }
 
         public INestedObjMapper GetMapper(
-            ICloneableMapper mapper,
-            INestedObj obj,
+            ICloneableMapper mainMapper,
             Type propType,
             bool isMtbl)
         {
-            var nestedType = nestedObjTypesMappings.Get(propType);
-            Type[] genericTypeArgs = nestedType.GenericTypeArgs.Value.ToArray();
-
-            var genericTypeDef = nestedType.GenericTypeDef.Value;
-            var mapperFactoryGenericTypeTuple = mapperFactoryGenericTypesDictnr[genericTypeDef];
-
-            TypeWrapper mapperFactoryGenericType;
+            var nestedTypeTuple = nestedObjTypesMappings.Get(propType);
+            TypeWrapper mapperFactoryType;
 
             if (isMtbl)
             {
-                mapperFactoryGenericType = mapperFactoryGenericTypeTuple.MtblMapperFactoryType;
+                mapperFactoryType = nestedTypeTuple.MtblMapperFactoryType;
             }
             else
             {
-                mapperFactoryGenericType = mapperFactoryGenericTypeTuple.ImmtblMapperFactoryType;
+                mapperFactoryType = nestedTypeTuple.ImmtblMapperFactoryType;
             }
 
-            Type mapperFactoryType = mapperFactoryGenericType.Data.MakeGenericType(genericTypeArgs);
-
-            var mapperFactory = mapperFactoryType.Create<INestedObjMapper>(
+            var mapperFactory = mapperFactoryType.Data.Create<INestedObjMapperFactory>(
                 clonnerFactory,
-                mapper);
+                mainMapper);
 
-            return mapperFactory;
+            var mapper = mapperFactory.GetMapper();
+            return mapper;
+        }
+
+        private TypeWrapper GetNestedObjGenericBaseType(
+            ITypesStaticDataCache typesCache,
+            TypeWrapper propTypeWrppr,
+            KeyValuePair<Type, NestedObjMapperFactoryTypesTuple> nestedTypeKvp)
+        {
+            var genericTypeDef = propTypeWrppr.GenericTypeDef.Value;
+            var nestedTypeGenericTypeDef = nestedTypeKvp.Value.NestedType.Data;
+
+            while (genericTypeDef == null || genericTypeDef != nestedTypeGenericTypeDef)
+            {
+                propTypeWrppr = typesCache.Get(propTypeWrppr.Data.BaseType);
+                genericTypeDef = propTypeWrppr.GenericTypeDef.Value;
+            }
+
+            return propTypeWrppr;
+        }
+
+        private NestedObjMapperFactoryTypesTuple GetNestedObjMapperFactoryTypesTuple(
+            ITypesStaticDataCache typesCache, Type propType)
+        {
+            var propTypeWrppr = typesCache.Get(propType);
+
+            var nestedTypeKvp = mapperFactoryGenericTypesDictnr.First(
+                kvp => kvp.Key.IsAssignableFrom(propType));
+
+            var nestedTypeGenericTypeDef = nestedTypeKvp.Value.NestedType.Data;
+
+            var nestedBaseTypeWrppr = GetNestedObjGenericBaseType(typesCache, propTypeWrppr, nestedTypeKvp);
+            var genericTypeArgs = nestedBaseTypeWrppr.GenericTypeArgs.Value.ToArray();
+
+            Type immtblMapperFactoryType = nestedTypeKvp.Value.ImmtblMapperFactoryType.Data.MakeGenericType(genericTypeArgs);
+            Type mtblMapperFactoryType = nestedTypeKvp.Value.MtblMapperFactoryType.Data.MakeGenericType(genericTypeArgs);
+
+            var retTuple = new NestedObjMapperFactoryTypesTuple(
+                typesCache.Get(nestedTypeKvp.Key),
+                typesCache.Get(immtblMapperFactoryType),
+                typesCache.Get(mtblMapperFactoryType));
+
+            return retTuple;
         }
 
         private ReadOnlyDictionary<Type, NestedObjMapperFactoryTypesTuple> GetMapperFactoryGenericTypesDictnr(
@@ -100,27 +135,27 @@ namespace Turmerik.Core.Cloneable
             (dictnr, factory, callback) =>
             {
                 callback(factory(typeof(INestedObjNmrbl),
-                    typeof(INestedObjNmrbl<object>),
+                    typeof(NestedObjNmrbl<object>),
                     typeof(NestedImmtblObjNmrblMapperFactory<object>),
                     typeof(NestedMtblObjNmrblMapperFactory<object>)));
 
                 callback(factory(typeof(INestedObjDictnr),
-                    typeof(INestedObjDictnr<object, object>),
+                    typeof(NestedObjDictnr<object, object>),
                     typeof(NestedImmtblObjDictnrMapperFactory<object, object>),
                     typeof(NestedMtblObjDictnrMapperFactory<object, object>)));
 
                 callback(factory(typeof(INestedClnbl),
-                    typeof(INestedClnbl<ICloneableObject, ICloneableObject, ICloneableObject>),
+                    typeof(NestedClnbl<ICloneableObject, ICloneableObject, ICloneableObject>),
                     typeof(NestedImmtblClnblMapperFactory<ICloneableObject, ICloneableObject, ICloneableObject>),
                     typeof(NestedMtblClnblMapperFactory<ICloneableObject, ICloneableObject, ICloneableObject>)));
 
                 callback(factory(typeof(INestedClnblNmrbl),
-                    typeof(INestedClnblNmrbl<ICloneableObject, ICloneableObject, ICloneableObject>),
+                    typeof(NestedClnblNmrbl<ICloneableObject, ICloneableObject, ICloneableObject>),
                     typeof(NestedImmtblClnblNmrblMapperFactory<ICloneableObject, ICloneableObject, ICloneableObject>),
                     typeof(NestedMtblClnblNmrblMapperFactory<ICloneableObject, ICloneableObject, ICloneableObject>)));
 
                 callback(factory(typeof(INestedClnblDictnr),
-                    typeof(INestedClnblDictnr<object, ICloneableObject, ICloneableObject, ICloneableObject>),
+                    typeof(NestedClnblDictnr<object, ICloneableObject, ICloneableObject, ICloneableObject>),
                     typeof(NestedImmtblClnblDictnrMapperFactory<object, ICloneableObject, ICloneableObject, ICloneableObject>),
                     typeof(NestedMtblClnblDictnrMapperFactory<object, ICloneableObject, ICloneableObject, ICloneableObject>)));
             }, (
@@ -137,12 +172,11 @@ namespace Turmerik.Core.Cloneable
             return mapperFactoryGenericTypesDictnr;
         }
 
-        private StaticDataCache<Type, TypeWrapper> GetNestedObjTypesMappings(
-            ReadOnlyDictionary<Type, NestedObjMapperFactoryTypesTuple> mapperFactoryGenericTypesDictnr)
+        private StaticDataCache<Type, NestedObjMapperFactoryTypesTuple> GetNestedObjTypesMappings(
+            ITypesStaticDataCache typesCache)
         {
-            var nestedObjTypesMappings = new StaticDataCache<Type, TypeWrapper>(
-                propType => mapperFactoryGenericTypesDictnr.First(
-                kvp => kvp.Key.IsAssignableFrom(propType)).Value.NestedType);
+            var nestedObjTypesMappings = new StaticDataCache<Type, NestedObjMapperFactoryTypesTuple>(
+                propType => GetNestedObjMapperFactoryTypesTuple(typesCache, propType));
 
             return nestedObjTypesMappings;
         }

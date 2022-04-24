@@ -34,22 +34,7 @@ namespace Turmerik.Core.Cloneable
 
         public void MapTarget(IObjMapOpts opts)
         {
-            IReadOnlyCollection<PropertyWrapper> trgProps;
-            IReadOnlyCollection<PropertyWrapper> srcProps;
-
-            var trgType = typesCache.Get(opts.TrgType ?? opts.TrgObj.GetType());
-            var srcType = typesCache.Get(opts.SrcType ?? opts.SrcObj.GetType());
-
-            if (opts.TrgIsMtbl)
-            {
-                trgProps = trgType.InstPubGetPubSetProps.Value;
-                srcProps = srcType.InstPubGetPubSetProps.Value;
-            }
-            else
-            {
-                trgProps = trgType.InstPubGetPubOrFamSetProps.Value;
-                srcProps = srcType.InstPubGetPubOrFamSetProps.Value;
-            }
+            (var trgProps, var srcProps) = GetPropWrpprs(opts);
 
             foreach (var trgProp in trgProps)
             {
@@ -58,27 +43,66 @@ namespace Turmerik.Core.Cloneable
 
                 if (srcProp != null)
                 {
-                    Type srcPropType = srcProp.PropType.Value.Data;
-                    Type trgPropType = trgProp.PropType.Value.Data;
-
-                    object srcPropValue = srcProp.Data.GetValue(opts.SrcObj);
-                    object trgPropValue;
-
-                    if (typeof(INestedObj).IsAssignableFrom(trgPropType))
-                    {
-                        trgPropValue = GetNestedClonableWrapperTrgPropValue(
-                            (INestedObj)srcPropValue,
-                            trgPropType,
-                            opts.TrgIsMtbl);
-                    }
-                    else
-                    {
-                        trgPropValue = srcPropValue;
-                    }
-
-                    opts.PropValSetter(trgProp.Data, trgPropValue);
+                    MapTargetCore(opts, trgProp, srcProp);
                 }
             }
+        }
+
+        private void MapTargetCore(
+            IObjMapOpts opts,
+            PropertyWrapper trgProp,
+            PropertyWrapper srcProp)
+        {
+            Type trgPropType = trgProp.PropType.Value.Data;
+            object srcPropValue = srcProp.Data.GetValue(opts.SrcObj);
+
+            object trgPropValue;
+
+            if (typeof(INestedObj).IsAssignableFrom(trgPropType))
+            {
+                trgPropValue = GetNestedClonableWrapperTrgPropValue(
+                    (INestedObj)srcPropValue,
+                    trgPropType,
+                    opts.TrgIsMtbl);
+            }
+            else
+            {
+                trgPropValue = srcPropValue;
+            }
+
+            opts.PropValSetter(trgProp.Data, trgPropValue);
+        }
+
+        private Tuple<IReadOnlyCollection<PropertyWrapper>, IReadOnlyCollection<PropertyWrapper>> GetPropWrpprs(IObjMapOpts opts)
+        {
+            var trgProps = GetPropWrpprs(
+                opts.TrgType, opts.TrgObj, opts.TrgIsMtbl);
+
+            var srcProps = GetPropWrpprs(
+                opts.TrgType, opts.TrgObj, opts.TrgIsMtbl);
+
+            return new Tuple<IReadOnlyCollection<PropertyWrapper>, IReadOnlyCollection<PropertyWrapper>>(
+                trgProps, srcProps);
+        }
+
+        private IReadOnlyCollection<PropertyWrapper> GetPropWrpprs(
+            Type type,
+            object obj,
+            bool trgIsMtbl)
+        {
+            var typeWrppr = typesCache.Get(type ?? obj.GetType());
+            IReadOnlyCollection<PropertyWrapper> props;
+
+            if (trgIsMtbl)
+            {
+                props = typeWrppr.InstPubGetPubSetProps.Value;
+            }
+            else
+            {
+                props = typeWrppr.InstPubGetPubOrFamSetProps.Value;
+            }
+
+            return props;
         }
 
         private INestedObj GetNestedClonableWrapperTrgPropValue(
@@ -88,17 +112,16 @@ namespace Turmerik.Core.Cloneable
         {
             var mapper = mainFactory.GetMapper(
                 this,
-                srcPropValue,
                 trgPropType,
                 isMtbl);
 
-            var trgType = GetTrgType(trgPropType, isMtbl);
-            var wrppr = mapper.GetObj(srcPropValue, trgType);
+            // var trgType = GetTrgType(trgPropType, isMtbl);
+            var wrppr = mapper.GetObj(srcPropValue, trgPropType);
 
             return wrppr;
         }
 
-        private Type GetTrgType(
+        /* private Type GetTrgType(
             Type trgPropType,
             bool isMtbl)
         {
@@ -135,7 +158,7 @@ namespace Turmerik.Core.Cloneable
             }
 
             return retType;
-        }
+        } */
     }
 
     public interface IObjMapOpts

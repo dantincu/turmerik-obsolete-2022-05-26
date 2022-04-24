@@ -9,12 +9,12 @@ using Turmerik.Testing.Core.Tests;
 
 namespace Turmerik.Cloneable.UnitTests.Tests
 {
-    internal class NestedObjTestAssertionsComponent<TNested, TImmtbl, TMtbl> : UnitTestCoreBase
+    internal class NestedObjTestComponent<TNested, TImmtbl, TMtbl> : UnitTestCoreBase
             where TNested : NestedObjBase<TImmtbl, TMtbl>
             where TImmtbl : class
             where TMtbl : class
     {
-        public void PerformTestAssertions(
+        public void PerformTest(
             TImmtbl immtbl,
             TMtbl mtbl,
             params object[] args)

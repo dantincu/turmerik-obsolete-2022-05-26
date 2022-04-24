@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Turmerik.Core.Cloneable.Nested.Clnbl
 {
-    public interface INestedClnblNmrbl : INestedClnbl
+    public interface INestedClnblNmrbl : INestedObj
     {
     }
 

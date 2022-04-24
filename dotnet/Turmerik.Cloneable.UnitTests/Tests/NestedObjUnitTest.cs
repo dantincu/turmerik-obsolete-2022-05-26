@@ -54,5 +54,21 @@ namespace Turmerik.Cloneable.UnitTests.Tests
 
             PerformNestedObjTestAssertions<NestedMockClnblTestObjDictnr<int>, ReadOnlyDictionary<int, MockClnblTestObjImmtbl>, Dictionary<int, MockClnblTestObjMtbl>>(rdnlDictnr, dictnr);
         }
+
+        private void PerformNestedObjTestAssertions<TNested, TImmtbl, TMtbl>(
+            TImmtbl immtbl, TMtbl mtbl)
+            where TNested : NestedObjBase<TImmtbl, TMtbl>
+            where TImmtbl : class
+            where TMtbl : class
+        {
+            var component = new NestedObjTestComponent<TNested, TImmtbl, TMtbl>();
+
+            component.PerformTest(immtbl, mtbl, immtbl, mtbl);
+            component.PerformTest(immtbl, null, immtbl, null);
+            component.PerformTest(immtbl, null, immtbl);
+            component.PerformTest(null, null, null, null);
+            component.PerformTest(null, null, null);
+            component.PerformTest(null, null);
+        }
     }
 }

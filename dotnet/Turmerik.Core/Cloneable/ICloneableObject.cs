@@ -90,7 +90,7 @@ namespace Turmerik.Core.Cloneable
         }
     }
 
-    public abstract class CloneableBaseAttribute : Attribute
+    /* public abstract class CloneableBaseAttribute : Attribute
     {
         public CloneableBaseAttribute(
             Type type,
@@ -138,5 +138,5 @@ namespace Turmerik.Core.Cloneable
     public abstract class CloneableTypeFactoryBase
     {
         public abstract Type GetType(Type trgPropType);
-    }
+    } */
 }
