@@ -31,7 +31,7 @@ namespace Turmerik.Cloneable.UnitTests.Tests
         [Fact]
         public void NestedClnblTest()
         {
-            var mtbl = GetTestClnblMtbl(1);
+            var mtbl = GetTestMockClnblMtbl(1);
             var immtbl = new MockClnblTestObjImmtbl(mtbl);
 
             PerformNestedObjTestAssertions<NestedMockClnblTestObj, MockClnblTestObjImmtbl, MockClnblTestObjMtbl>(immtbl, mtbl);
@@ -40,7 +40,7 @@ namespace Turmerik.Cloneable.UnitTests.Tests
         [Fact]
         public void NestedClnblNmrblTest()
         {
-            var list = GetTestClnblList(3);
+            var list = GetTestMockClnblList(3);
             var rdnlClctn = list.RdnlC(mtbl => new MockClnblTestObjImmtbl(mtbl));
 
             PerformNestedObjTestAssertions<NestedMockClnblTestObjNmrbl, ReadOnlyCollection<MockClnblTestObjImmtbl>, List<MockClnblTestObjMtbl>>(rdnlClctn, list);
@@ -49,7 +49,7 @@ namespace Turmerik.Cloneable.UnitTests.Tests
         [Fact]
         public void NestedClnblDictnrTest()
         {
-            var dictnr = GetTestClnblDictnr(3);
+            var dictnr = GetTestMockClnblDictnr(3);
             var rdnlDictnr = dictnr.RdnlD(kvp => kvp.Key, kvp => new MockClnblTestObjImmtbl(kvp.Value));
 
             PerformNestedObjTestAssertions<NestedMockClnblTestObjDictnr<int>, ReadOnlyDictionary<int, MockClnblTestObjImmtbl>, Dictionary<int, MockClnblTestObjMtbl>>(rdnlDictnr, dictnr);

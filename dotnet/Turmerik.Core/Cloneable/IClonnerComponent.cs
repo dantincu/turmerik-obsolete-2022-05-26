@@ -37,12 +37,13 @@ namespace Turmerik.Core.Cloneable
             {
                 srcType = srcType ?? srcObj.GetType();
 
-                trgObj = Activator.CreateInstance(
-                    trgType,
+                var args = new ClnblArgs(
                     Mapper,
-                    srcObj,
+                    (ICloneableObject)srcObj,
                     srcType,
                     trgType);
+
+                trgObj = Activator.CreateInstance(trgType, args);
             }
 
             return trgObj;

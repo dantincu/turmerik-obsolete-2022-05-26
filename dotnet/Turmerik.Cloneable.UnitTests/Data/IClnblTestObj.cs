@@ -15,12 +15,16 @@ namespace Turmerik.Cloneable.UnitTests.Data
 
     public class ClnblTestObjImmtbl : CloneableObjectImmtblBase, IClnblTestObj
     {
-        public ClnblTestObjImmtbl(ICloneableMapper mapper, IMockClnblTestObj src) : base(mapper, src)
+        public ClnblTestObjImmtbl(ClnblArgs args) : base(args)
         {
         }
 
-        public int Key { get; }
-        public int Value { get; }
+        public ClnblTestObjImmtbl(ICloneableMapper mapper, ICloneableObject src) : base(mapper, src)
+        {
+        }
+
+        public int Key { get; protected set; }
+        public int Value { get; protected set; }
     }
 
     public class ClnblTestObjMtbl : CloneableObjectMtblBase, IClnblTestObj
@@ -29,7 +33,11 @@ namespace Turmerik.Cloneable.UnitTests.Data
         {
         }
 
-        public ClnblTestObjMtbl(ICloneableMapper mapper, IMockClnblTestObj src) : base(mapper, src)
+        public ClnblTestObjMtbl(ClnblArgs args) : base(args)
+        {
+        }
+
+        public ClnblTestObjMtbl(ICloneableMapper mapper, ICloneableObject src) : base(mapper, src)
         {
         }
 

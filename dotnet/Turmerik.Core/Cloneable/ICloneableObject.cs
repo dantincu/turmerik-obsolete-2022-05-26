@@ -14,58 +14,41 @@ namespace Turmerik.Core.Cloneable
         {
         }
 
-        protected CloneableObjectBase(
-            ICloneableMapper mapper,
-            ICloneableObject src,
-            bool isMtbl,
-            Type srcType = null,
-            Type trgType = null)
+        protected CloneableObjectBase(ClnblArgs args, bool isMtbl)
         {
-            MapProps(
-                mapper,
-                src,
-                isMtbl,
-                srcType,
-                trgType);
+            MapProps(args, isMtbl);
         }
 
-        protected virtual void MapProps(
-            ICloneableMapper mapper,
-            ICloneableObject src,
-            bool isMtbl,
-            Type srcType = null,
-            Type trgType = null)
+        protected virtual void MapProps(ClnblArgs args, bool isMtbl)
         {
-            if (src != null)
+            if (args.src != null)
             {
                 var opts = new ObjMapOptsMtbl
                 {
-                    SrcType = srcType,
-                    TrgType = trgType,
-                    SrcObj = src,
+                    SrcType = args.srcType,
+                    TrgType = args.trgType,
+                    SrcObj = args.src,
                     TrgObj = this,
                     PropValSetter = (propInfo, propVal) => propInfo.SetValue(this, propVal),
                     TrgIsMtbl = isMtbl
                 };
 
                 var immtblOpts = new ObjMapOptsImmtbl(opts);
-                mapper.MapTarget(immtblOpts);
+                args.mapper.MapTarget(immtblOpts);
             }
         }
     }
 
     public abstract class CloneableObjectImmtblBase : CloneableObjectBase, ICloneableObject
     {
-        public CloneableObjectImmtblBase(
+        public CloneableObjectImmtblBase(ClnblArgs args) : base(args, false)
+        {
+        }
+
+        protected CloneableObjectImmtblBase(
             ICloneableMapper mapper,
-            ICloneableObject src,
-            Type srcType = null,
-            Type trgType = null) : base(
-                mapper,
-                src,
-                false,
-                srcType,
-                trgType)
+            ICloneableObject src) : this(
+                new ClnblArgs(mapper, src))
         {
         }
     }
@@ -76,19 +59,38 @@ namespace Turmerik.Core.Cloneable
         {
         }
 
-        public CloneableObjectMtblBase(
+        public CloneableObjectMtblBase(ClnblArgs args) : base(args, true)
+        {
+        }
+
+        protected CloneableObjectMtblBase(
             ICloneableMapper mapper,
-            ICloneableObject src,
-            Type srcType = null,
-            Type trgType = null) : base(
-                mapper,
-                src,
-                true,
-                srcType,
-                trgType)
+            ICloneableObject src) : this(
+                new ClnblArgs(mapper, src))
         {
         }
     }
+
+    public readonly struct ClnblArgs
+    {
+        public readonly ICloneableMapper mapper;
+        public readonly ICloneableObject src;
+        public readonly Type srcType;
+        public readonly Type trgType;
+
+        public ClnblArgs(
+            ICloneableMapper mapper,
+            ICloneableObject src,
+            Type srcType = null,
+            Type trgType = null)
+        {
+            this.mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            this.src = src ?? throw new ArgumentNullException(nameof(src));
+            this.srcType = srcType;
+            this.trgType = trgType;
+        }
+    }
+
 
     /* public abstract class CloneableBaseAttribute : Attribute
     {

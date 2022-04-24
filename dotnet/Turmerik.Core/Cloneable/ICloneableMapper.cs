@@ -79,7 +79,7 @@ namespace Turmerik.Core.Cloneable
                 opts.TrgType, opts.TrgObj, opts.TrgIsMtbl);
 
             var srcProps = GetPropWrpprs(
-                opts.TrgType, opts.TrgObj, opts.TrgIsMtbl);
+                opts.SrcType, opts.SrcObj, null);
 
             return new Tuple<IReadOnlyCollection<PropertyWrapper>, IReadOnlyCollection<PropertyWrapper>>(
                 trgProps, srcProps);
@@ -88,18 +88,25 @@ namespace Turmerik.Core.Cloneable
         private IReadOnlyCollection<PropertyWrapper> GetPropWrpprs(
             Type type,
             object obj,
-            bool trgIsMtbl)
+            bool? trgIsMtbl)
         {
             var typeWrppr = typesCache.Get(type ?? obj.GetType());
             IReadOnlyCollection<PropertyWrapper> props;
 
-            if (trgIsMtbl)
+            if (trgIsMtbl.HasValue)
             {
-                props = typeWrppr.InstPubGetPubSetProps.Value;
+                if (trgIsMtbl.Value)
+                {
+                    props = typeWrppr.InstPubGetPubSetProps.Value;
+                }
+                else
+                {
+                    props = typeWrppr.InstPubGetPubOrFamSetProps.Value;
+                }
             }
             else
             {
-                props = typeWrppr.InstPubGetPubOrFamSetProps.Value;
+                props = typeWrppr.InstPubGetProps.Value;
             }
 
             return props;
