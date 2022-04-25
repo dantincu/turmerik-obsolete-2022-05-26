@@ -1,28 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication;
+using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using Microsoft.Identity.Web;
-using Microsoft.Identity.Web.UI;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Turmerik.OneDriveExplorer.Blazor.Server.App.Data;
-using Microsoft.Graph;
+using Microsoft.Extensions.Logging;
+using Microsoft.Identity.Web;
 using Turmerik.OneDriveExplorer.Blazor.Server.App.Graph;
-using System.Net.Http.Headers;
-using System.Net;
-using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-using Blazored.LocalStorage;
-using Turmerik.OneDriveExplorer.Blazor.Server.App.AppSettings;
 
 namespace Turmerik.OneDriveExplorer.Blazor.Server.App
 {

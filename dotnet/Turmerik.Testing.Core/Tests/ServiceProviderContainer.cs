@@ -10,7 +10,7 @@ namespace Turmerik.Testing.Core.Tests
     public class ServiceProviderContainer : SimpleServiceProviderContainer
     {
         public static readonly Lazy<ServiceProviderContainer> Instance = new Lazy<ServiceProviderContainer>(
-            () => new ServiceProviderContainer(), System.Threading.LazyThreadSafetyMode.ExecutionAndPublication);
+            () => new ServiceProviderContainer(), LazyThreadSafetyMode.ExecutionAndPublication);
 
         protected ServiceProviderContainer()
         {
