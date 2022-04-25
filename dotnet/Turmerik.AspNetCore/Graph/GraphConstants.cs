@@ -1,9 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// Licensed under the MIT license.
-
-// <GraphConstantsSnippet>
-
-namespace Turmerik.OneDriveExplorer.Blazor.Server.App.Graph
+namespace Turmerik.AspNetCore.Graph
 {
     public static class GraphConstants
     {
@@ -16,4 +11,3 @@ namespace Turmerik.OneDriveExplorer.Blazor.Server.App.Graph
         };
     }
 }
-// </GraphConstantsSnippet>

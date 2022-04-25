@@ -1,4 +1,4 @@
-﻿namespace Turmerik.OneDriveExplorer.Blazor.Server.App.AppSettings
+﻿namespace Turmerik.AspNetCore.AppStartup
 {
     public class SessionKeys
     {

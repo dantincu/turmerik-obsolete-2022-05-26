@@ -3,7 +3,7 @@ using System;
 using System.IO;
 using System.Security.Claims;
 
-namespace Turmerik.OneDriveExplorer.Blazor.Server.App.Graph
+namespace Turmerik.AspNetCore.Graph
 {
     public static class GraphClaimTypes
     {
@@ -91,7 +91,7 @@ namespace Turmerik.OneDriveExplorer.Blazor.Server.App.Graph
                 }
             }
 
-            AddUserGraphPhoto(claimsPrincipal, photoBytes);
+            claimsPrincipal.AddUserGraphPhoto(photoBytes);
             return photoBytes;
         }
     }

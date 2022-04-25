@@ -1,4 +1,4 @@
-﻿namespace Turmerik.OneDriveExplorer.Blazor.Server.App.Data
+﻿namespace Turmerik.AspNetCore.Services
 {
     public class TrmrkMsGraphUserData
     {

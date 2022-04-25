@@ -8,10 +8,11 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Identity.Web;
 using System;
-using Turmerik.Blazor.Server.Core.Services;
-using Turmerik.OneDriveExplorer.Blazor.Server.App.Graph;
+using Turmerik.AspNetCore.Graph;
+using Turmerik.AspNetCore.Services;
+using Turmerik.AspNetCore.UserSession;
 
-namespace Turmerik.OneDriveExplorer.Blazor.Server.App
+namespace Turmerik.OneDriveExplorer.Blazor.Server.App.AppStartup
 {
     public class Startup
     {
@@ -52,12 +53,14 @@ namespace Turmerik.OneDriveExplorer.Blazor.Server.App
 
                 // Add ability to call web API (Graph)
                 // and get access tokens
-                .EnableTokenAcquisitionToCallDownstreamApi(options => {
+                .EnableTokenAcquisitionToCallDownstreamApi(options =>
+                {
                     Configuration.Bind("AzureAd", options);
                 }, GraphConstants.Scopes)
 
                 // Add a GraphServiceClient via dependency injection
-                .AddMicrosoftGraph(options => {
+                .AddMicrosoftGraph(options =>
+                {
                     options.Scopes = string.Join(' ', GraphConstants.Scopes);
                 })
 

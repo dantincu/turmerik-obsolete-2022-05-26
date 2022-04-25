@@ -1,65 +1,32 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Graph;
 using Microsoft.Identity.Web;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Threading.Tasks;
-using Turmerik.Blazor.Server.Core;
-using Turmerik.Blazor.Server.Core.Services;
-using Turmerik.Core.Helpers;
-using Turmerik.Core.Infrastucture;
-using Turmerik.OneDriveExplorer.Blazor.Server.App.AppSettings;
-using Turmerik.OneDriveExplorer.Blazor.Server.App.Data;
-using Turmerik.OneDriveExplorer.Blazor.Server.App.Graph;
+using Turmerik.AspNetCore.Graph;
+using Turmerik.AspNetCore.Infrastructure;
+using Turmerik.AspNetCore.Services;
+using Turmerik.AspNetCore.UserSession;
 
-namespace Turmerik.OneDriveExplorer.Blazor.Server.App
+namespace Turmerik.AspNetCore.AppStartup
 {
-    public class StartupHelper : StartupHelperBase
+    public abstract class MsIdentityStartupHelperBase : OpenIdConnectStartupHelperBase
     {
-        private readonly Func<ILogger<MainApplicationLog>> loggerFactory;
-        private readonly Func<ITrmrkUserSessionsManager> userSessionManagerFactory;
-
-        private ILogger<MainApplicationLog> logger;
-        private ITrmrkUserSessionsManager userSessionManager;
-
-        public StartupHelper(
+        protected MsIdentityStartupHelperBase(
             Func<ILogger<MainApplicationLog>> loggerFactory,
-            Func<ITrmrkUserSessionsManager> userSessionManagerFactory)
+            Func<ITrmrkUserSessionsManager> userSessionManagerFactory) : base(
+                loggerFactory,
+                userSessionManagerFactory)
         {
-            this.loggerFactory = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
-            this.userSessionManagerFactory = userSessionManagerFactory ?? throw new ArgumentNullException(nameof(userSessionManagerFactory));
-        }
-
-        private ILogger<MainApplicationLog> Logger
-        {
-            get
-            {
-                if (logger == null)
-                {
-                    logger = loggerFactory();
-                }
-
-                return logger;
-            }
-        }
-
-        private ITrmrkUserSessionsManager UserSessionManager
-        {
-            get
-            {
-                if (userSessionManager == null)
-                {
-                    userSessionManager = userSessionManagerFactory();
-                }
-
-                return userSessionManager;
-            }
         }
 
         public string GetAppErrorUrl(string errName, string errMsg)
@@ -105,7 +72,8 @@ namespace Turmerik.OneDriveExplorer.Blazor.Server.App
 
             // Get user information from Graph
             var user = await graphClient.Me.Request()
-                .Select(u => new {
+                .Select(u => new
+                {
                     u.DisplayName,
                     u.Mail,
                     u.UserPrincipalName,
@@ -188,7 +156,7 @@ namespace Turmerik.OneDriveExplorer.Blazor.Server.App
                 var usrIdnf = userIdentifier.Value;
                 Logger?.LogInformation($"USER LOGGED IN: [{usrIdnf.UsernameHash}]-[{usrIdnf.AuthTokenHash}]");
             }
-            
+
             return Task.CompletedTask;
         }
     }

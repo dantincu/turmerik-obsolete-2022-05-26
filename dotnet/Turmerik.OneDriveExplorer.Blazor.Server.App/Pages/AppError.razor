@@ -3,7 +3,9 @@
 @inject Microsoft.AspNetCore.Components.NavigationManager NavManager
 
 @using Microsoft.AspNetCore.WebUtilities
-@using Turmerik.OneDriveExplorer.Blazor.Server.App.AppSettings;
+@using Turmerik.AspNetCore.Services;
+@using Turmerik.AspNetCore.AppStartup;
+@using Turmerik.AspNetCore.Infrastructure;
 
 @code {
     private Uri Uri { get; set; }

@@ -1,6 +1,6 @@
 ﻿using Turmerik.Core.Helpers;
 
-namespace Turmerik.Blazor.Server.Core.Services
+namespace Turmerik.AspNetCore.UserSession
 {
     public delegate Task RegisterLoginEvent(byte[] usernameHash, byte[] authTokenHash);
 
@@ -48,7 +48,7 @@ namespace Turmerik.Blazor.Server.Core.Services
             {
                 await registerLoginEventHandler.Invoke(usernameSha1, authTokenSha1);
             }
-            
+
             return new UserIdentifier(
                 username, authToken);
         }

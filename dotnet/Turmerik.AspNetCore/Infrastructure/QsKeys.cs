@@ -1,4 +1,4 @@
-﻿namespace Turmerik.OneDriveExplorer.Blazor.Server.App.AppSettings
+﻿namespace Turmerik.AspNetCore.Infrastructure
 {
     public static class QsKeys
     {

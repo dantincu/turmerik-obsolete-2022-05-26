@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Turmerik.Blazor.Server.Core.Services
+namespace Turmerik.AspNetCore.Settings
 {
     public class TrmrkAppSettingsCore
     {

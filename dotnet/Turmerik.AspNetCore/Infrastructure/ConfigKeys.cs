@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using Turmerik.Core.Helpers;
 using Turmerik.Core.Reflection.Wrappers;
 
-namespace Turmerik.Blazor.Server.Core.Services
+namespace Turmerik.AspNetCore.Infrastructure
 {
     public static class ConfigKeys
     {

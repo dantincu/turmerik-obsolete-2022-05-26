@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Turmerik.Blazor.Server.Core.Services
+namespace Turmerik.AspNetCore.UserSession
 {
     public interface IAppUserSessionsManager
     {

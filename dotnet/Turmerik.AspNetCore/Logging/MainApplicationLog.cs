@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Turmerik.Blazor.Server.Core.Services
+namespace Turmerik.AspNetCore.Services
 {
-    public class ApplicationLog
+    public class MainApplicationLog
     {
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace Turmerik.Blazor.Server.Core.Services
+﻿namespace Turmerik.AspNetCore.UserSession
 {
     public class AppsUserSession
     {

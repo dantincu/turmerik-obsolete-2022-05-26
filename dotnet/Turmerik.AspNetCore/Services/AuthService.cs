@@ -7,9 +7,9 @@ using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Turmerik.Blazor.Server.Core.Services;
+using Turmerik.AspNetCore.Settings;
 
-namespace Turmerik.OneDriveExplorer.Blazor.Server.App.Data
+namespace Turmerik.AspNetCore.Services
 {
     public class AuthService : ServiceBase
     {
