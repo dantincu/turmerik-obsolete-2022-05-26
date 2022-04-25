@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using Turmerik.Core.Helpers;
 
-namespace Turmerik.Core.Helpers
+namespace Turmerik.Core.Components
 {
     public class BytesEqCompr : IEqualityComparer<byte[]>
     {

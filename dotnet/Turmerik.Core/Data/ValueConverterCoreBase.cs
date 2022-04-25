@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using Turmerik.Core.Infrastucture;
 using Microsoft.Extensions.DependencyInjection;
+using Turmerik.Core.Components;
 
 namespace Turmerik.Core.Data
 {

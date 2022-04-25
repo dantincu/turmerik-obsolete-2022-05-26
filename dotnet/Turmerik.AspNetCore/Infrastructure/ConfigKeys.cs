@@ -2,7 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Turmerik.Core.Helpers;
+using Turmerik.Core.Components;
 using Turmerik.Core.Reflection.Wrappers;
 
 namespace Turmerik.AspNetCore.Infrastructure

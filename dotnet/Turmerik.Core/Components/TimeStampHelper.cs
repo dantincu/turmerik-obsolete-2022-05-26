@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Turmerik.Core.Helpers
+namespace Turmerik.Core.Components
 {
     public enum TimeStamp
     {
@@ -74,16 +74,33 @@ namespace Turmerik.Core.Helpers
         }
     }
 
-    public class TmStmpH
+    public interface ITimeStampHelper
     {
-        public static readonly Lazy<TmStmpH> Instance = new Lazy<TmStmpH>(() => new TmStmpH());
+        string TmStmp(
+            DateTime? dateTime,
+            bool hasDate,
+            TimeStamp? tmStmp = TimeStamp.Minutes,
+            bool hasTimeZone = false,
+            bool isForFileName = false);
+
+        string TmStmp(
+            DateTime? dateTime,
+            TmStmp tmStmp);
+
+        string TmStmp(
+            bool hasDate,
+            TimeStamp? tmStmp = TimeStamp.Minutes,
+            bool hasTimeZone = false,
+            bool isForFileName = false);
+
+        string TmStmp(TmStmp tmStmp);
+    }
+
+    public class TimeStampHelper : ITimeStampHelper
+    {
         public static readonly IReadOnlyDictionary<TmStmp, string> TmStmpsDictnr;
 
-        private TmStmpH()
-        {
-        }
-
-        static TmStmpH()
+        static TimeStampHelper()
         {
             TmStmpsDictnr = GetTmStmpDictnr();
         }

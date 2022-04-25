@@ -4,6 +4,7 @@ using System.Text;
 using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
+using Turmerik.Core.Components;
 
 namespace Turmerik.Core.Helpers
 {

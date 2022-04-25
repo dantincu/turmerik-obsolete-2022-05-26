@@ -8,7 +8,7 @@ using System.Text;
 using Turmerik.Core.Cloneable.Nested;
 using Turmerik.Core.Cloneable.Nested.Clnbl.Mappers;
 using Turmerik.Core.Cloneable.Nested.Mappers;
-using Turmerik.Core.Helpers;
+using Turmerik.Core.Components;
 using Turmerik.Core.Infrastucture;
 using Turmerik.Core.Reflection.Wrappers;
 

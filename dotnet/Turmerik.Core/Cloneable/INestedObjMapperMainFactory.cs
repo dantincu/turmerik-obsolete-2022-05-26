@@ -11,6 +11,7 @@ using Turmerik.Core.Cloneable.Nested.Mappers;
 using Turmerik.Core.Cloneable.Nested.Mappers.Factories;
 using Turmerik.Core.Collections.Builders;
 using Turmerik.Core.Collections.Cache;
+using Turmerik.Core.Components;
 using Turmerik.Core.Helpers;
 using Turmerik.Core.Reflection;
 using Turmerik.Core.Reflection.Wrappers;

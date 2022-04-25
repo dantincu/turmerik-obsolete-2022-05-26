@@ -5,8 +5,8 @@ using System.Text;
 using Turmerik.Core.Data;
 using Turmerik.Core.Cloneable;
 using Turmerik.Core.Cloneable.Nested;
-using Turmerik.Core.Helpers;
 using Turmerik.Core.Threading;
+using Turmerik.Core.Components;
 
 namespace Turmerik.Core.Infrastucture
 {
@@ -74,6 +74,7 @@ namespace Turmerik.Core.Infrastucture
             services.AddSingleton(immtbl.SynchronizerFactory);
 
             services.AddSingleton<IConsoleComponent, ConsoleComponent>();
+            services.AddSingleton<ITimeStampHelper, TimeStampHelper>();
 
             services.AddSingleton<IStringToStringConverterCore, StringToStringConverterCore>();
             services.AddSingleton<IStringToIntConverter, StringToIntConverter>();

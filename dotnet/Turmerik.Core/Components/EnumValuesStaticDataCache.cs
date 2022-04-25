@@ -4,9 +4,10 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using Turmerik.Core.Collections.Cache;
+using Turmerik.Core.Helpers;
 using Turmerik.Core.Reflection.Wrappers;
 
-namespace Turmerik.Core.Helpers
+namespace Turmerik.Core.Components
 {
     public interface IEnumValuesStaticDataCache : IStaticDataCache<Type, IReadOnlyDictionary<string, EnumMemberWrapper>>
     {

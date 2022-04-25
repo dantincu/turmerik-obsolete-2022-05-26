@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 
-namespace Turmerik.Core.Helpers
+namespace Turmerik.Core.Components
 {
     public interface ILambdaExprHelperFactory
     {

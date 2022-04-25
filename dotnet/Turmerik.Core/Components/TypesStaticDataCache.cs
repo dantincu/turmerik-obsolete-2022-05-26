@@ -5,7 +5,7 @@ using System.Text;
 using Turmerik.Core.Collections.Cache;
 using Turmerik.Core.Reflection.Wrappers;
 
-namespace Turmerik.Core.Helpers
+namespace Turmerik.Core.Components
 {
     public interface ITypesStaticDataCache : IStaticDataCache<Type, TypeWrapper>
     {

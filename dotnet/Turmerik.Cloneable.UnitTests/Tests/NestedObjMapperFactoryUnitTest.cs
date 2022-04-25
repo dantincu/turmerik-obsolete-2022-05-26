@@ -13,7 +13,7 @@ using Turmerik.Core.Cloneable.Nested.Clnbl.Mappers;
 using Turmerik.Core.Cloneable.Nested.Clnbl.Mappers.Factories;
 using Turmerik.Core.Cloneable.Nested.Mappers;
 using Turmerik.Core.Cloneable.Nested.Mappers.Factories;
-using Turmerik.Core.Helpers;
+using Turmerik.Core.Components;
 using Turmerik.Core.Reflection;
 using Turmerik.Testing.Core.Tests;
 using Xunit;

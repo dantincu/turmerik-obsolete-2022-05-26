@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Turmerik.Core.Helpers;
 
-namespace Turmerik.Core.Helpers
+namespace Turmerik.Core.Components
 {
     public struct ConsoleColorsAgg
     {
@@ -103,6 +104,13 @@ namespace Turmerik.Core.Helpers
             { ConsoleColor.Magenta, ConsoleColor.DarkMagenta },
             { ConsoleColor.Gray, ConsoleColor.DarkGray },
         };
+
+        private readonly ITimeStampHelper timeStampHelper;
+
+        public ConsoleComponent(ITimeStampHelper timeStampHelper)
+        {
+            this.timeStampHelper = timeStampHelper ?? throw new ArgumentNullException(nameof(timeStampHelper));
+        }
 
         public void Write(
             string message,
@@ -558,7 +566,7 @@ namespace Turmerik.Core.Helpers
         {
             if (printTimeStamp)
             {
-                string timeStamp = TmStmpH.Instance.Value.TmStmp(null, true);
+                string timeStamp = timeStampHelper.TmStmp(null, true);
                 Console.Write($"# {timeStamp} # ");
             }
         }
