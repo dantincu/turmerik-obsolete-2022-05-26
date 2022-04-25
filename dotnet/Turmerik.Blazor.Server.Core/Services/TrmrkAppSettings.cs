@@ -1,7 +1,6 @@
-﻿using Microsoft.Extensions.Configuration;
-using System;
+﻿using System;
 
-namespace Turmerik.OneDriveExplorer.Blazor.Server.App.AppSettings
+namespace Turmerik.Blazor.Server.Core.Services
 {
     public class TrmrkAppSettingsCore
     {

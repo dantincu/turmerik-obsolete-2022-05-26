@@ -1,8 +1,10 @@
-﻿@using Turmerik.OneDriveExplorer.Blazor.Server.App.AppSettings
+﻿@using Turmerik.Blazor.Server.Core.Services
+@using Turmerik.OneDriveExplorer.Blazor.Server.App.AppSettings
 @inherits LayoutComponentBase
 
 @inject NavigationManager NavManager;
 @inject TrmrkAppSettings AppSettings;
+@inject IAppUserSessionsManager AppUserSessionsManager;
 
 <div class="sidebar">
     <NavMenu />

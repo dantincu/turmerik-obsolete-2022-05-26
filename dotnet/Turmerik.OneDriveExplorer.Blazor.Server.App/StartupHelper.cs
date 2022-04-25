@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Graph;
 using Microsoft.Identity.Web;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
@@ -9,6 +10,8 @@ using System;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using Turmerik.Blazor.Server.Core;
+using Turmerik.Blazor.Server.Core.Services;
 using Turmerik.Core.Helpers;
 using Turmerik.Core.Infrastucture;
 using Turmerik.OneDriveExplorer.Blazor.Server.App.AppSettings;
@@ -17,9 +20,49 @@ using Turmerik.OneDriveExplorer.Blazor.Server.App.Graph;
 
 namespace Turmerik.OneDriveExplorer.Blazor.Server.App
 {
-    public static class StartupH
+    public class StartupHelper : StartupHelperBase
     {
-        public static string GetAppErrorUrl(string errName, string errMsg)
+        private readonly Func<ILogger<MainApplicationLog>> loggerFactory;
+        private readonly Func<ITrmrkUserSessionsManager> userSessionManagerFactory;
+
+        private ILogger<MainApplicationLog> logger;
+        private ITrmrkUserSessionsManager userSessionManager;
+
+        public StartupHelper(
+            Func<ILogger<MainApplicationLog>> loggerFactory,
+            Func<ITrmrkUserSessionsManager> userSessionManagerFactory)
+        {
+            this.loggerFactory = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
+            this.userSessionManagerFactory = userSessionManagerFactory ?? throw new ArgumentNullException(nameof(userSessionManagerFactory));
+        }
+
+        private ILogger<MainApplicationLog> Logger
+        {
+            get
+            {
+                if (logger == null)
+                {
+                    logger = loggerFactory();
+                }
+
+                return logger;
+            }
+        }
+
+        private ITrmrkUserSessionsManager UserSessionManager
+        {
+            get
+            {
+                if (userSessionManager == null)
+                {
+                    userSessionManager = userSessionManagerFactory();
+                }
+
+                return userSessionManager;
+            }
+        }
+
+        public string GetAppErrorUrl(string errName, string errMsg)
         {
             errName = Uri.EscapeDataString(errName);
 
@@ -34,7 +77,7 @@ namespace Turmerik.OneDriveExplorer.Blazor.Server.App
             return url;
         }
 
-        public static void RedirectToAppError<T>(HandleRequestContext<T> context, string errName, string errMsg)
+        public void RedirectToAppError<T>(HandleRequestContext<T> context, string errName, string errMsg)
             where T : AuthenticationSchemeOptions
         {
             string url = GetAppErrorUrl(errName, errMsg);
@@ -43,10 +86,10 @@ namespace Turmerik.OneDriveExplorer.Blazor.Server.App
             context.HandleResponse();
         }
 
-        public static async Task OnTokenValidated(TokenValidatedContext context)
+        public async Task OnTokenValidated(TokenValidatedContext context)
         {
             var tokenAcquisition = context.HttpContext.RequestServices
-                            .GetRequiredService<ITokenAcquisition>();
+                .GetRequiredService<ITokenAcquisition>();
 
             var token = await tokenAcquisition.GetAccessTokenForUserAsync(
                 GraphConstants.Scopes, user: context.Principal);
@@ -56,7 +99,7 @@ namespace Turmerik.OneDriveExplorer.Blazor.Server.App
                     async (request) =>
                     {
                         request.Headers.Authorization =
-                                        new AuthenticationHeaderValue("Bearer", token);
+                            new AuthenticationHeaderValue("Bearer", token);
                     })
             );
 
@@ -97,15 +140,17 @@ namespace Turmerik.OneDriveExplorer.Blazor.Server.App
                     throw;
                 }
             }
+
+            RegisterUserLogin(user, token).Wait();
         }
 
-        public static async Task OnAuthenticationFailed(AuthenticationFailedContext context)
+        public async Task OnAuthenticationFailed(AuthenticationFailedContext context)
         {
             var error = WebUtility.UrlEncode(context.Exception.Message);
             RedirectToAppError(context, "Authentication error", error);
         }
 
-        public static async Task OnRemoteFailure(RemoteFailureContext context)
+        public async Task OnRemoteFailure(RemoteFailureContext context)
         {
             if (context.Failure is OpenIdConnectProtocolException)
             {
@@ -114,83 +159,37 @@ namespace Turmerik.OneDriveExplorer.Blazor.Server.App
             }
         }
 
-        public static async Task OnRemoteSignOut(RemoteSignOutContext context)
+        public async Task OnRemoteSignOut(RemoteSignOutContext context)
         {
         }
 
-        public static async Task OnSignedOutCallbackRedirect(RemoteSignOutContext context)
+        public async Task OnSignedOutCallbackRedirect(RemoteSignOutContext context)
         {
         }
 
-        public static async Task OnRedirectToIdentityProviderForSignOut(RedirectContext context)
+        public async Task OnRedirectToIdentityProviderForSignOut(RedirectContext context)
         {
         }
 
-        public static IAppCoreServiceCollection RegisterCoreServices(
-            this IServiceCollection services, IConfiguration config)
-        {
-            var coreSvcs = TrmrkCoreServiceCollectionBuilder.RegisterAll(services);
-            var typesCache = coreSvcs.TypesStaticDataCache;
-
-            var trmrkAppSettings = config.GetObject<TrmrkAppSettings>(
-                typesCache,
-                ConfigKeys.TRMRK,
-                typeof(TrmrkAppSettingsCore),
-                s =>
-                {
-                    s.LoginUrl = $"{s.AppBaseUrl}/{s.LoginRelUrl}";
-                });
-
-            var appSvcsMtbl = new AppCoreServiceCollectionMtbl(coreSvcs)
-            {
-                TrmrkAppSettings = trmrkAppSettings
-            };
-
-            var appSvcsImmtbl = new AppCoreServiceCollectionImmtbl(appSvcsMtbl);
-            services.AddSingleton(provider => trmrkAppSettings);
-
-            return appSvcsImmtbl;
-        }
-
-        public static void RegisterServices(this IServiceCollection services)
+        public void RegisterServices(IServiceCollection services)
         {
             services.AddHttpContextAccessor();
 
             services.AddScoped<AuthService>();
             services.AddSingleton<TrmrkUserSessionsManager>();
         }
-    }
 
-    public interface IAppCoreServiceCollection : ITrmrkCoreServiceCollection
-    {
-        TrmrkAppSettings TrmrkAppSettings { get; }
-    }
-
-    public class AppCoreServiceCollectionImmtbl : TrmrkCoreServiceCollectionImmtbl, IAppCoreServiceCollection
-    {
-        public AppCoreServiceCollectionImmtbl(IAppCoreServiceCollection src) : base(src)
+        private Task RegisterUserLogin(User user, string authToken)
         {
-            TrmrkAppSettings = src.TrmrkAppSettings;
+            var userIdentifier = UserSessionManager?.RegisterLogin(user.UserPrincipalName, authToken).Result;
+
+            if (userIdentifier.HasValue)
+            {
+                var usrIdnf = userIdentifier.Value;
+                Logger?.LogInformation($"USER LOGGED IN: [{usrIdnf.UsernameHash}]-[{usrIdnf.AuthTokenHash}]");
+            }
+            
+            return Task.CompletedTask;
         }
-
-        public TrmrkAppSettings TrmrkAppSettings { get; protected set; }
-    }
-
-    public class AppCoreServiceCollectionMtbl : TrmrkCoreServiceCollectionMtbl, IAppCoreServiceCollection
-    {
-        public AppCoreServiceCollectionMtbl()
-        {
-        }
-
-        public AppCoreServiceCollectionMtbl(ITrmrkCoreServiceCollection src) : base(src)
-        {
-        }
-
-        public AppCoreServiceCollectionMtbl(IAppCoreServiceCollection src) : base(src)
-        {
-            TrmrkAppSettings = src.TrmrkAppSettings;
-        }
-
-        public TrmrkAppSettings TrmrkAppSettings { get; set; }
     }
 }

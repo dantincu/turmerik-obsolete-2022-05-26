@@ -8,7 +8,6 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Turmerik.Blazor.Server.Core.Services;
-using Turmerik.OneDriveExplorer.Blazor.Server.App.AppSettings;
 
 namespace Turmerik.OneDriveExplorer.Blazor.Server.App.Data
 {

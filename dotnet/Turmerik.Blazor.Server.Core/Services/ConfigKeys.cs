@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using Turmerik.Core.Helpers;
 using Turmerik.Core.Reflection.Wrappers;
 
-namespace Turmerik.OneDriveExplorer.Blazor.Server.App.AppSettings
+namespace Turmerik.Blazor.Server.Core.Services
 {
     public static class ConfigKeys
     {

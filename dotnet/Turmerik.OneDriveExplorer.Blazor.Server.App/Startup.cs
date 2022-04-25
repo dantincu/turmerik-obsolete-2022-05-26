@@ -7,15 +7,25 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Identity.Web;
+using System;
+using Turmerik.Blazor.Server.Core.Services;
 using Turmerik.OneDriveExplorer.Blazor.Server.App.Graph;
 
 namespace Turmerik.OneDriveExplorer.Blazor.Server.App
 {
     public class Startup
     {
+        private readonly StartupHelper helper;
+        private ILogger<MainApplicationLog> logger;
+        private ITrmrkUserSessionsManager userSessionManager;
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+
+            helper = new StartupHelper(
+                () => logger,
+                () => userSessionManager);
         }
 
         public IConfiguration Configuration { get; }
@@ -24,7 +34,8 @@ namespace Turmerik.OneDriveExplorer.Blazor.Server.App
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            var appSvcs = services.RegisterCoreServices(Configuration);
+            var appSvcs = helper.RegisterCoreServices(services, Configuration);
+            userSessionManager = appSvcs.UserSessionsManager;
 
             services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
                 .AddMicrosoftIdentityWebApp(options =>
@@ -33,10 +44,10 @@ namespace Turmerik.OneDriveExplorer.Blazor.Server.App
                     options.AccessDeniedPath = $"/{appSvcs.TrmrkAppSettings.LoginRelUrl}";
 
                     options.Prompt = "select_account";
-                    options.Events.OnTokenValidated = StartupH.OnTokenValidated;
+                    options.Events.OnTokenValidated = helper.OnTokenValidated;
 
-                    options.Events.OnAuthenticationFailed = StartupH.OnAuthenticationFailed;
-                    options.Events.OnRemoteFailure = StartupH.OnRemoteFailure;
+                    options.Events.OnAuthenticationFailed = helper.OnAuthenticationFailed;
+                    options.Events.OnRemoteFailure = helper.OnRemoteFailure;
                 })
 
                 // Add ability to call web API (Graph)
@@ -65,12 +76,14 @@ namespace Turmerik.OneDriveExplorer.Blazor.Server.App
                 .AddMicrosoftIdentityConsentHandler();
             services.AddBlazoredLocalStorage();
 
-            services.RegisterServices();
+            helper.RegisterServices(services);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
+            logger = loggerFactory.CreateLogger<MainApplicationLog>();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
