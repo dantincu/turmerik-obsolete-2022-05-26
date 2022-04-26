@@ -35,6 +35,21 @@ namespace Turmerik.Core.Helpers
             return retVal;
         }
 
+        public static T FirstNotNull<T>(this T first, params Func<T>[] next)
+        {
+            T retVal = first;
+            int i = 0;
+
+            int len = next.Length;
+
+            while (retVal == null && i < len)
+            {
+                retVal = next[i++].Invoke();
+            }
+
+            return retVal;
+        }
+
         public static bool Is<T>(this T value, Func<T, bool> predicate)
         {
             bool retVal = predicate(value);

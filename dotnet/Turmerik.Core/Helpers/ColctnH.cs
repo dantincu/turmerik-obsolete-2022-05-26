@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Turmerik.Core.Helpers
@@ -35,6 +36,24 @@ namespace Turmerik.Core.Helpers
                 }
             }
 
+            return retVal;
+        }
+
+        public static bool None<T>(this IEnumerable<T> nmrbl)
+        {
+            bool retVal = nmrbl.Any() == false;
+            return retVal;
+        }
+
+        public static bool None<T>(this IEnumerable<T> nmrbl, Func<T, bool> predicate)
+        {
+            bool retVal = nmrbl.Any(predicate) == false;
+            return retVal;
+        }
+
+        public static bool None<T>(this IEnumerable<T> nmrbl, Func<T, int, bool> predicate)
+        {
+            bool retVal = nmrbl.Any(predicate) == false;
             return retVal;
         }
     }

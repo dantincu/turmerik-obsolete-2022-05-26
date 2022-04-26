@@ -16,57 +16,34 @@ namespace Turmerik.AspNetCore.AppStartup
 {
     public abstract class StartupHelperBase
     {
-        private readonly Func<ILogger<MainApplicationLog>> loggerFactory;
-        private ILogger<MainApplicationLog> LoggerInstn;
-
-        protected StartupHelperBase(
-            Func<ILogger<MainApplicationLog>> loggerFactory)
-        {
-            this.loggerFactory = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
-        }
-
-        protected ILogger<MainApplicationLog> Logger
-        {
-            get
-            {
-                if (LoggerInstn == null)
-                {
-                    LoggerInstn = loggerFactory();
-                }
-
-                return LoggerInstn;
-            }
-        }
-
         public IAppCoreServiceCollection RegisterCoreServices(
             IServiceCollection services, IConfiguration config)
         {
             var coreSvcs = TrmrkCoreServiceCollectionBuilder.RegisterAll(services);
             var typesCache = coreSvcs.TypesStaticDataCache;
 
-            var trmrkAppSettings = config.GetObject<TrmrkAppSettings>(
+            var trmrkAppSettingsMtbl = config.GetObject<TrmrkAppSettingsMtbl>(
                 typesCache,
                 ConfigKeys.TRMRK,
-                typeof(TrmrkAppSettingsCore),
+                typeof(TrmrkAppSettingsCoreMtbl),
                 s =>
                 {
                     s.LoginUrl = $"{s.AppBaseUrl}/{s.LoginRelUrl}";
+                    s.LogoutUrl = $"{s.AppBaseUrl}/{s.LogoutRelUrl}";
                 });
 
-            var userSessionManager = new TrmrkUserSessionsManager();
+            var trmrkAppSettings = new TrmrkAppSettingsImmtbl(
+                trmrkAppSettingsMtbl);
 
             var appSvcsMtbl = new AppCoreServiceCollectionMtbl(coreSvcs)
             {
-                TrmrkAppSettings = trmrkAppSettings,
-                UserSessionsManager = userSessionManager
+                TrmrkAppSettings = trmrkAppSettingsMtbl
             };
 
             var appSvcsImmtbl = new AppCoreServiceCollectionImmtbl(appSvcsMtbl);
-            services.AddSingleton(provider => trmrkAppSettings);
+            services.AddSingleton<ITrmrkAppSettings>(provider => trmrkAppSettings);
 
-            services.AddSingleton<ITrmrkUserSessionsManager>(provider => userSessionManager);
             services.AddSingleton<IAppUserSessionsManager, AppUserSessionsManager>();
-
             return appSvcsImmtbl;
         }
     }

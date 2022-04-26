@@ -1,13 +1,19 @@
-﻿@using Turmerik.AspNetCore.Services
+﻿@using Microsoft.AspNetCore.Http
+@using Microsoft.Extensions.Primitives
+@using Turmerik.AspNetCore.Services
 @using Turmerik.AspNetCore.Settings
 @using Turmerik.AspNetCore.UserSession
 @using Turmerik.AspNetCore.AppStartup
 @using Turmerik.AspNetCore.Infrastructure
+@using Turmerik.Core.Cloneable.Nested
+@using Turmerik.Core.Helpers;
 @inherits LayoutComponentBase
 
 @inject NavigationManager NavManager;
-@inject TrmrkAppSettings AppSettings;
+@inject ITrmrkAppSettings AppSettings;
 @inject IAppUserSessionsManager AppUserSessionsManager;
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage;
+@inject IHttpContextAccessor httpContextAccessor;
 
 <div class="sidebar">
     <NavMenu />
@@ -26,12 +32,53 @@
 @code {
     [CascadingParameter] protected Task<AuthenticationState> AuthStat { get; set; }
 
+    private System.Security.Claims.ClaimsPrincipal User;
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        await LocalStorage.AssureIsSetAsync<AppUserSessionMtbl>(
+            LocalStorageKeys.UserSession,
+            async () =>
+            {
+                AppUserSessionMtbl userSession = null;
+                var context = httpContextAccessor.HttpContext;
+
+                var userSessionGuidNlbl = context.Request.Cookies.GetNullableValue<Guid>(
+                    SessionKeys.UserSessionGuid,
+                    (string strVal, out Guid val) => Guid.TryParse(strVal, out val));
+
+                        string usernameHash = context.Request.Cookies.GetStr(
+                    SessionKeys.UserName);
+
+                if (userSessionGuidNlbl.HasValue && usernameHash != null)
+                {
+                    var userSessionGuid = userSessionGuidNlbl.Value;
+                    var usernameHashBytes = Convert.FromBase64String(usernameHash);
+
+                    userSession = new AppUserSessionMtbl
+                    {
+                        UserSessionGuid = userSessionGuid,
+                        UsernameHash = usernameHash,
+                        UsernameHashBytes = new NestedObjNmrbl<byte>
+                        {
+                            Mtbl = usernameHashBytes.ToList()
+                        }
+                    };
+
+                    await AppUserSessionsManager.AssureUserSessionRegisteredAsync(userSession);
+                }
+
+                return userSession;
+            },
+            true);
+    }
+
     protected async override Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        var user = (await AuthStat).User;
+        User = (await AuthStat).User;
 
-        if(!user.Identity.IsAuthenticated || !user.Claims.Any())
+        if(!User.Identity.IsAuthenticated || !User.Claims.Any())
         {
             NavManager.NavigateTo($"{AppSettings.LoginRelUrl}?{QsKeys.RET_URL}={Uri.EscapeDataString(NavManager.Uri)}");
         }

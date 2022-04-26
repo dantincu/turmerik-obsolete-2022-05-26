@@ -11,8 +11,7 @@ namespace Turmerik.AspNetCore.Services
 {
     public interface IAppCoreServiceCollection : ITrmrkCoreServiceCollection
     {
-        TrmrkAppSettings TrmrkAppSettings { get; }
-        ITrmrkUserSessionsManager UserSessionsManager { get; }
+        TrmrkAppSettingsMtbl TrmrkAppSettings { get; }
     }
 
     public class AppCoreServiceCollectionImmtbl : TrmrkCoreServiceCollectionImmtbl, IAppCoreServiceCollection
@@ -20,11 +19,9 @@ namespace Turmerik.AspNetCore.Services
         public AppCoreServiceCollectionImmtbl(IAppCoreServiceCollection src) : base(src)
         {
             TrmrkAppSettings = src.TrmrkAppSettings;
-            UserSessionsManager = src.UserSessionsManager;
         }
 
-        public TrmrkAppSettings TrmrkAppSettings { get; protected set; }
-        public ITrmrkUserSessionsManager UserSessionsManager { get; protected set; }
+        public TrmrkAppSettingsMtbl TrmrkAppSettings { get; protected set; }
     }
 
     public class AppCoreServiceCollectionMtbl : TrmrkCoreServiceCollectionMtbl, IAppCoreServiceCollection
@@ -40,10 +37,8 @@ namespace Turmerik.AspNetCore.Services
         public AppCoreServiceCollectionMtbl(IAppCoreServiceCollection src) : base(src)
         {
             TrmrkAppSettings = src.TrmrkAppSettings;
-            UserSessionsManager = src.UserSessionsManager;
         }
 
-        public TrmrkAppSettings TrmrkAppSettings { get; set; }
-        public ITrmrkUserSessionsManager UserSessionsManager { get; set; }
+        public TrmrkAppSettingsMtbl TrmrkAppSettings { get; set; }
     }
 }

@@ -14,13 +14,13 @@ namespace Turmerik.AspNetCore.Services
     public class AuthService : ServiceBase
     {
         private readonly IHttpContextAccessor httpContextAccessor;
-        private readonly TrmrkAppSettings trmrkAppSettings;
+        private readonly ITrmrkAppSettings trmrkAppSettings;
         private readonly NavigationManager navigationManager;
 
         public AuthService(
             ILogger<ApplicationLog> logger,
             IHttpContextAccessor httpContextAccessor,
-            TrmrkAppSettings trmrkAppSettings,
+            ITrmrkAppSettings trmrkAppSettings,
             NavigationManager navigationManager) : base(logger)
         {
             this.httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));

@@ -8,12 +8,5 @@ namespace Turmerik.OneDriveExplorer.Blazor.Server.App.AppStartup
 {
     public class StartupHelper : MsIdentityStartupHelperBase
     {
-        public StartupHelper(
-            Func<ILogger<MainApplicationLog>> loggerFactory,
-            Func<ITrmrkUserSessionsManager> userSessionManagerFactory) : base(
-                loggerFactory,
-                userSessionManagerFactory)
-        {
-        }
     }
 }

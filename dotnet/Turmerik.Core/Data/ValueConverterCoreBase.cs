@@ -9,6 +9,8 @@ using Turmerik.Core.Components;
 
 namespace Turmerik.Core.Data
 {
+    public delegate bool TryParseVal<TIn, TOut>(TIn inVal, out TOut outVal);
+
     public interface IValueConverterCore<TInput, TResult>
     {
         bool TryParse(TInput arg, out TResult parsedValue);

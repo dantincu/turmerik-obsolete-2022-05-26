@@ -122,50 +122,10 @@ namespace Turmerik.Core.Cloneable
                 trgPropType,
                 isMtbl);
 
-            // var trgType = GetTrgType(trgPropType, isMtbl);
             var wrppr = mapper.GetObj(srcPropValue, trgPropType);
 
             return wrppr;
         }
-
-        /* private Type GetTrgType(
-            Type trgPropType,
-            bool isMtbl)
-        {
-            var typeAttrs = typesCache.Get(trgPropType).Attrs.Value;
-            CloneableBaseAttribute attr;
-
-            if (isMtbl)
-            {
-                attr = (CloneableMtblAttribute)typeAttrs.Get(
-                    typeof(CloneableMtblAttribute)).Single().Data;
-            }
-            else
-            {
-                attr = (CloneableImmtblAttribute)typeAttrs.Get(
-                    typeof(CloneableImmtblAttribute)).Single().Data;
-            }
-
-            Type retType = attr.Type;
-
-            if (retType == null)
-            {
-                if (attr.ClnblTypeFactoryType != null)
-                {
-                    var factory = (CloneableTypeFactoryBase)Activator.CreateInstance(
-                        attr.ClnblTypeFactoryType);
-
-                    retType = factory.GetType();
-                }
-                else
-                {
-                    throw new InvalidOperationException(
-                        $"Either cloneable type or cloneable type factory type must be provided");
-                }
-            }
-
-            return retType;
-        } */
     }
 
     public interface IObjMapOpts

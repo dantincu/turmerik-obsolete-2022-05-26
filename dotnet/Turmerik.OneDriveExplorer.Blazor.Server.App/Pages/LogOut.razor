@@ -1,14 +1,17 @@
 ﻿@page "/logout"
 
+@using Turmerik.AspNetCore.Infrastructure
 @using Turmerik.AspNetCore.Services
+@using Turmerik.AspNetCore.UserSession
 @inject AuthService AuthSvc
+@inject IAppUserSessionsManager AppUserSessionsManager;
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage;
 
-<h3>LogOut</h3>
+<h3>Logging out</h3>
 
 @code {
     protected override async Task OnInitializedAsync()
     {
-        // await base.OnInitializedAsync();
         await AuthSvc.LogOut();
     }
 }

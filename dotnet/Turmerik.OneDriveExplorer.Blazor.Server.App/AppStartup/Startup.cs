@@ -17,16 +17,11 @@ namespace Turmerik.OneDriveExplorer.Blazor.Server.App.AppStartup
     public class Startup
     {
         private readonly StartupHelper helper;
-        private ILogger<MainApplicationLog> logger;
-        private ITrmrkUserSessionsManager userSessionManager;
 
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-
-            helper = new StartupHelper(
-                () => logger,
-                () => userSessionManager);
+            helper = new StartupHelper();
         }
 
         public IConfiguration Configuration { get; }
@@ -36,7 +31,6 @@ namespace Turmerik.OneDriveExplorer.Blazor.Server.App.AppStartup
         public void ConfigureServices(IServiceCollection services)
         {
             var appSvcs = helper.RegisterCoreServices(services, Configuration);
-            userSessionManager = appSvcs.UserSessionsManager;
 
             services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
                 .AddMicrosoftIdentityWebApp(options =>
@@ -85,8 +79,6 @@ namespace Turmerik.OneDriveExplorer.Blazor.Server.App.AppStartup
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
-            logger = loggerFactory.CreateLogger<MainApplicationLog>();
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

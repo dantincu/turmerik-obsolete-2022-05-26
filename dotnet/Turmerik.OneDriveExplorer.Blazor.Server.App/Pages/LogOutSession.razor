@@ -1,0 +1,29 @@
+﻿@page "/logout-session"
+
+@using Turmerik.AspNetCore.Infrastructure
+@using Turmerik.AspNetCore.Services
+@using Turmerik.AspNetCore.Settings
+@using Turmerik.AspNetCore.UserSession
+@inject AuthService AuthSvc
+@inject IAppUserSessionsManager AppUserSessionsManager;
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage;
+@inject NavigationManager NavManager;
+@inject ITrmrkAppSettings AppSettings;
+
+<h3>Logging out</h3>
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        var appUserSessionTuple = await LocalStorage.TryRemoveItem<AppUserSessionMtbl>(
+            LocalStorageKeys.UserSession);
+
+        if (appUserSessionTuple.Item1)
+        {
+            await AppUserSessionsManager.RemoveUserSession(
+                appUserSessionTuple.Item2);
+        }
+
+        NavManager.NavigateTo(AppSettings.LogoutRelUrl);
+    }
+}

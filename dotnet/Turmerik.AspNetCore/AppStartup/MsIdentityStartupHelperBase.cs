@@ -16,19 +16,12 @@ using Turmerik.AspNetCore.Graph;
 using Turmerik.AspNetCore.Infrastructure;
 using Turmerik.AspNetCore.Services;
 using Turmerik.AspNetCore.UserSession;
+using Turmerik.Core.Helpers;
 
 namespace Turmerik.AspNetCore.AppStartup
 {
     public abstract class MsIdentityStartupHelperBase : OpenIdConnectStartupHelperBase
     {
-        protected MsIdentityStartupHelperBase(
-            Func<ILogger<MainApplicationLog>> loggerFactory,
-            Func<ITrmrkUserSessionsManager> userSessionManagerFactory) : base(
-                loggerFactory,
-                userSessionManagerFactory)
-        {
-        }
-
         public string GetAppErrorUrl(string errName, string errMsg)
         {
             errName = Uri.EscapeDataString(errName);
@@ -109,7 +102,20 @@ namespace Turmerik.AspNetCore.AppStartup
                 }
             }
 
-            RegisterUserLogin(user, token).Wait();
+            var userSessionGuid = Guid.NewGuid();
+
+            var usernameHashBytes = EncodeH.EncodeSha1(
+                user.UserPrincipalName);
+
+            var userNameHash = Convert.ToBase64String(usernameHashBytes);
+
+            context.Response.Cookies.Append(
+                SessionKeys.UserName,
+                userNameHash);
+
+            context.Response.Cookies.AddValue(
+                SessionKeys.UserSessionGuid,
+                userSessionGuid);
         }
 
         public async Task OnAuthenticationFailed(AuthenticationFailedContext context)
@@ -144,20 +150,6 @@ namespace Turmerik.AspNetCore.AppStartup
             services.AddHttpContextAccessor();
 
             services.AddScoped<AuthService>();
-            services.AddSingleton<TrmrkUserSessionsManager>();
-        }
-
-        private Task RegisterUserLogin(User user, string authToken)
-        {
-            var userIdentifier = UserSessionManager?.RegisterLogin(user.UserPrincipalName, authToken).Result;
-
-            if (userIdentifier.HasValue)
-            {
-                var usrIdnf = userIdentifier.Value;
-                Logger?.LogInformation($"USER LOGGED IN: [{usrIdnf.UsernameHash}]-[{usrIdnf.AuthTokenHash}]");
-            }
-
-            return Task.CompletedTask;
         }
     }
 }
