@@ -148,8 +148,7 @@ namespace Turmerik.AspNetCore.AppStartup
         public void RegisterServices(IServiceCollection services)
         {
             services.AddHttpContextAccessor();
-
-            services.AddScoped<AuthService>();
+            services.AddScoped<IAuthService, AuthService>();
         }
     }
 }

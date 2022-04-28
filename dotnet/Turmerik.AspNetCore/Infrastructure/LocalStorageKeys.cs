@@ -4,9 +4,9 @@
     {
         public const string TRMRK = "trmrk";
 
-        public const string USER_USER = "user-session";
+        public const string USER_SESSION = "user-session";
 
-        public static readonly string UserSession = GetKey(USER_USER);
+        public static readonly string UserSession = GetKey(USER_SESSION);
 
         private static string GetKey(params string[] segments)
         {

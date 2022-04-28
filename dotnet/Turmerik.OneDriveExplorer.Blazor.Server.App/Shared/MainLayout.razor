@@ -1,10 +1,12 @@
-﻿@using Microsoft.AspNetCore.Http
+﻿@using Blazored.LocalStorage
+@using Microsoft.AspNetCore.Http
 @using Microsoft.Extensions.Primitives
 @using Turmerik.AspNetCore.Services
 @using Turmerik.AspNetCore.Settings
 @using Turmerik.AspNetCore.UserSession
 @using Turmerik.AspNetCore.AppStartup
 @using Turmerik.AspNetCore.Infrastructure
+@using Turmerik.Core.Cloneable
 @using Turmerik.Core.Cloneable.Nested
 @using Turmerik.Core.Helpers;
 @inherits LayoutComponentBase
@@ -12,8 +14,8 @@
 @inject NavigationManager NavManager;
 @inject ITrmrkAppSettings AppSettings;
 @inject IAppUserSessionsManager AppUserSessionsManager;
-@inject Blazored.LocalStorage.ILocalStorageService LocalStorage;
-@inject IHttpContextAccessor httpContextAccessor;
+@inject IHttpContextAccessor HttpContextAccessor;
+@inject ILocalStorageService LocalStorageService;
 
 <div class="sidebar">
     <NavMenu />
@@ -36,41 +38,9 @@
 
     protected async override Task OnAfterRenderAsync(bool firstRender)
     {
-        await LocalStorage.AssureIsSetAsync<AppUserSessionMtbl>(
-            LocalStorageKeys.UserSession,
-            async () =>
-            {
-                AppUserSessionMtbl userSession = null;
-                var context = httpContextAccessor.HttpContext;
-
-                var userSessionGuidNlbl = context.Request.Cookies.GetNullableValue<Guid>(
-                    SessionKeys.UserSessionGuid,
-                    (string strVal, out Guid val) => Guid.TryParse(strVal, out val));
-
-                        string usernameHash = context.Request.Cookies.GetStr(
-                    SessionKeys.UserName);
-
-                if (userSessionGuidNlbl.HasValue && usernameHash != null)
-                {
-                    var userSessionGuid = userSessionGuidNlbl.Value;
-                    var usernameHashBytes = Convert.FromBase64String(usernameHash);
-
-                    userSession = new AppUserSessionMtbl
-                    {
-                        UserSessionGuid = userSessionGuid,
-                        UsernameHash = usernameHash,
-                        UsernameHashBytes = new NestedObjNmrbl<byte>
-                        {
-                            Mtbl = usernameHashBytes.ToList()
-                        }
-                    };
-
-                    await AppUserSessionsManager.AssureUserSessionRegisteredAsync(userSession);
-                }
-
-                return userSession;
-            },
-            true);
+        var userSession = await AppUserSessionsManager.TryAddOrUpdateUserSessionAsync(
+            HttpContextAccessor,
+            LocalStorageService);
     }
 
     protected async override Task OnInitializedAsync()

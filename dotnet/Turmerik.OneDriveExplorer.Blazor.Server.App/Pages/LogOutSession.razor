@@ -1,28 +1,31 @@
 ﻿@page "/logout-session"
 
-@using Turmerik.AspNetCore.Infrastructure
+@using Blazored.LocalStorage
+@using Microsoft.AspNetCore.Http
+@using Microsoft.Extensions.Primitives
 @using Turmerik.AspNetCore.Services
 @using Turmerik.AspNetCore.Settings
 @using Turmerik.AspNetCore.UserSession
-@inject AuthService AuthSvc
-@inject IAppUserSessionsManager AppUserSessionsManager;
-@inject Blazored.LocalStorage.ILocalStorageService LocalStorage;
+@using Turmerik.AspNetCore.AppStartup
+@using Turmerik.AspNetCore.Infrastructure
+@using Turmerik.Core.Cloneable
+@using Turmerik.Core.Cloneable.Nested
+@using Turmerik.Core.Helpers;
+
 @inject NavigationManager NavManager;
 @inject ITrmrkAppSettings AppSettings;
+@inject IAppUserSessionsManager AppUserSessionsManager;
+@inject IHttpContextAccessor HttpContextAccessor;
+@inject ILocalStorageService LocalStorageService;
 
 <h3>Logging out</h3>
 
 @code {
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        var appUserSessionTuple = await LocalStorage.TryRemoveItem<AppUserSessionMtbl>(
-            LocalStorageKeys.UserSession);
-
-        if (appUserSessionTuple.Item1)
-        {
-            await AppUserSessionsManager.RemoveUserSession(
-                appUserSessionTuple.Item2);
-        }
+        var userSession = await AppUserSessionsManager.TryRemoveUserSessionAsync(
+            HttpContextAccessor,
+            LocalStorageService);
 
         NavManager.NavigateTo(AppSettings.LogoutRelUrl);
     }

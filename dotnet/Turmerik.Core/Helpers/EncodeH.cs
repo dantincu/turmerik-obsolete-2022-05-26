@@ -18,5 +18,23 @@ namespace Turmerik.Core.Helpers
 
             return hash;
         }
+
+        public static byte[] TryDecodeFromBase64(this string str)
+        {
+            byte[] retVal = null;
+
+            try
+            {
+                if (str != null)
+                {
+                    retVal = Convert.FromBase64String(str);
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+
+            return retVal;
+        }
     }
 }

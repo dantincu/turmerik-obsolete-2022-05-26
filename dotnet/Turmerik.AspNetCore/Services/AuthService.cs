@@ -11,7 +11,13 @@ using Turmerik.AspNetCore.Settings;
 
 namespace Turmerik.AspNetCore.Services
 {
-    public class AuthService : ServiceBase
+    public interface IAuthService
+    {
+        Task LogIn();
+        Task LogOut();
+    }
+
+    public class AuthService : ServiceBase, IAuthService
     {
         private readonly IHttpContextAccessor httpContextAccessor;
         private readonly ITrmrkAppSettings trmrkAppSettings;

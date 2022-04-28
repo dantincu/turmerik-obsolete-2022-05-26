@@ -38,16 +38,39 @@ namespace Turmerik.AspNetCore.Infrastructure
             TryParseVal<string, T> factory)
             where T : struct
         {
+            T? retVal = cookies.GetNullableValue(
+                key,
+                str =>
+                {
+                    T outVal;
+
+                    bool isValid = factory(str, out outVal);
+                    return new Tuple<bool, T>(isValid, outVal);
+                });
+
+            return retVal;
+        }
+
+        public static T? GetNullableValue<T>(
+            this IRequestCookieCollection cookies,
+            string key,
+            Func<string, Tuple<bool, T>> factory)
+            where T : struct
+        {
             T? retVal;
             string str;
 
-            T val;
+            Tuple<bool, T> tuple = null;
 
             if (cookies.TryGetValue(
-                key, out str) && factory(
-                    str, out val))
+                key, out str))
             {
-                retVal = val;
+                tuple = factory(str);
+            }
+
+            if (tuple != null && tuple.Item1)
+            {
+                retVal = tuple.Item2;
             }
             else
             {

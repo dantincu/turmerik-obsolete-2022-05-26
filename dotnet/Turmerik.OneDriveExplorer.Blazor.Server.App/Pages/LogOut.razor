@@ -1,11 +1,7 @@
 ﻿@page "/logout"
 
-@using Turmerik.AspNetCore.Infrastructure
 @using Turmerik.AspNetCore.Services
-@using Turmerik.AspNetCore.UserSession
-@inject AuthService AuthSvc
-@inject IAppUserSessionsManager AppUserSessionsManager;
-@inject Blazored.LocalStorage.ILocalStorageService LocalStorage;
+@inject IAuthService AuthSvc
 
 <h3>Logging out</h3>
 

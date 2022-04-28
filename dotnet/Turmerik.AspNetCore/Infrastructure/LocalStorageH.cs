@@ -63,51 +63,43 @@ namespace Turmerik.AspNetCore.Infrastructure
             return valTuple;
         }
 
-        public static async Task<bool> AssureIsSetAsync<T>(
+        public static async Task<T> AddOrUpdateAsync<T>(
             this ILocalStorageService localStorage,
             string key,
+            Func<T, T> updateFunc,
             Func<T> factory,
             bool removeKeyOnError = false)
         {
             var valTuple = await localStorage.TryGetValueAsync<T>(key, removeKeyOnError);
-            bool hasValue = valTuple.Item1;
+            T value = valTuple.Item1 ? updateFunc(valTuple.Item2) : factory();
 
-            if (!hasValue)
+            if (value != null)
             {
-                T value = factory();
-
-                if (value != null)
-                {
-                    await localStorage.SetItemAsync(key, value);
-                }
+                await localStorage.SetItemAsync(key, value);
             }
 
-            return !hasValue;
+            return value;
         }
 
-        public static async Task<bool> AssureIsSetAsync<T>(
+        public static async Task<T> AddOrUpdateAsync<T>(
             this ILocalStorageService localStorage,
             string key,
+            Func<T, Task<T>> updateFunc,
             Func<Task<T>> factory,
             bool removeKeyOnError = false)
         {
             var valTuple = await localStorage.TryGetValueAsync<T>(key, removeKeyOnError);
-            bool hasValue = valTuple.Item1;
+            T value = valTuple.Item1 ? await updateFunc(valTuple.Item2) : await factory();
 
-            if (!hasValue)
+            if (value != null)
             {
-                T value = await factory();
-
-                if (value != null)
-                {
-                    await localStorage.SetItemAsync(key, value);
-                }
+                await localStorage.SetItemAsync(key, value);
             }
 
-            return !hasValue;
+            return value;
         }
 
-        public static async Task<Tuple<bool, T>> TryRemoveItem<T>(
+        public static async Task<Tuple<bool, T>> TryRemoveItemAsync<T>(
             this ILocalStorageService localStorage,
             string key)
         {
