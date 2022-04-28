@@ -1,4 +1,5 @@
 using Blazored.LocalStorage;
+using Blazored.SessionStorage;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -69,9 +70,12 @@ namespace Turmerik.OneDriveExplorer.Blazor.Server.App.AppStartup
             });
 
             services.AddRazorPages();
+
             services.AddServerSideBlazor()
                 .AddMicrosoftIdentityConsentHandler();
+
             services.AddBlazoredLocalStorage();
+            services.AddBlazoredSessionStorage();
 
             helper.RegisterServices(services);
         }

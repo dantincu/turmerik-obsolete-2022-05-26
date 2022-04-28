@@ -1,4 +1,5 @@
 ﻿using Blazored.LocalStorage;
+using Blazored.SessionStorage;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
@@ -19,19 +20,19 @@ namespace Turmerik.AspNetCore.UserSession
         private readonly IUserSessionsDictnr userSessionsDictnr;
         private readonly IHttpContextAccessor httpContextAccessor;
         private readonly ILocalStorageService localStorage;
-
-        private readonly Lazy<HttpContext> httpContext;
+        private readonly ISessionStorageService sessionStorage;
 
         public UserSessionsManager(
             IUserSessionsDictnr userSessionsDictnr,
             IHttpContextAccessor httpContextAccessor,
-            ILocalStorageService localStorage)
+            ILocalStorageService localStorage,
+            ISessionStorageService sessionStorage)
         {
             this.userSessionsDictnr = userSessionsDictnr ?? throw new ArgumentNullException(nameof(userSessionsDictnr));
             this.httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
 
             this.localStorage = localStorage ?? throw new ArgumentNullException(nameof(localStorage));
-            httpContext = new Lazy<HttpContext>(() => httpContextAccessor.HttpContext);
+            this.sessionStorage = sessionStorage ?? throw new ArgumentNullException(nameof(sessionStorage));
         }
 
         public async Task<IAppUserSessionData> TryAddOrUpdateUserSessionAsync()
@@ -47,7 +48,8 @@ namespace Turmerik.AspNetCore.UserSession
         {
             var appUserSessionData = await userSessionsDictnr.TryRemoveUserSessionAsync(
                 httpContextAccessor,
-                localStorage);
+                localStorage,
+                sessionStorage);
 
             return appUserSessionData;
         }

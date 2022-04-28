@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Blazored.LocalStorage;
+using Blazored.SessionStorage;
 using Microsoft.AspNetCore.Http;
 using Turmerik.AspNetCore.AppStartup;
 using Turmerik.AspNetCore.Infrastructure;
@@ -23,7 +24,8 @@ namespace Turmerik.AspNetCore.UserSession
 
         Task<IAppUserSessionData> TryRemoveUserSessionAsync(
             IHttpContextAccessor httpContextAccessor,
-            ILocalStorageService localStorage);
+            ILocalStorageService localStorage,
+            ISessionStorageService sessionStorage);
     }
 
     public class UserSessionsDictnr : IUserSessionsDictnr
@@ -104,7 +106,8 @@ namespace Turmerik.AspNetCore.UserSession
 
         public async Task<IAppUserSessionData> TryRemoveUserSessionAsync(
             IHttpContextAccessor httpContextAccessor,
-            ILocalStorageService localStorage)
+            ILocalStorageService localStorage,
+            ISessionStorageService sessionStorage)
         {
             var sessionProps = GetSessionProps(httpContextAccessor);
             IAppUserSessionData immtbl = null;
@@ -130,7 +133,24 @@ namespace Turmerik.AspNetCore.UserSession
                     LocalStorageKeys.UserSession);
             }
 
+            var keysArr = (await localStorage.KeysAsync(
+                )).Where(IsTrmrkKey).ToArray();
+
+            await localStorage.RemoveItemsAsync(keysArr);
+            await sessionStorage.ClearAsync();
+
             return immtbl;
+        }
+
+        private bool IsTrmrkKey(string key)
+        {
+            bool retVal = key.StartsWith(
+                LocalStorageKeys.TRMRK,
+                true,
+                '-',
+                '[');
+
+            return retVal;
         }
 
         private TMtbl SetAppUserDataProps<TMtbl>(

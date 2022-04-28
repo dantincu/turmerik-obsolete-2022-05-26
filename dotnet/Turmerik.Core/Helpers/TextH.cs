@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -141,6 +142,46 @@ namespace Turmerik.Core.Helpers
         public static bool StrEquals(this string target, string reference, bool ignoreCase = false)
         {
             bool retVal = string.Compare(target, reference, ignoreCase) == 0;
+            return retVal;
+        }
+
+        public static bool StartsWith(
+            this string str,
+            string prefix,
+            bool ignoreCase,
+            params string[] afterPfxAlts)
+        {
+            bool retVal = str.Length > prefix.Length;
+            retVal = retVal && str.StartsWith(prefix, ignoreCase, CultureInfo.InvariantCulture);
+
+            if (retVal)
+            {
+                str = str.Substring(prefix.Length);
+
+                foreach (var pfx in afterPfxAlts)
+                {
+                    retVal = retVal && str.StartsWith(pfx, ignoreCase, CultureInfo.InvariantCulture);
+                }
+            }
+
+            return retVal;
+        }
+
+        public static bool StartsWith(
+            this string str,
+            string prefix,
+            bool ignoreCase,
+            params char[] afterPfxAlts)
+        {
+            bool retVal = str.Length > prefix.Length;
+            retVal = retVal && str.StartsWith(prefix, ignoreCase, CultureInfo.InvariantCulture);
+
+            if (retVal)
+            {
+                var chr = str.Skip(prefix.Length).First();
+                retVal = afterPfxAlts.Contains(chr);
+            }
+
             return retVal;
         }
     }
