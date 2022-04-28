@@ -13,7 +13,7 @@
 
 @inject NavigationManager NavManager;
 @inject ITrmrkAppSettings AppSettings;
-@inject IAppUserSessionsManager AppUserSessionsManager;
+@inject IUserSessionsManager UserSessionsManager;
 @inject IHttpContextAccessor HttpContextAccessor;
 @inject ILocalStorageService LocalStorageService;
 
@@ -38,9 +38,7 @@
 
     protected async override Task OnAfterRenderAsync(bool firstRender)
     {
-        var userSession = await AppUserSessionsManager.TryAddOrUpdateUserSessionAsync(
-            HttpContextAccessor,
-            LocalStorageService);
+        var userSession = await UserSessionsManager.TryAddOrUpdateUserSessionAsync();
     }
 
     protected async override Task OnInitializedAsync()

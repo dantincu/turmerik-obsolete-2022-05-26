@@ -15,7 +15,7 @@ using Turmerik.Core.Helpers;
 
 namespace Turmerik.AspNetCore.UserSession
 {
-    public interface IAppUserSessionsManagerCore
+    public interface IUserSessionsDictnr
     {
         Task<IAppUserSessionData> TryAddOrUpdateUserSessionAsync(
             IHttpContextAccessor httpContextAccessor,
@@ -26,20 +26,14 @@ namespace Turmerik.AspNetCore.UserSession
             ILocalStorageService localStorage);
     }
 
-    public interface IAppUserSessionsManager : IAppUserSessionsManagerCore
-    {
-    }
-
-    public class AppUserSessionsManager : IAppUserSessionsManager
+    public class UserSessionsDictnr : IUserSessionsDictnr
     {
         private readonly ICloneableMapper mapper;
-
-        private readonly Lazy<HttpContext> httpContext;
 
         private readonly ConcurrentDictionary<IReadOnlyCollection<byte>, IAppUserData> usersDataDictnr;
         private readonly ConcurrentDictionary<IReadOnlyCollection<byte>, ConcurrentDictionary<Guid, IAppUserSessionData>> userSessionsDictnr;
 
-        public AppUserSessionsManager(ICloneableMapper mapper)
+        public UserSessionsDictnr(ICloneableMapper mapper)
         {
             this.mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             usersDataDictnr = new ConcurrentDictionary<IReadOnlyCollection<byte>, IAppUserData>();

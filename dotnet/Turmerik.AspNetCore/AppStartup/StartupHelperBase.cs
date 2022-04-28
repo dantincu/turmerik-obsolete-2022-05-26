@@ -43,7 +43,9 @@ namespace Turmerik.AspNetCore.AppStartup
             var appSvcsImmtbl = new AppCoreServiceCollectionImmtbl(appSvcsMtbl);
             services.AddSingleton<ITrmrkAppSettings>(provider => trmrkAppSettings);
 
-            services.AddSingleton<IAppUserSessionsManager, AppUserSessionsManager>();
+            services.AddSingleton<IUserSessionsDictnr, UserSessionsDictnr>();
+            services.AddScoped<IUserSessionsManager, UserSessionsManager>();
+
             return appSvcsImmtbl;
         }
     }
