@@ -1,17 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
-using Turmerik.AspNetCore.Services;
-using Turmerik.AspNetCore.Settings;
+﻿using Turmerik.AspNetCore.Services.DriveItems;
 using Turmerik.Core.Cloneable;
 
-namespace Turmerik.AspNetCore.Services.DriveItems
+namespace Turmerik.AspNetCore.MsIdentity.Services.DriveItems
 {
-    public interface IDriveFolderService
-    {
-        Task<IDriveFolder> GetDriveFolderAsync(string id);
-        Task<IDriveFolder> GetRootFolderAsync();
-    }
-
     public class DriveFolderService : IDriveFolderService
     {
         private readonly ICloneableMapper mapper;

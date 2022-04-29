@@ -1,4 +1,4 @@
-﻿namespace Turmerik.AspNetCore.Services
+﻿namespace Turmerik.AspNetCore.MsIdentity.Services
 {
     public class TrmrkMsGraphUserData
     {

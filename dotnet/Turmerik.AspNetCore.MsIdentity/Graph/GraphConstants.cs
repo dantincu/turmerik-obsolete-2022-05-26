@@ -1,4 +1,4 @@
-namespace Turmerik.AspNetCore.Graph
+namespace Turmerik.AspNetCore.MsIdentity.Graph
 {
     public static class GraphConstants
     {

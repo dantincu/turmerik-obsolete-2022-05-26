@@ -3,7 +3,7 @@ using System;
 using System.IO;
 using System.Security.Claims;
 
-namespace Turmerik.AspNetCore.Graph
+namespace Turmerik.AspNetCore.MsIdentity.Graph
 {
     public static class GraphClaimTypes
     {

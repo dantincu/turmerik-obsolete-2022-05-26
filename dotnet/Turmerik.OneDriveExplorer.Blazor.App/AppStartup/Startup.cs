@@ -9,7 +9,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Identity.Web;
 using System;
-using Turmerik.AspNetCore.Graph;
+using Turmerik.AspNetCore.MsIdentity.Graph;
 using Turmerik.AspNetCore.Services;
 using Turmerik.AspNetCore.UserSession;
 

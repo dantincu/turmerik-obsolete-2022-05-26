@@ -7,9 +7,10 @@ using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Turmerik.AspNetCore.Services;
 using Turmerik.AspNetCore.Settings;
 
-namespace Turmerik.AspNetCore.Services
+namespace Turmerik.AspNetCore.MsIdentity.Services
 {
     public interface IAuthService
     {

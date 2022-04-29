@@ -12,13 +12,16 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
-using Turmerik.AspNetCore.Graph;
+using Turmerik.AspNetCore.AppStartup;
 using Turmerik.AspNetCore.Infrastructure;
-using Turmerik.AspNetCore.Services;
+using Turmerik.AspNetCore.MsIdentity.Graph;
+using Turmerik.AspNetCore.MsIdentity.Services;
+using Turmerik.AspNetCore.MsIdentity.Services.DriveItems;
+using Turmerik.AspNetCore.Services.DriveItems;
 using Turmerik.AspNetCore.UserSession;
 using Turmerik.Core.Helpers;
 
-namespace Turmerik.AspNetCore.AppStartup
+namespace Turmerik.AspNetCore.MsIdentity.AppStartup
 {
     public abstract class MsIdentityStartupHelperBase : OpenIdConnectStartupHelperBase
     {
@@ -149,6 +152,16 @@ namespace Turmerik.AspNetCore.AppStartup
         {
             services.AddHttpContextAccessor();
             services.AddScoped<IAuthService, AuthService>();
+
+
+            if (useMockData)
+            {
+                services.AddScoped<IDriveFolderService, DriveFolderService>();
+            }
+            else
+            {
+                services.AddScoped<IDriveFolderService, DriveFolderService>();
+            }
         }
     }
 }
