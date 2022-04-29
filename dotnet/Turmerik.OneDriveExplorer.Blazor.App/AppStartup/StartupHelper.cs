@@ -4,10 +4,10 @@ using Microsoft.Extensions.Logging;
 using System;
 using Turmerik.AspNetCore.AppStartup;
 using Turmerik.AspNetCore.Services;
+using Turmerik.AspNetCore.Services.DriveItems;
 using Turmerik.AspNetCore.UserSession;
-using Turmerik.OneDriveExplorer.Blazor.Server.App.Data;
 
-namespace Turmerik.OneDriveExplorer.Blazor.Server.App.AppStartup
+namespace Turmerik.OneDriveExplorer.Blazor.App.AppStartup
 {
     public class StartupHelper : MsIdentityStartupHelperBase
     {
@@ -25,7 +25,7 @@ namespace Turmerik.OneDriveExplorer.Blazor.Server.App.AppStartup
             {
                 services.AddScoped<IDriveFolderService, DriveFolderService>();
             }
-            
+
         }
     }
 }

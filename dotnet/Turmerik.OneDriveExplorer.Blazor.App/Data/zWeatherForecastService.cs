@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Turmerik.OneDriveExplorer.Blazor.Server.App.Data
+namespace Turmerik.OneDriveExplorer.Blazor.App.Data
 {
     public class WeatherForecastService
     {

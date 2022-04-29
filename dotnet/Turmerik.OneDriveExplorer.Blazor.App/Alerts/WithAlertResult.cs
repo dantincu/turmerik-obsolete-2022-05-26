@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.DependencyInjection;
 using System.Threading.Tasks;
 
-namespace Turmerik.OneDriveExplorer.Blazor.Server.App.Alerts
+namespace Turmerik.OneDriveExplorer.Blazor.App.Alerts
 {
     // WithAlertResult adds temporary error/info/success
     // messages to the result of a controller action.

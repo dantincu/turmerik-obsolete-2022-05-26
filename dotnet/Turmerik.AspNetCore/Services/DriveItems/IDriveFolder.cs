@@ -1,7 +1,7 @@
 ﻿using Turmerik.Core.Cloneable;
 using Turmerik.Core.Cloneable.Nested.Clnbl;
 
-namespace Turmerik.OneDriveExplorer.Blazor.Server.App.Data
+namespace Turmerik.AspNetCore.Services.DriveItems
 {
     public interface IDriveFolder : IDriveItemCore
     {

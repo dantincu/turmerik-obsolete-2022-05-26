@@ -1,6 +1,6 @@
 using System;
 
-namespace Turmerik.OneDriveExplorer.Blazor.Server.App.Data
+namespace Turmerik.OneDriveExplorer.Blazor.App.Data
 {
     public class WeatherForecast
     {

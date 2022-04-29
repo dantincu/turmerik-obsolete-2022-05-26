@@ -6,9 +6,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Turmerik.OneDriveExplorer.Blazor.Server.App.AppStartup;
+using Turmerik.OneDriveExplorer.Blazor.App.AppStartup;
 
-namespace Turmerik.OneDriveExplorer.Blazor.Server.App
+namespace Turmerik.OneDriveExplorer.Blazor.App
 {
     public class Program
     {

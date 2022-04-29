@@ -1,14 +1,22 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Turmerik.AspNetCore.Services;
+using Turmerik.AspNetCore.Settings;
 using Turmerik.Core.Cloneable;
 
-namespace Turmerik.OneDriveExplorer.Blazor.Server.App.Data.Mock
+namespace Turmerik.AspNetCore.Services.DriveItems
 {
-    public class MockDriveFolderService : IDriveFolderService
+    public interface IDriveFolderService
+    {
+        Task<IDriveFolder> GetDriveFolderAsync(string id);
+        Task<IDriveFolder> GetRootFolderAsync();
+    }
+
+    public class DriveFolderService : IDriveFolderService
     {
         private readonly ICloneableMapper mapper;
 
-        public MockDriveFolderService(
+        public DriveFolderService(
             ICloneableMapper mapper)
         {
             this.mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));

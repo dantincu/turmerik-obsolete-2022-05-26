@@ -2,7 +2,7 @@
 using System.Collections.ObjectModel;
 using Turmerik.Core.Cloneable.Nested.Clnbl;
 
-namespace Turmerik.OneDriveExplorer.Blazor.Server.App.Data
+namespace Turmerik.AspNetCore.Services.DriveItems
 {
     public class DriveFoldersList : NestedClnblNmrbl<IDriveFolder, DriveFolderImmtbl, DriveFolderMtbl>
     {

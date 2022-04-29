@@ -13,7 +13,7 @@ using Turmerik.AspNetCore.Graph;
 using Turmerik.AspNetCore.Services;
 using Turmerik.AspNetCore.UserSession;
 
-namespace Turmerik.OneDriveExplorer.Blazor.Server.App.AppStartup
+namespace Turmerik.OneDriveExplorer.Blazor.App.AppStartup
 {
     public class Startup
     {

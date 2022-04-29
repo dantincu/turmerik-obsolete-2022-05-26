@@ -3,8 +3,9 @@
 
 // <AlertExtensionsSnippet>
 using Microsoft.AspNetCore.Mvc;
+using Turmerik.OneDriveExplorer.Blazor.App.Alerts;
 
-namespace Turmerik.OneDriveExplorer.Blazor.Server.App.Alerts
+namespace Turmerik.OneDriveExplorer.Blazor.App.Alerts
 {
     public static class AlertExtensions
     {
