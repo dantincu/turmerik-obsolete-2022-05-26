@@ -77,11 +77,11 @@ namespace Turmerik.OneDriveExplorer.Blazor.Server.App.AppStartup
             services.AddBlazoredLocalStorage();
             services.AddBlazoredSessionStorage();
 
-            helper.RegisterServices(services);
+            helper.RegisterServices(services, appSvcs.TrmrkAppSettings.UseMockData);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {

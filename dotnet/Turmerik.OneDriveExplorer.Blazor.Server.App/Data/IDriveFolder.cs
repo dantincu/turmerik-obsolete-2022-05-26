@@ -25,6 +25,10 @@ namespace Turmerik.OneDriveExplorer.Blazor.Server.App.Data
 
     public class DriveFolderMtbl : DriveItemCoreMtbl, IDriveFolder
     {
+        public DriveFolderMtbl()
+        {
+        }
+
         public DriveFolderMtbl(ClnblArgs args) : base(args)
         {
         }

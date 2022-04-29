@@ -7,6 +7,7 @@ namespace Turmerik.AspNetCore.Settings
         string AppBaseUrl { get; }
         string LoginRelUrl { get; }
         string LogoutRelUrl { get; }
+        bool UseMockData { get; }
     }
 
     public interface ITrmrkAppSettings : ITrmrkAppSettingsCore
@@ -22,11 +23,13 @@ namespace Turmerik.AspNetCore.Settings
             AppBaseUrl = src.AppBaseUrl;
             LoginRelUrl = src.LoginRelUrl;
             LogoutRelUrl = src.LogoutRelUrl;
+            UseMockData = src.UseMockData;
         }
 
         public string AppBaseUrl { get; }
         public string LoginRelUrl { get; }
         public string LogoutRelUrl { get; }
+        public bool UseMockData { get; }
     }
 
     public class TrmrkAppSettingsCoreMtbl : ITrmrkAppSettingsCore
@@ -40,11 +43,13 @@ namespace Turmerik.AspNetCore.Settings
             AppBaseUrl = src.AppBaseUrl;
             LoginRelUrl = src.LoginRelUrl;
             LogoutRelUrl = src.LogoutRelUrl;
+            UseMockData = src.UseMockData;
         }
 
         public string AppBaseUrl { get; set; }
         public string LoginRelUrl { get; set; }
         public string LogoutRelUrl { get; set; }
+        public bool UseMockData { get; set; }
     }
 
     public class TrmrkAppSettingsImmtbl : TrmrkAppSettingsCoreImmtbl, ITrmrkAppSettings

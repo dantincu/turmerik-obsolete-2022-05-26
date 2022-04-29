@@ -145,7 +145,7 @@ namespace Turmerik.AspNetCore.AppStartup
         {
         }
 
-        public void RegisterServices(IServiceCollection services)
+        public virtual void RegisterServices(IServiceCollection services, bool useMockData)
         {
             services.AddHttpContextAccessor();
             services.AddScoped<IAuthService, AuthService>();
