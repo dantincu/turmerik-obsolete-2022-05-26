@@ -7,17 +7,12 @@ using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Turmerik.AspNetCore.OpenId.Services;
 using Turmerik.AspNetCore.Services;
 using Turmerik.AspNetCore.Settings;
 
 namespace Turmerik.AspNetCore.MsIdentity.Services
 {
-    public interface IAuthService
-    {
-        Task LogIn();
-        Task LogOut();
-    }
-
     public class AuthService : ServiceBase, IAuthService
     {
         private readonly IHttpContextAccessor httpContextAccessor;

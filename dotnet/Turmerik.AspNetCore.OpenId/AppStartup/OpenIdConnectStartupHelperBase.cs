@@ -11,7 +11,7 @@ using Turmerik.AspNetCore.Services;
 using Turmerik.AspNetCore.UserSession;
 using Turmerik.Core.Infrastucture;
 
-namespace Turmerik.AspNetCore.MsIdentity.AppStartup
+namespace Turmerik.AspNetCore.OpenId.AppStartup
 {
     public abstract class OpenIdConnectStartupHelperBase : StartupHelperBase
     {

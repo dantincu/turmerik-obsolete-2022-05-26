@@ -15,5 +15,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Turmerik.AspNetCore.MsIdentity\Turmerik.AspNetCore.MsIdentity.csproj" />
+    <ProjectReference Include="..\Turmerik.Blazor.OpenId\Turmerik.Blazor.OpenId.csproj" />
   </ItemGroup>
 </Project>

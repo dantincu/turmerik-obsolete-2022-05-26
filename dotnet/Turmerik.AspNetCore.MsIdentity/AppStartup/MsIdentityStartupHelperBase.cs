@@ -17,6 +17,8 @@ using Turmerik.AspNetCore.Infrastructure;
 using Turmerik.AspNetCore.MsIdentity.Graph;
 using Turmerik.AspNetCore.MsIdentity.Services;
 using Turmerik.AspNetCore.MsIdentity.Services.DriveItems;
+using Turmerik.AspNetCore.OpenId.AppStartup;
+using Turmerik.AspNetCore.OpenId.Services;
 using Turmerik.AspNetCore.Services.DriveItems;
 using Turmerik.AspNetCore.UserSession;
 using Turmerik.Core.Helpers;
@@ -152,7 +154,6 @@ namespace Turmerik.AspNetCore.MsIdentity.AppStartup
         {
             services.AddHttpContextAccessor();
             services.AddScoped<IAuthService, AuthService>();
-
 
             if (useMockData)
             {
