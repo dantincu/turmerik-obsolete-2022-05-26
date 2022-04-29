@@ -17,8 +17,8 @@
 @inject IHttpContextAccessor HttpContextAccessor;
 @inject ILocalStorageService LocalStorageService;
 
-<div class="sidebar">
-    <NavMenu />
+<div class="sidebar trmrk-app-sidebar @SideBarSizeCssClass">
+    <NavMenu SizeChangedCallback="@SizeChangedCallback" />
 </div>
 
 <div class="main">
@@ -32,9 +32,11 @@
 </div>
 
 @code {
-    [CascadingParameter] protected Task<AuthenticationState> AuthStat { get; set; }
-
+    private bool sideBarLarge = false;
     private System.Security.Claims.ClaimsPrincipal User;
+
+    [CascadingParameter] protected Task<AuthenticationState> AuthStat { get; set; }
+    private string? SideBarSizeCssClass => sideBarLarge ? "trmrk-large" : "trmrk-small";
 
     protected async override Task OnAfterRenderAsync(bool firstRender)
     {
@@ -50,5 +52,10 @@
         {
             NavManager.NavigateTo($"{AppSettings.LoginRelUrl}?{QsKeys.RET_URL}={Uri.EscapeDataString(NavManager.Uri)}");
         }
+    }
+
+    private void SizeChangedCallback(MouseEventArgs e)
+    {
+        sideBarLarge = !sideBarLarge;
     }
 }

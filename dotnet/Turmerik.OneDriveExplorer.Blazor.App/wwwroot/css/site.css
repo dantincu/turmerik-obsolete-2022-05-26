@@ -153,6 +153,10 @@ app {
     .main .top-row a, .main .top-row .btn-link {
         margin-left: 0;
     }
+
+    .trmrk-shrink-enlarge {
+        display: none;
+    }
 }
 
 @media (min-width: 768px) {
@@ -186,4 +190,39 @@ app {
         /* Never collapse the sidebar for wide screens */
         display: block;
     }
+
+    .trmrk-app-sidebar.trmrk-small {
+        width: 250px;
+    }
+
+    .trmrk-app-sidebar.trmrk-large {
+        min-width: 500px;
+        width: 50%;
+    }
+}
+
+.navbar-brand.trmrk-navbar-brand {
+    font-size: 16px;
+    font-style: italic;
+    color: #FFAA44;
+}
+
+.trmrk-app-sidebar {
+    position: sticky;
+    top: 0px;
+}
+
+.trmrk-shrink-enlarge {
+    float: right;
+    width: 16px;
+    height: 16px;
+    cursor: grab;
+}
+
+    .trmrk-shrink-enlarge .oi {
+        cursor: grab;
+    }
+
+.trmrk-hidden {
+    display: none;
 }
