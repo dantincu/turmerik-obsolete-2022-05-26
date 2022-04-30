@@ -1,5 +1,5 @@
 ﻿@using Turmerik.Blazor.Core.Pages.Shared
-@inherits LayoutComponentBase
+@inherits MainLayoutComponentBase
 
 <PageTitle>Turmerik Local Disk Explorer</PageTitle>
 
@@ -16,12 +16,4 @@
 </div>
 
 @code {
-    private bool sideBarLarge = false;
-
-    private string? SideBarSizeCssClass => sideBarLarge ? "trmrk-large" : "trmrk-small";
-
-    private void SizeChangedCallback(MouseEventArgs e)
-    {
-        sideBarLarge = !sideBarLarge;
-    }
 }

@@ -11,13 +11,12 @@
 @using Turmerik.Core.Cloneable.Nested
 @using Turmerik.Core.Helpers;
 @using Turmerik.AspNetCore.OpenId.UserSession;
-@inherits LayoutComponentBase
+@inherits OpenIdMainLayoutComponentBase
 
-@inject NavigationManager NavManager;
-@inject ITrmrkAppSettings AppSettings;
-@inject IUserSessionsManager UserSessionsManager;
-@inject IHttpContextAccessor HttpContextAccessor;
-@inject ILocalStorageService LocalStorageService;
+@inject NavigationManager navManager;
+@inject ITrmrkAppSettings appSettings;
+@inject IUserSessionsManager userSessionsManager;
+@inject IHttpContextAccessor httpContextAccessor;
 
 <PageTitle>Turmerik OneDrive Explorer</PageTitle>
 
@@ -37,30 +36,13 @@
 </div>
 
 @code {
-    private bool sideBarLarge = false;
-    private System.Security.Claims.ClaimsPrincipal User;
-
-    [CascadingParameter] protected Task<AuthenticationState> AuthStat { get; set; }
-    private string? SideBarSizeCssClass => sideBarLarge ? "trmrk-large" : "trmrk-small";
-
-    protected async override Task OnAfterRenderAsync(bool firstRender)
-    {
-        var userSession = await UserSessionsManager.TryAddOrUpdateUserSessionAsync();
-    }
-
     protected async override Task OnInitializedAsync()
     {
+        this.NavManager = navManager;
+        this.AppSettings = appSettings;
+        this.UserSessionsManager = userSessionsManager;
+        this.HttpContextAccessor = httpContextAccessor;
+
         await base.OnInitializedAsync();
-        User = (await AuthStat).User;
-
-        if(!User.Identity.IsAuthenticated || !User.Claims.Any())
-        {
-            NavManager.NavigateTo($"{AppSettings.LoginRelUrl}?{QsKeys.RET_URL}={Uri.EscapeDataString(NavManager.Uri)}");
-        }
-    }
-
-    private void SizeChangedCallback(MouseEventArgs e)
-    {
-        sideBarLarge = !sideBarLarge;
     }
 }

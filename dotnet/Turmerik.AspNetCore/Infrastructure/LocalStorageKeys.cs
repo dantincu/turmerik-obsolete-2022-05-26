@@ -8,6 +8,14 @@
 
         public static readonly string UserSession = GetKey(USER_SESSION);
 
+        public static string GetLocal(
+            string baseKey,
+            Guid localSessionGuid)
+        {
+            string key = $"{baseKey}[{localSessionGuid}]";
+            return key;
+        }
+
         private static string GetKey(params string[] segments)
         {
             segments = segments.Prepend(TRMRK).ToArray();

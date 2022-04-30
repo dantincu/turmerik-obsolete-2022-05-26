@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <Title>Cloneable Types</Title>
+      <Shortcut>clnbl</Shortcut>
+      <Description>Code snippet for Cloneable Types</Description>
+      <Author>Daniel Tincu</Author>
+      <SnippetTypes>
+        <SnippetType>Expansion</SnippetType>
+      </SnippetTypes>
+    </Header>
+    <Snippet>
+      <Declarations>
+        <Literal>
+          <ID>intf_name</ID>
+          <ToolTip>Interface name</ToolTip>
+          <Default>Clnbl</Default>
+        </Literal>
+      </Declarations>
+      <Code Language="csharp">
+      <![CDATA[public interface I$intf_name$ : ICloneableObject
+    {
+    }
+
+    public class $intf_name$Immtbl : CloneableObjectImmtblBase, I$intf_name$
+    {
+        public $intf_name$Immtbl(ClnblArgs args) : base(args)
+        {
+        }
+
+        public $intf_name$Immtbl(ICloneableMapper mapper, I$intf_name$ src) : base(mapper, src)
+        {
+        }
+    }
+
+    public class $intf_name$Mtbl : CloneableObjectMtblBase, I$intf_name$
+    {
+        public $intf_name$Mtbl()
+        {
+        }
+
+        public $intf_name$Mtbl(ClnblArgs args) : base(args)
+        {
+        }
+
+        public $intf_name$Mtbl(ICloneableMapper mapper, I$intf_name$ src) : base(mapper, src)
+        {
+        }
+    }]]>
+      </Code>
+    </Snippet>
+  </CodeSnippet>
+</CodeSnippets>

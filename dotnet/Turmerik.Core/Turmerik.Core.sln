@@ -40,7 +40,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turmerik.Blazor.Core", "..\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turmerik.Blazor.OpenId", "..\Turmerik.Blazor.OpenId\Turmerik.Blazor.OpenId.csproj", "{E3E20EA4-3CEA-47D9-B209-5B0D52D3496E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Turmerik.MsGraph.Core", "..\Turmerik.MsGraph.Core\Turmerik.MsGraph.Core.csproj", "{288C8FE6-13C9-4C67-9700-31E0D3438C10}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turmerik.MsGraph.Core", "..\Turmerik.MsGraph.Core\Turmerik.MsGraph.Core.csproj", "{288C8FE6-13C9-4C67-9700-31E0D3438C10}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

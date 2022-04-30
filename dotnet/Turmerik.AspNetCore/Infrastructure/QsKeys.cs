@@ -7,5 +7,6 @@
 
         public const string RET_URL = "returnUrl";
         public const string DRIVE_ITEM_ID = "drive-item-id";
+        public const string LOCAL_SESSION_ID = "local-session-id";
     }
 }

@@ -39,7 +39,8 @@ namespace Turmerik.AspNetCore.OpenId.UserSession
         {
             var appUserSessionData = await userSessionsDictnr.TryAddOrUpdateUserSessionAsync(
                 httpContextAccessor,
-                localStorage);
+                localStorage,
+                sessionStorage);
 
             return appUserSessionData;
         }
