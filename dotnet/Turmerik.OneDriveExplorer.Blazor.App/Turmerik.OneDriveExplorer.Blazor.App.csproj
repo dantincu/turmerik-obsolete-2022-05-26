@@ -20,4 +20,10 @@
     <Folder Include="Data\" />
     <Folder Include="wwwroot\js\browser-utility\" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Update="wwwroot\js\browser-utility\main.js">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
 </Project>

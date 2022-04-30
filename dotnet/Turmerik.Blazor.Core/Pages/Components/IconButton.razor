@@ -1,0 +1,44 @@
+﻿@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.JSInterop
+@using Turmerik.AspNetCore.Infrastructure
+
+@inherits ComponentCoreBase;
+@inject IJSRuntime JSRuntime;
+
+<span id="@UuidStr" class="@CssClass trmrk-btn" aria-hidden="true" title="@Title" @onmousedown=@OnMouseDownEventHandler @onmouseup=@OnMouseUpEventHandler></span>
+
+@code {
+    [Parameter]
+    public string CssClass { get; set; }
+
+    [Parameter]
+    public string Title { get; set; }
+
+    [Parameter]
+    public Func<MouseEventArgs, Task> OnMouseDown { get; set; }
+
+    [Parameter]
+    public Func<MouseEventArgs, Task> OnMouseUp { get; set; }
+
+    protected async Task OnMouseDownEventHandler(MouseEventArgs args)
+    {
+        await JSRuntime.InvokeAsync<string>(
+            JsH.Get(JsH.AddCssClass), UuidStr, null, "trmrk-pressed");
+
+        if (OnMouseDown != null)
+        {
+            await OnMouseDown.Invoke(args);
+        }
+    }
+
+    protected async Task OnMouseUpEventHandler(MouseEventArgs args)
+    {
+        await JSRuntime.InvokeAsync<string>(
+            JsH.Get(JsH.RemoveCssClass), UuidStr, null, "trmrk-pressed");
+
+        if (OnMouseUp != null)
+        {
+            await OnMouseUp.Invoke(args);
+        }
+    }
+}

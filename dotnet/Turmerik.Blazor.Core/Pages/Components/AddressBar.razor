@@ -2,20 +2,55 @@
 @using Microsoft.JSInterop
 @using Turmerik.AspNetCore.Infrastructure
 
+@inherits ComponentCoreBase;
 @inject IJSRuntime JSRuntime;
 
-<div class="trmrk-address-bar-container">
-    <span class="oi oi-arrow-circle-left" aria-hidden="true" title="Go back"></span>
-    <span class="oi oi-arrow-circle-right" aria-hidden="true" title="Go forward"></span>
+<div id="@UuidStr" class="trmrk-address-bar-container">
+    <IconButton CssClass="oi oi-arrow-circle-left" Title="Go Back" OnMouseUp=@OnGoBackMouseUpAsyncEventHandler></IconButton>
+    <IconButton CssClass="oi oi-arrow-circle-top" Title="Go Up" OnMouseUp=@OnGoUpMouseUpAsyncEventHandler></IconButton>
+
+    <IconButton CssClass="oi oi-arrow-circle-right" Title="Go Forward" OnMouseUp=@OnGoForwardMouseUpAsyncEventHandler></IconButton>
     <input type="text" class="trmrk-address-bar" @onfocus=@OnAddressBarFocusAsync />
-    <span class="oi oi-reload" aria-hidden="true" title="Reload"></span>
+
+    <IconButton CssClass="oi oi-reload" Title="Reload" OnMouseUp=@OnReloadMouseUpAsyncEventHandler></IconButton>
 </div>
 
 @code {
+    [Parameter]
+    public Func<MouseEventArgs, Task> OnGoBackMouseUp { get; set; }
+
+    [Parameter]
+    public Func<MouseEventArgs, Task> OnGoUpMouseUp { get; set; }
+    
+    [Parameter]
+    public Func<MouseEventArgs, Task> OnGoForwardMouseUp { get; set; }
+
+    [Parameter]
+    public Func<MouseEventArgs, Task> OnReloadMouseUp { get; set; }
+
     protected async Task OnAddressBarFocusAsync(FocusEventArgs args)
     {
         await JSRuntime.InvokeAsync<string>(
-            JsH.Get(JsH.SelectSelector),
-            ".trmrk-address-bar-container .trmrk-address-bar");
+            JsH.Get(JsH.SelectDomEl), UuidStr, ".trmrk-address-bar");
+    }
+
+    protected async Task OnGoBackMouseUpAsyncEventHandler(MouseEventArgs args)
+    {
+        
+    }
+
+    protected async Task OnGoUpMouseUpAsyncEventHandler(MouseEventArgs args)
+    {
+        
+    }
+
+    protected async Task OnGoForwardMouseUpAsyncEventHandler(MouseEventArgs args)
+    {
+        
+    }
+
+    protected async Task OnReloadMouseUpAsyncEventHandler(MouseEventArgs args)
+    {
+        
     }
 }
