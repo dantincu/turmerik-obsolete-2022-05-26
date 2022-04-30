@@ -11,14 +11,13 @@ using System.Threading.Tasks;
 using Turmerik.AspNetCore.Infrastructure;
 using Turmerik.AspNetCore.Services;
 using Turmerik.AspNetCore.Settings;
-using Turmerik.AspNetCore.UserSession;
 using Turmerik.Core.Infrastucture;
 
 namespace Turmerik.AspNetCore.AppStartup
 {
     public abstract class StartupHelperBase
     {
-        public IAppCoreServiceCollection RegisterCoreServices(
+        public virtual IAppCoreServiceCollection RegisterCoreServices(
             IServiceCollection services, IConfiguration config)
         {
             var coreSvcs = TrmrkCoreServiceCollectionBuilder.RegisterAll(services);
@@ -44,9 +43,6 @@ namespace Turmerik.AspNetCore.AppStartup
 
             var appSvcsImmtbl = new AppCoreServiceCollectionImmtbl(appSvcsMtbl);
             services.AddSingleton<ITrmrkAppSettings>(provider => trmrkAppSettings);
-
-            services.AddSingleton<IUserSessionsDictnr, UserSessionsDictnr>();
-            services.AddScoped<IUserSessionsManager, UserSessionsManager>();
 
             return appSvcsImmtbl;
         }

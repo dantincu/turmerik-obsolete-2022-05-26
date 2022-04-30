@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Turmerik.AspNetCore.UserSession
+namespace Turmerik.AspNetCore.OpenId.UserSession
 {
     public interface IUserSessionsManager
     {

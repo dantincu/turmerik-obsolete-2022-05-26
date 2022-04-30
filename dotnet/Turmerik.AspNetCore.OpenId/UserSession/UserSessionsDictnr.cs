@@ -14,7 +14,7 @@ using Turmerik.Core.Cloneable.Nested;
 using Turmerik.Core.Components;
 using Turmerik.Core.Helpers;
 
-namespace Turmerik.AspNetCore.UserSession
+namespace Turmerik.AspNetCore.OpenId.UserSession
 {
     public interface IUserSessionsDictnr
     {
@@ -67,7 +67,7 @@ namespace Turmerik.AspNetCore.UserSession
                         new AppUserDataMtbl(),
                         usernameHash,
                         usernameHashBytesList));
-                
+
                 userSessionsDictnr.AddOrUpdateValue(
                     usernameHashBytes,
                     key => new ConcurrentDictionary<Guid, IAppUserSessionData>(),
@@ -78,17 +78,17 @@ namespace Turmerik.AspNetCore.UserSession
                         userSessionGuid,
                         k => SetAppUserDataProps(
                             new AppUserSessionDataMtbl
-                        {
-                            UserSessionGuid = userSessionGuid,
-                            LoginDateTimeUtc = utcNow
-                        },
+                            {
+                                UserSessionGuid = userSessionGuid,
+                                LoginDateTimeUtc = utcNow
+                            },
                         usernameHash,
                         usernameHashBytesList),
                         (k, isUpdate, data) =>
                         {
                             data.LastActiveDateTimeUtc = utcNow;
 
-                           return data;
+                            return data;
                         });
 
                         return dictnr;
@@ -118,7 +118,7 @@ namespace Turmerik.AspNetCore.UserSession
             if (sessionProps != null)
             {
                 ConcurrentDictionary<Guid, IAppUserSessionData> dictnr;
-                
+
                 if (userSessionsDictnr.TryGetValue(
                     usernameHashBytes,
                     out dictnr))

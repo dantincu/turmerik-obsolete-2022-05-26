@@ -20,7 +20,6 @@ using Turmerik.AspNetCore.MsIdentity.Services.DriveItems;
 using Turmerik.AspNetCore.OpenId.AppStartup;
 using Turmerik.AspNetCore.OpenId.Services;
 using Turmerik.AspNetCore.Services.DriveItems;
-using Turmerik.AspNetCore.UserSession;
 using Turmerik.Core.Helpers;
 
 namespace Turmerik.AspNetCore.MsIdentity.AppStartup

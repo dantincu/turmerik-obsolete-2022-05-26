@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Turmerik.Core.Cloneable;
 
-namespace Turmerik.AspNetCore.UserSession
+namespace Turmerik.AspNetCore.OpenId.UserSession
 {
-    public interface  IAppUserData : IAppUserDataCore
+    public interface IAppUserData : IAppUserDataCore
     {
     }
 

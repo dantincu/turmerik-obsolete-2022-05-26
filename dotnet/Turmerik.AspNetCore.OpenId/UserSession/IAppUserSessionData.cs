@@ -3,7 +3,7 @@ using Turmerik.Core.Cloneable;
 using Turmerik.Core.Cloneable.Nested;
 using Turmerik.Core.Helpers;
 
-namespace Turmerik.AspNetCore.UserSession
+namespace Turmerik.AspNetCore.OpenId.UserSession
 {
     public interface IAppUserSessionData : IAppUserDataCore
     {

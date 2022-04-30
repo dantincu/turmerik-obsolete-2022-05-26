@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Turmerik.Core.Cloneable;
 using Turmerik.Core.Cloneable.Nested;
 
-namespace Turmerik.AspNetCore.UserSession
+namespace Turmerik.AspNetCore.OpenId.UserSession
 {
     public interface IAppUserDataCore : ICloneableObject
     {

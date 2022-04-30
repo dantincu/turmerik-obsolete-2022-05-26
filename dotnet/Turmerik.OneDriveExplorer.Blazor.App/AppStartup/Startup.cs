@@ -11,7 +11,6 @@ using Microsoft.Identity.Web;
 using System;
 using Turmerik.AspNetCore.MsIdentity.Graph;
 using Turmerik.AspNetCore.Services;
-using Turmerik.AspNetCore.UserSession;
 
 namespace Turmerik.OneDriveExplorer.Blazor.App.AppStartup
 {
