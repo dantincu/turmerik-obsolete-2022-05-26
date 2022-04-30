@@ -1,6 +1,7 @@
 ﻿@using Blazored.LocalStorage
 @using Microsoft.AspNetCore.Http
 @using Microsoft.Extensions.Primitives
+@using Turmerik.AspNetCore.LocalSession
 @using Turmerik.AspNetCore.Services
 @using Turmerik.AspNetCore.Settings
 @using Turmerik.AspNetCore.AppStartup
@@ -14,9 +15,10 @@
 @inherits OpenIdMainLayoutComponentBase
 
 @inject NavigationManager navManager;
+@inject ILocalSessionsManager localSessionsManager;
 @inject ITrmrkAppSettings appSettings;
-@inject IUserSessionsManager userSessionsManager;
 @inject IHttpContextAccessor httpContextAccessor;
+@inject IUserSessionsManager userSessionsManager;
 
 <PageTitle>Turmerik OneDrive Explorer</PageTitle>
 
@@ -38,6 +40,7 @@
 @code {
     protected async override Task OnInitializedAsync()
     {
+        this.LocalSessionsManager = localSessionsManager;
         this.NavManager = navManager;
         this.AppSettings = appSettings;
         this.UserSessionsManager = userSessionsManager;

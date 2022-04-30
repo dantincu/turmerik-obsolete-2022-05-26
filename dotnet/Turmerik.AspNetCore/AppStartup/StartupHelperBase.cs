@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Turmerik.AspNetCore.Infrastructure;
+using Turmerik.AspNetCore.LocalSession;
 using Turmerik.AspNetCore.Services;
 using Turmerik.AspNetCore.Settings;
 using Turmerik.Core.Infrastucture;
@@ -53,6 +54,9 @@ namespace Turmerik.AspNetCore.AppStartup
             services.AddBlazoredSessionStorage();
 
             services.AddHttpContextAccessor();
+
+            services.AddSingleton<ILocalSessionsDictnr, LocalSessionsDictnr>();
+            services.AddScoped<ILocalSessionsManager, LocalSessionsManager>();
         }
     }
 }

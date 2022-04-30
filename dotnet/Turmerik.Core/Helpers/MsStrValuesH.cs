@@ -1,19 +1,16 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Primitives;
+﻿using Microsoft.Extensions.Primitives;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Turmerik.Core.Data;
-using Turmerik.Core.Helpers;
 
-namespace Turmerik.AspNetCore.Infrastructure
+namespace Turmerik.Core.Helpers
 {
-    public static class HttpHeadersH
+    public static class MsStrValuesH
     {
         public static void AddValue<T>(
-            this IHeaderDictionary headers,
+            this IDictionary<string, StringValues> headers,
             string key,
             T value)
         {
@@ -21,13 +18,13 @@ namespace Turmerik.AspNetCore.Infrastructure
         }
 
         public static StringValues? GetStr(
-            this IHeaderDictionary headers,
+            this IDictionary<string, StringValues> queryStrings,
             string key)
         {
             StringValues? result;
             StringValues value;
 
-            if (headers.TryGetValue(key, out value))
+            if (queryStrings.TryGetValue(key, out value))
             {
                 result = value;
             }
@@ -40,13 +37,13 @@ namespace Turmerik.AspNetCore.Infrastructure
         }
 
         public static T? GetNullableValue<T>(
-            this IHeaderDictionary headers,
+            this IDictionary<string, StringValues> queryStrings,
             string key,
             TryParseVal<StringValues, T> factory)
             where T : struct
         {
             T? retVal;
-            var value = headers.GetStr(key);
+            var value = queryStrings.GetStr(key);
 
             T val;
 
@@ -63,12 +60,12 @@ namespace Turmerik.AspNetCore.Infrastructure
         }
 
         public static T GetValueOrNull<T>(
-            this IHeaderDictionary headers,
+            this IDictionary<string, StringValues> queryStrings,
             string key,
             TryParseVal<StringValues, T> factory)
             where T : class
         {
-            var value = headers.GetStr(key);
+            var value = queryStrings.GetStr(key);
             T retVal;
 
             if (!value.HasValue || !factory(value.Value, out retVal))
@@ -80,10 +77,10 @@ namespace Turmerik.AspNetCore.Infrastructure
         }
 
         public static string GetStringOrNull(
-            this IHeaderDictionary headers,
+            this IDictionary<string, StringValues> queryStrings,
             string key)
         {
-            string value = headers.GetValueOrNull(
+            string value = queryStrings.GetValueOrNull(
                 key,
                 (StringValues strVal, out string val) =>
                 {

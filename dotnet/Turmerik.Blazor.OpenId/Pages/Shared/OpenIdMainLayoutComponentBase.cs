@@ -15,15 +15,13 @@ namespace Turmerik.Blazor.OpenId.Pages.Shared
 {
     public abstract class OpenIdMainLayoutComponentBase : MainLayoutComponentBase
     {
-        protected NavigationManager NavManager { get; set; }
-        protected ITrmrkAppSettings AppSettings { get; set; }
-        protected IHttpContextAccessor HttpContextAccessor { get; set; }
         protected IUserSessionsManager UserSessionsManager { get; set; }
         protected System.Security.Claims.ClaimsPrincipal User { get; set; }
 
         [CascadingParameter] protected Task<AuthenticationState> AuthStat { get; set; }
         protected async override Task OnAfterRenderAsync(bool firstRender)
         {
+            await base.OnAfterRenderAsync(firstRender);
             await UserSessionsManager.TryAddOrUpdateUserSessionAsync();
         }
 

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Graph;
@@ -19,8 +20,15 @@ using Turmerik.AspNetCore.MsIdentity.Services;
 using Turmerik.AspNetCore.MsIdentity.Services.DriveItems;
 using Turmerik.AspNetCore.OpenId.AppStartup;
 using Turmerik.AspNetCore.OpenId.Services;
+using Turmerik.AspNetCore.Services;
 using Turmerik.AspNetCore.Services.DriveItems;
 using Turmerik.Core.Helpers;
+using Blazored.LocalStorage;
+using Blazored.SessionStorage;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
+using System;
 
 namespace Turmerik.AspNetCore.MsIdentity.AppStartup
 {
@@ -147,6 +155,53 @@ namespace Turmerik.AspNetCore.MsIdentity.AppStartup
 
         public async Task OnRedirectToIdentityProviderForSignOut(RedirectContext context)
         {
+        }
+
+        public virtual void ConfigureServices(
+            IServiceCollection services,
+            IConfiguration config,
+            IAppCoreServiceCollection appSvcs)
+        {
+            services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
+                .AddMicrosoftIdentityWebApp(options =>
+                {
+                    config.Bind("AzureAd", options);
+                    options.AccessDeniedPath = $"/{appSvcs.TrmrkAppSettings.LoginRelUrl}";
+
+                    options.Prompt = "select_account";
+                    options.Events.OnTokenValidated = OnTokenValidated;
+
+                    options.Events.OnAuthenticationFailed = OnAuthenticationFailed;
+                    options.Events.OnRemoteFailure = OnRemoteFailure;
+                })
+
+                // Add ability to call web API (Graph)
+                // and get access tokens
+                .EnableTokenAcquisitionToCallDownstreamApi(options =>
+                {
+                    config.Bind("AzureAd", options);
+                }, GraphConstants.Scopes)
+
+                // Add a GraphServiceClient via dependency injection
+                .AddMicrosoftGraph(options =>
+                {
+                    options.Scopes = string.Join(' ', GraphConstants.Scopes);
+                })
+
+                // Use in-memory token cache
+                // See https://github.com/AzureAD/microsoft-identity-web/wiki/token-cache-serialization
+                .AddInMemoryTokenCaches();
+
+            services.AddAuthorization(options =>
+            {
+                // By default, all incoming requests will be authorized according to the default policy
+                options.FallbackPolicy = options.DefaultPolicy;
+            });
+
+            services.AddRazorPages();
+
+            services.AddServerSideBlazor()
+                .AddMicrosoftIdentityConsentHandler();
         }
 
         public override void RegisterServices(IServiceCollection services, bool useMockData)

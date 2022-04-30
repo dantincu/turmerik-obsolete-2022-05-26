@@ -31,47 +31,7 @@ namespace Turmerik.OneDriveExplorer.Blazor.App.AppStartup
         public void ConfigureServices(IServiceCollection services)
         {
             var appSvcs = helper.RegisterCoreServices(services, Configuration);
-
-            services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
-                .AddMicrosoftIdentityWebApp(options =>
-                {
-                    Configuration.Bind("AzureAd", options);
-                    options.AccessDeniedPath = $"/{appSvcs.TrmrkAppSettings.LoginRelUrl}";
-
-                    options.Prompt = "select_account";
-                    options.Events.OnTokenValidated = helper.OnTokenValidated;
-
-                    options.Events.OnAuthenticationFailed = helper.OnAuthenticationFailed;
-                    options.Events.OnRemoteFailure = helper.OnRemoteFailure;
-                })
-
-                // Add ability to call web API (Graph)
-                // and get access tokens
-                .EnableTokenAcquisitionToCallDownstreamApi(options =>
-                {
-                    Configuration.Bind("AzureAd", options);
-                }, GraphConstants.Scopes)
-
-                // Add a GraphServiceClient via dependency injection
-                .AddMicrosoftGraph(options =>
-                {
-                    options.Scopes = string.Join(' ', GraphConstants.Scopes);
-                })
-
-                // Use in-memory token cache
-                // See https://github.com/AzureAD/microsoft-identity-web/wiki/token-cache-serialization
-                .AddInMemoryTokenCaches();
-
-            services.AddAuthorization(options =>
-            {
-                // By default, all incoming requests will be authorized according to the default policy
-                options.FallbackPolicy = options.DefaultPolicy;
-            });
-
-            services.AddRazorPages();
-
-            services.AddServerSideBlazor()
-                .AddMicrosoftIdentityConsentHandler();
+            helper.ConfigureServices(services, Configuration, appSvcs);
 
             helper.RegisterServices(services, appSvcs.TrmrkAppSettings.UseMockData);
         }

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Blazored.LocalStorage;
+using Blazored.SessionStorage;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,8 +12,15 @@ namespace Turmerik.AspNetCore.LocalSession
 {
     public interface ILocalSessionsDictnr
     {
-        Task<ILocalSessionData> TryAddOrUpdateLocalSessionAsync(Guid localSessionGuid);
-        Task<ILocalSessionData> TryRemoveLocalSessionAsync(Guid localSessionGuid);
+        Task<ILocalSessionData> TryAddOrUpdateLocalSessionAsync(
+            ILocalStorageService localStorage,
+            ISessionStorageService sessionStorage,
+            Guid localSessionGuid);
+
+        Task<ILocalSessionData> TryRemoveLocalSessionAsync(
+            ILocalStorageService localStorage,
+            ISessionStorageService sessionStorage,
+            Guid localSessionGuid);
     }
 
     public class LocalSessionsDictnr : ILocalSessionsDictnr
@@ -26,12 +35,18 @@ namespace Turmerik.AspNetCore.LocalSession
             dictnr = new ConcurrentDictionary<Guid, ILocalSessionData>();
         }
 
-        public Task<ILocalSessionData> TryAddOrUpdateLocalSessionAsync(Guid localSessionGuid)
+        public async Task<ILocalSessionData> TryAddOrUpdateLocalSessionAsync(
+            ILocalStorageService localStorage,
+            ISessionStorageService sessionStorage,
+            Guid localSessionGuid)
         {
             throw new NotImplementedException();
         }
 
-        public Task<ILocalSessionData> TryRemoveLocalSessionAsync(Guid localSessionGuid)
+        public async Task<ILocalSessionData> TryRemoveLocalSessionAsync(
+            ILocalStorageService localStorage,
+            ISessionStorageService sessionStorage,
+            Guid localSessionGuid)
         {
             throw new NotImplementedException();
         }
