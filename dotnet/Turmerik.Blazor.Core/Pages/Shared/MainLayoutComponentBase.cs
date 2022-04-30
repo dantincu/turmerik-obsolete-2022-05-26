@@ -64,7 +64,7 @@ namespace Turmerik.Blazor.Core.Pages.Shared
             string targetUrl = QueryHelpers.AddQueryString(
                     NavManager.AbsUri.AbsoluteUri,
                     QsKeys.LOCAL_SESSION_ID,
-                    localSessionGuid.ToString());
+                    localSessionGuid.ToString("N"));
 
             NavManager.Manager.NavigateTo(targetUrl, forceLoad);
         }

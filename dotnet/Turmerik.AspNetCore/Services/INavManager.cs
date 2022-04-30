@@ -50,7 +50,7 @@ namespace Turmerik.AspNetCore.Services
                 relUrl = QueryHelpers.AddQueryString(
                     relUrl,
                     QsKeys.LOCAL_SESSION_ID,
-                    LocalSessionGuid.Value.ToString());
+                    LocalSessionGuid.Value.ToString("N"));
             }
 
             return relUrl;

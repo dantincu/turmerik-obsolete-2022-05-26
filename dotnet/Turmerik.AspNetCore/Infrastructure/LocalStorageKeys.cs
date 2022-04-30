@@ -14,7 +14,7 @@
             string baseKey,
             Guid localSessionGuid)
         {
-            string key = $"{baseKey}[{localSessionGuid}]";
+            string key = $"{baseKey}[{localSessionGuid.ToString("N")}]";
             return key;
         }
 
