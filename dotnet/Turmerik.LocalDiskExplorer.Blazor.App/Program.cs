@@ -1,13 +1,15 @@
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-using Turmerik.LocalDiskExplorer.Blazor.App.Data;
+using Turmerik.LocalDiskExplorer.Blazor.App.AppStartup;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var helper = new StartupHelper();
+var appSvcs = helper.RegisterCoreServices(builder.Services, builder.Configuration);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddSingleton<WeatherForecastService>();
+
+helper.RegisterServices(builder.Services, appSvcs.TrmrkAppSettings.UseMockData);
 
 var app = builder.Build();
 

@@ -1,0 +1,57 @@
+﻿<h3>Files</h3>
+
+@inject Microsoft.AspNetCore.Components.NavigationManager NavManager
+@inject IDriveFolderService DriveFolderService;
+
+@using Microsoft.Extensions.Primitives;
+@using Microsoft.AspNetCore.WebUtilities
+@using Turmerik.AspNetCore.Services;
+@using Turmerik.AspNetCore.AppStartup;
+@using Turmerik.AspNetCore.Infrastructure;
+@using Turmerik.AspNetCore.Services.DriveItems
+
+@code {
+    private Uri Uri { get; set; }
+    private Dictionary<string, StringValues> QueryStrings { get; set; }
+    private string DriveFolderId { get; set; }
+    private IDriveFolder DriveFolder { get; set; }
+    private bool IsRootDriveFolder { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Uri = NavManager.ToAbsoluteUri(NavManager.Uri);
+        QueryStrings = QueryHelpers.ParseQuery(Uri.Query);
+
+        StringValues driveFolderId;
+
+        if (QueryStrings.TryGetValue(
+            QsKeys.DRIVE_ITEM_ID,
+        out driveFolderId))
+        {
+            DriveFolderId = driveFolderId.SingleOrDefault();
+        }
+
+        var tuple = await GetDriveFolderAsync(DriveFolderId);
+        DriveFolder = tuple.Item1;
+
+        IsRootDriveFolder = tuple.Item2;
+    }
+
+    private async Task<Tuple<IDriveFolder, bool>> GetDriveFolderAsync(string driveFolderId)
+    {
+        IDriveFolder driveFolder;
+        bool isRootDriveFolder = string.IsNullOrWhiteSpace(driveFolderId);
+
+        if (!isRootDriveFolder)
+        {
+            driveFolder = await DriveFolderService.GetDriveFolderAsync(driveFolderId);
+        }
+        else
+        {
+            driveFolder = await DriveFolderService.GetRootFolderAsync();
+        }
+
+        return new Tuple<IDriveFolder, bool>(
+        driveFolder, isRootDriveFolder);
+    }
+}

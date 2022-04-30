@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Turmerik.AspNetCore.Settings;
-using Turmerik.AspNetCore.UserSession;
 using Turmerik.Core.Infrastucture;
 
 namespace Turmerik.AspNetCore.Services

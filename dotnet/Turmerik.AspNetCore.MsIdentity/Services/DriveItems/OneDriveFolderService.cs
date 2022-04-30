@@ -3,11 +3,11 @@ using Turmerik.Core.Cloneable;
 
 namespace Turmerik.AspNetCore.MsIdentity.Services.DriveItems
 {
-    public class DriveFolderService : IDriveFolderService
+    public class OneDriveFolderService : IDriveFolderService
     {
         private readonly ICloneableMapper mapper;
 
-        public DriveFolderService(
+        public OneDriveFolderService(
             ICloneableMapper mapper)
         {
             this.mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));

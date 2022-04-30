@@ -150,19 +150,10 @@ namespace Turmerik.AspNetCore.MsIdentity.AppStartup
         {
         }
 
-        public virtual void RegisterServices(IServiceCollection services, bool useMockData)
+        public override void RegisterServices(IServiceCollection services, bool useMockData)
         {
-            services.AddHttpContextAccessor();
+            base.RegisterServices(services, useMockData);
             services.AddScoped<IAuthService, AuthService>();
-
-            if (useMockData)
-            {
-                services.AddScoped<IDriveFolderService, DriveFolderService>();
-            }
-            else
-            {
-                services.AddScoped<IDriveFolderService, DriveFolderService>();
-            }
         }
     }
 }

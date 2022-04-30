@@ -1,0 +1,19 @@
+﻿@using System.Net.Http
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.JSInterop
+
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor;
+
+<AuthorizeView>
+    <Authorized>
+        <span class="trmrk-greet">Hello, @HttpContextAccessor.HttpContext.User.Identity.Name!</span>
+        <a href="logout-session">Log out</a>
+    </Authorized>
+    <NotAuthorized>
+        <a href="login">Log in</a>
+    </NotAuthorized>
+</AuthorizeView>

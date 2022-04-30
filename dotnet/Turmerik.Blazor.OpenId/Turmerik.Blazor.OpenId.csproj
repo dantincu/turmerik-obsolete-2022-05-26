@@ -12,10 +12,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Pages\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Turmerik.AspNetCore.OpenId\Turmerik.AspNetCore.OpenId.csproj" />
     <ProjectReference Include="..\Turmerik.Blazor.Core\Turmerik.Blazor.Core.csproj" />
   </ItemGroup>

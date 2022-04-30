@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Blazored.LocalStorage;
+using Blazored.SessionStorage;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
@@ -47,6 +49,14 @@ namespace Turmerik.AspNetCore.AppStartup
             services.AddScoped<IUserSessionsManager, UserSessionsManager>();
 
             return appSvcsImmtbl;
+        }
+
+        public virtual void RegisterServices(IServiceCollection services, bool useMockData)
+        {
+            services.AddBlazoredLocalStorage();
+            services.AddBlazoredSessionStorage();
+
+            services.AddHttpContextAccessor();
         }
     }
 }

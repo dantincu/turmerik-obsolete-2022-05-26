@@ -1,4 +1,5 @@
 ﻿using Turmerik.Core.Cloneable;
+using Turmerik.Core.Cloneable.Nested.Clnbl;
 
 namespace Turmerik.AspNetCore.Services.DriveItems
 {
@@ -6,6 +7,7 @@ namespace Turmerik.AspNetCore.Services.DriveItems
     {
         string Id { get; }
         string Name { get; }
+        NestedDriveFolder ParentFolder { get; }
     }
 
     public class DriveItemCoreImmtbl : CloneableObjectImmtblBase, IDriveItemCore
@@ -20,6 +22,7 @@ namespace Turmerik.AspNetCore.Services.DriveItems
 
         public string Id { get; protected set; }
         public string Name { get; protected set; }
+        public NestedDriveFolder ParentFolder { get; protected set; }
     }
 
     public class DriveItemCoreMtbl : CloneableObjectMtblBase, IDriveItemCore
@@ -38,5 +41,10 @@ namespace Turmerik.AspNetCore.Services.DriveItems
 
         public string Id { get; set; }
         public string Name { get; set; }
+        public NestedDriveFolder ParentFolder { get; set; }
+    }
+
+    public class NestedDriveFolder : NestedClnbl<IDriveFolder, DriveFolderImmtbl, DriveFolderMtbl>
+    {
     }
 }

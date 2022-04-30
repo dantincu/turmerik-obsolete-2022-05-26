@@ -74,9 +74,6 @@ namespace Turmerik.OneDriveExplorer.Blazor.App.AppStartup
             services.AddServerSideBlazor()
                 .AddMicrosoftIdentityConsentHandler();
 
-            services.AddBlazoredLocalStorage();
-            services.AddBlazoredSessionStorage();
-
             helper.RegisterServices(services, appSvcs.TrmrkAppSettings.UseMockData);
         }
 

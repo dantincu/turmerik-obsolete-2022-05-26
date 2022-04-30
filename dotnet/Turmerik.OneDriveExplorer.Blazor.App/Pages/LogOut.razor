@@ -1,13 +1,3 @@
 ﻿@page "/logout"
 
-@using Turmerik.AspNetCore.OpenId.Services
-@inject IAuthService AuthSvc
-
-<h3>Logging out</h3>
-
-@code {
-    protected override async Task OnInitializedAsync()
-    {
-        await AuthSvc.LogOut();
-    }
-}
+@inherits Turmerik.Blazor.OpenId.Pages.LogOut
