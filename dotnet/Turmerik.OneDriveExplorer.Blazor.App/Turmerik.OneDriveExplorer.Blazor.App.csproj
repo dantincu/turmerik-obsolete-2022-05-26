@@ -18,5 +18,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Data\" />
+    <Folder Include="wwwroot\js\browser-utility\" />
   </ItemGroup>
 </Project>

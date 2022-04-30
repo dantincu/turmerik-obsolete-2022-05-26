@@ -1,0 +1,21 @@
+﻿@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.JSInterop
+@using Turmerik.AspNetCore.Infrastructure
+
+@inject IJSRuntime JSRuntime;
+
+<div class="trmrk-address-bar-container">
+    <span class="oi oi-arrow-circle-left" aria-hidden="true" title="Go back"></span>
+    <span class="oi oi-arrow-circle-right" aria-hidden="true" title="Go forward"></span>
+    <input type="text" class="trmrk-address-bar" @onfocus=@OnAddressBarFocusAsync />
+    <span class="oi oi-reload" aria-hidden="true" title="Reload"></span>
+</div>
+
+@code {
+    protected async Task OnAddressBarFocusAsync(FocusEventArgs args)
+    {
+        await JSRuntime.InvokeAsync<string>(
+            JsH.Get(JsH.SelectSelector),
+            ".trmrk-address-bar-container .trmrk-address-bar");
+    }
+}

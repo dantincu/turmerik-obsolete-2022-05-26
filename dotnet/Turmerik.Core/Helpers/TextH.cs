@@ -184,5 +184,64 @@ namespace Turmerik.Core.Helpers
 
             return retVal;
         }
+
+        public static string ChangeChar(
+            this string str,
+            Func<char[], int, int> indexFactory,
+            Func<char, bool> condition,
+            Func<char, char> factory)
+        {
+            if (!string.IsNullOrEmpty(str))
+            {
+                char[] chars = str.ToCharArray();
+                int length = chars.Length;
+
+                int idx = indexFactory(chars, length);
+                char c = chars[idx];
+
+                if (condition(c))
+                {
+                    c = factory(c);
+                    chars[idx] = c;
+
+                    str = new string(chars);
+                }
+            }
+
+            return str;
+        }
+
+        public static string ChangeFirstChar(
+            this string str,
+            Func<char, bool> condition,
+            Func<char, char> factory)
+        {
+            str = str.ChangeChar(
+                (chars, len) => 0,
+                condition,
+                factory);
+
+            return str;
+        }
+
+        public static string CapitalizeFirstLetter(
+            this string str)
+        {
+            str = str.ChangeFirstChar(
+                c => char.IsLower(c),
+                c => char.ToUpper(c));
+
+            return str;
+        }
+
+        public static string DecapitalizeFirstLetter(
+            this string str)
+        {
+            str = str.ChangeFirstChar(
+                c => char.IsUpper(c),
+                c => char.ToLower(c));
+
+            return str;
+        }
     }
 }

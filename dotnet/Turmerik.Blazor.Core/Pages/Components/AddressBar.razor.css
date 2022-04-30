@@ -1,0 +1,12 @@
+﻿.trmrk-address-bar-container {
+    display: flex;
+    flex-direction: row;
+}
+
+.trmrk-address-bar {
+    width: 100%;
+    display: inline-flex;
+    background-color: black;
+    color: #d7d7d7;
+    font-size: 0.9em;
+}
