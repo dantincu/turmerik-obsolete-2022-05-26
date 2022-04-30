@@ -8,8 +8,8 @@ namespace Turmerik.AspNetCore.Services.DriveItems
 {
     public interface IDriveFolderService
     {
-        Task<IDriveFolder> GetDriveFolderAsync(string id);
-        Task<IDriveFolder> GetRootFolderAsync();
+        Task<IDriveFolder> GetDriveFolderAsync(string id, bool refreshCache = false);
+        Task<IDriveFolder> GetRootFolderAsync(bool refreshCache = false);
     }
 
 }

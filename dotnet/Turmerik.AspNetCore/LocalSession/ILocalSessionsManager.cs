@@ -10,7 +10,7 @@ namespace Turmerik.AspNetCore.LocalSession
 {
     public interface ILocalSessionsManager
     {
-        Task<ILocalSessionData> TryAddOrUpdateLocalSessionAsync(Guid localSessionGuid);
+        Task<ILocalSessionData> TryAddOrUpdateLocalSessionAsync(Guid? localSessionGuid);
         Task<ILocalSessionData> TryRemoveLocalSessionAsync(Guid localSessionGuid);
     }
 
@@ -30,10 +30,12 @@ namespace Turmerik.AspNetCore.LocalSession
             this.sessionStorage = sessionStorage ?? throw new ArgumentNullException(nameof(sessionStorage));
         }
 
-        public async Task<ILocalSessionData> TryAddOrUpdateLocalSessionAsync(Guid localSessionGuid)
+        public async Task<ILocalSessionData> TryAddOrUpdateLocalSessionAsync(Guid? localSessionGuid)
         {
+            localSessionGuid = localSessionGuid ?? Guid.NewGuid();
+
             var localSessionData = await localSessionsDictnr.TryAddOrUpdateLocalSessionAsync(
-                localStorage, sessionStorage, localSessionGuid);
+                localStorage, sessionStorage, localSessionGuid.Value);
 
             return localSessionData;
         }

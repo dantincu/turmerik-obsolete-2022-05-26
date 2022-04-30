@@ -4,8 +4,10 @@
     {
         public const string TRMRK = "trmrk";
 
+        public const string LOCAL_SESSION = "local-session";
         public const string USER_SESSION = "user-session";
 
+        public static readonly string LocalSession = GetKey(LOCAL_SESSION);
         public static readonly string UserSession = GetKey(USER_SESSION);
 
         public static string GetLocal(

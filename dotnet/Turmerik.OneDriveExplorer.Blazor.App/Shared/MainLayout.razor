@@ -1,4 +1,5 @@
 ﻿@using Blazored.LocalStorage
+@using Blazored.SessionStorage
 @using Microsoft.AspNetCore.Http
 @using Microsoft.Extensions.Primitives
 @using Turmerik.AspNetCore.LocalSession
@@ -18,6 +19,7 @@
 @inject ILocalSessionsManager localSessionsManager;
 @inject ITrmrkAppSettings appSettings;
 @inject IHttpContextAccessor httpContextAccessor;
+@inject ISessionStorageService sessionStorage;
 @inject IUserSessionsManager userSessionsManager;
 
 <PageTitle>Turmerik OneDrive Explorer</PageTitle>
@@ -44,6 +46,7 @@
         this.NavManager = navManager;
         this.AppSettings = appSettings;
         this.UserSessionsManager = userSessionsManager;
+        this.SessionStorage = sessionStorage;
         this.HttpContextAccessor = httpContextAccessor;
 
         await base.OnInitializedAsync();

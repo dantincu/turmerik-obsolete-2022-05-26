@@ -13,12 +13,12 @@ namespace Turmerik.AspNetCore.MsIdentity.Services.DriveItems
             this.mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
-        public Task<IDriveFolder> GetDriveFolderAsync(string id)
+        public Task<IDriveFolder> GetDriveFolderAsync(string id, bool refreshCache = false)
         {
             throw new NotImplementedException();
         }
 
-        public Task<IDriveFolder> GetRootFolderAsync()
+        public Task<IDriveFolder> GetRootFolderAsync(bool refreshCache = false)
         {
             throw new NotImplementedException();
         }

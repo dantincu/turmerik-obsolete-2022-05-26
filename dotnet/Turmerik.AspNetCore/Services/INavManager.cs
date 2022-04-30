@@ -6,6 +6,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Turmerik.AspNetCore.Infrastructure;
+using Turmerik.Core.Data;
+using Turmerik.Core.Helpers;
 
 namespace Turmerik.AspNetCore.Services
 {
@@ -13,7 +16,9 @@ namespace Turmerik.AspNetCore.Services
     {
         NavigationManager Manager { get; }
         Uri AbsUri { get; }
-        Dictionary<string, StringValues> QueryStrings { get; }
+        IDictionary<string, StringValues> QueryStrings { get; }
+        Guid? LocalSessionGuid { get; }
+        string Url(string relUrl);
     }
 
     public class NavManager : INavManager
@@ -24,10 +29,31 @@ namespace Turmerik.AspNetCore.Services
             AbsUri = navManager.ToAbsoluteUri(navManager.Uri);
 
             QueryStrings = QueryHelpers.ParseQuery(AbsUri.Query);
+
+            LocalSessionGuid = QueryStrings.GetNullableValue(
+                QsKeys.LOCAL_SESSION_ID,
+                (StringValues str,
+                out Guid val) => Guid.TryParse(
+                    str,
+                    out val));
         }
 
         public NavigationManager Manager { get; }
         public Uri AbsUri { get; }
-        public Dictionary<string, StringValues> QueryStrings { get; }
+        public IDictionary<string, StringValues> QueryStrings { get; }
+        public Guid? LocalSessionGuid { get; }
+
+        public string Url(string relUrl)
+        {
+            if (LocalSessionGuid.HasValue)
+            {
+                relUrl = QueryHelpers.AddQueryString(
+                    relUrl,
+                    QsKeys.LOCAL_SESSION_ID,
+                    LocalSessionGuid.Value.ToString());
+            }
+
+            return relUrl;
+        }
     }
 }

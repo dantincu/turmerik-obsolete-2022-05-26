@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Turmerik.AspNetCore.Infrastructure;
 using Turmerik.Core.Cloneable;
 
 namespace Turmerik.AspNetCore.LocalSession
@@ -40,7 +41,20 @@ namespace Turmerik.AspNetCore.LocalSession
             ISessionStorageService sessionStorage,
             Guid localSessionGuid)
         {
-            throw new NotImplementedException();
+            var localSessionData = dictnr.GetOrAdd(
+                localSessionGuid,
+                key => new LocalSessionDataImmtbl(
+                    mapper,
+                    new LocalSessionDataMtbl
+                    {
+                        LocalSessionGuid = localSessionGuid
+                    }));
+
+            await sessionStorage.SetItemAsync(
+                LocalStorageKeys.LocalSession,
+                localSessionGuid);
+
+            return localSessionData;
         }
 
         public async Task<ILocalSessionData> TryRemoveLocalSessionAsync(
@@ -48,7 +62,13 @@ namespace Turmerik.AspNetCore.LocalSession
             ISessionStorageService sessionStorage,
             Guid localSessionGuid)
         {
-            throw new NotImplementedException();
+            ILocalSessionData localSessionData;
+            
+            dictnr.TryRemove(
+                localSessionGuid,
+                out localSessionData);
+
+            return localSessionData;
         }
     }
 }
