@@ -54,6 +54,7 @@ namespace Turmerik.AspNetCore.AppStartup
             services.AddBlazoredSessionStorage();
 
             services.AddHttpContextAccessor();
+            services.AddScoped<INavManager, NavManager>();
 
             services.AddSingleton<ILocalSessionsDictnr, LocalSessionsDictnr>();
             services.AddScoped<ILocalSessionsManager, LocalSessionsManager>();

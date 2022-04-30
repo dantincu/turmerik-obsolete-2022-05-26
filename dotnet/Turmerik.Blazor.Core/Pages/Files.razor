@@ -11,7 +11,7 @@
 @using Turmerik.AspNetCore.Services.DriveItems
 
 @code {
-    private Uri Uri { get; set; }
+    @* private Uri Uri { get; set; }
     private Dictionary<string, StringValues> QueryStrings { get; set; }
     private string DriveFolderId { get; set; }
     private IDriveFolder DriveFolder { get; set; }
@@ -53,5 +53,5 @@
 
         return new Tuple<IDriveFolder, bool>(
         driveFolder, isRootDriveFolder);
-    }
+    } *@
 }

@@ -10,4 +10,8 @@
     <ProjectReference Include="..\Turmerik.Blazor.Core\Turmerik.Blazor.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Data\" />
+  </ItemGroup>
+
 </Project>

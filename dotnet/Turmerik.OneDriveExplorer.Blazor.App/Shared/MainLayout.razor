@@ -14,7 +14,7 @@
 @using Turmerik.AspNetCore.OpenId.UserSession;
 @inherits OpenIdMainLayoutComponentBase
 
-@inject NavigationManager navManager;
+@inject INavManager navManager;
 @inject ILocalSessionsManager localSessionsManager;
 @inject ITrmrkAppSettings appSettings;
 @inject IHttpContextAccessor httpContextAccessor;

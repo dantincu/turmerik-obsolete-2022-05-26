@@ -1,9 +1,10 @@
 ﻿@using Turmerik.AspNetCore.LocalSession
+@using Turmerik.AspNetCore.Services
 @using Turmerik.AspNetCore.Settings
 @using Turmerik.Blazor.Core.Pages.Shared
 @inherits MainLayoutComponentBase
 
-@inject NavigationManager navManager;
+@inject INavManager navManager;
 @inject ILocalSessionsManager localSessionsManager;
 @inject ITrmrkAppSettings appSettings;
 @inject IHttpContextAccessor httpContextAccessor;

@@ -32,7 +32,8 @@ namespace Turmerik.Blazor.OpenId.Pages.Shared
 
             if (!User.Identity.IsAuthenticated || !User.Claims.Any())
             {
-                NavManager.NavigateTo($"{AppSettings.LoginRelUrl}?{QsKeys.RET_URL}={Uri.EscapeDataString(NavManager.Uri)}");
+                NavManager.Manager.NavigateTo(
+                    $"{AppSettings.LoginRelUrl}?{QsKeys.RET_URL}={Uri.EscapeDataString(NavManager.Manager.Uri)}");
             }
         }
     }
