@@ -25,7 +25,7 @@ namespace Turmerik.Blazor.Core.Pages.Shared
         protected IHttpContextAccessor HttpContextAccessor { get; set; }
         protected ISessionStorageService SessionStorage { get; set; }
         protected bool SideBarLarge { get; set; } = false;
-        protected string? SideBarSizeCssClass => SideBarLarge ? "trmrk-large" : "trmrk-small";
+        protected string? SideBarSizeCssClass => SideBarLarge ? CssClassH.Large : CssClassH.Small;
         protected Guid? LocalSessionGuid { get; set; }
 
         protected async override Task OnAfterRenderAsync(bool firstRender)

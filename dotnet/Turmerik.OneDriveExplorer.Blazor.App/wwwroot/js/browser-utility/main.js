@@ -5,6 +5,8 @@ import { EdtblRdnlTextBoxWrapper } from './EdtblRdnlTextBoxWrapper.js';
 trmrk.selectDomEl = (domElId, selector) => {
     let helper = new DomHelper(domElId, selector);
     helper.DomEl.select();
+
+    return helper.DomEl.value;
 };
 
 trmrk.addCssClass = (domElId, selector, cssClass) => {
@@ -47,16 +49,13 @@ trmrk.textBoxWrapperSetEditable = (
         editableTextBoxSelector,
         readonlyTextBoxSelector);
 
-    if (isEditable) {
-        wrapper.EditableTextBox.value = wrapper.ReadonlyTextBox.value;
-    } else {
-        wrapper.ReadonlyTextBox.value = wrapper.EditableTextBox.value;
-    }
-
     wrapper.IsEditable = isEditable;
 
     if (isEditable) {
+        wrapper.EditableTextBox.value = wrapper.ReadonlyTextBox.value;
         wrapper.EditableTextBox.select();
+    } else {
+        wrapper.ReadonlyTextBox.value = wrapper.EditableTextBox.value;
     }
 
     return wrapper.EditableTextBox.value;

@@ -3,12 +3,13 @@
     public static class LocalStorageKeys
     {
         public const string TRMRK = "trmrk";
+        public const string SESSION = "trmrk";
 
-        public const string LOCAL_SESSION = "local-session";
-        public const string USER_SESSION = "user-session";
+        public const string LOCAL = "local";
+        public const string USER = "user";
 
-        public static readonly string LocalSession = GetKey(LOCAL_SESSION);
-        public static readonly string UserSession = GetKey(USER_SESSION);
+        public static readonly string LocalSession = GetKey(LOCAL, SESSION);
+        public static readonly string UserSession = GetKey(USER, SESSION);
 
         public static string GetLocal(
             string baseKey,

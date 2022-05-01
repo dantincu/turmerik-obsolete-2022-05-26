@@ -6,13 +6,13 @@
 @inherits ComponentCoreBase;
 @inject IJSRuntime JSRuntime;
 
-<div id="@UuidStr" class="trmrk-address-bar-container">
+<div id="@UuidStr" class="@CssClassH.AddressBarContainer">
     <IconButton CssClass="oi oi-arrow-circle-left" Title="Go Back" OnMouseUp=@OnGoBackMouseUpAsyncEventHandler></IconButton>
     <IconButton CssClass="oi oi-arrow-circle-top" Title="Go Up" OnMouseUp=@OnGoUpMouseUpAsyncEventHandler></IconButton>
 
     <IconButton CssClass="oi oi-arrow-circle-right" Title="Go Forward" OnMouseUp=@OnGoForwardMouseUpAsyncEventHandler></IconButton>
-    <input type="text" value="@AddressStrValueCore" class="trmrk-address-bar trmrk-hidden" @onfocus=@OnAddressBarFocusAsync @onkeydown=@OnAddressBarKeyDownAsyncEventHandler />
-    <input type="text" readonly value="@AddressStrValueCore" class="trmrk-address-bar-readonly" @onclick=@OnAddressBarReadonlyClickAsyncEventHandler></input>
+    <input type="text" value="@InitialAddressStrValue" class="@CssClassH.AddressBar @CssClassH.Hidden" @onfocus=@OnAddressBarFocusAsync @onkeydown=@OnAddressBarKeyDownAsyncEventHandler />
+    <input type="text" readonly value="@InitialAddressStrValue" class="@CssClassH.AddressBarReadonly" @onclick=@OnAddressBarReadonlyClickAsyncEventHandler></input>
     
     <IconButton CssClass="oi oi-arrow-circle-right" Title="Go to address" OnMouseUp=@OnGoToAddressMouseUpAsyncEventHandler></IconButton>
     <IconButton CssClass="oi oi-reload" Title="Reload" OnMouseUp=@OnReloadMouseUpAsyncEventHandler></IconButton>
@@ -20,11 +20,7 @@
 
 @code {
     [Parameter]
-    public string AddressStrValue
-    {
-        get => HttpUtility.HtmlDecode(AddressStrValueCore);
-        set => AddressStrValueCore = HttpUtility.HtmlAttributeEncode(value);
-    }
+    public string InitialAddressStrValue { get; set; }
 
     [Parameter]
     public Func<MouseEventArgs, Task> OnGoBackClick { get; set; }
@@ -41,12 +37,22 @@
     [Parameter]
     public Func<MouseEventArgs, Task> OnReloadClick { get; set; }
 
-    protected string  AddressStrValueCore { get; set; }
+    protected string AddressStrValue { get; set; }
 
     protected async Task OnAddressBarFocusAsync(FocusEventArgs args)
     {
-        await JSRuntime.InvokeAsync<string>(
-            JsH.Get(JsH.SelectDomEl), UuidStr, ".trmrk-address-bar");
+        AddressStrValue = await JSRuntime.InvokeAsync<string>(
+            JsH.Get(JsH.SelectDomEl),
+            UuidStr,
+            CssClassH.AddressBar.CssClsSel());
+    }
+
+    protected async Task OnAddressBarKeyDownAsyncEventHandler(KeyboardEventArgs args)
+    {
+        if (args.Code.KeyCodeIsEnter())
+        {
+            await SubmitAddress(args);
+        }
     }
 
     protected async Task OnGoBackMouseUpAsyncEventHandler(MouseEventArgs args)
@@ -94,12 +100,14 @@
         await SetEditable(true);
     }
 
-    protected async Task OnAddressBarKeyDownAsyncEventHandler(KeyboardEventArgs args)
+    protected async Task<string> RefreshAddressStrValue()
     {
-        if (args.Code.KeyCodeIsEnter())
-        {
-            await SubmitAddress(args);
-        }
+        AddressStrValue = await JSRuntime.InvokeAsync<string>(
+            JsH.Get(JsH.GetDomElValue),
+            UuidStr,
+            CssClassH.AddressBar.CssClsSel());
+
+        return AddressStrValue;
     }
 
     protected async Task<string> SetEditable(bool editable)
@@ -107,8 +115,8 @@
         AddressStrValue = await JSRuntime.InvokeAsync<string>(
             JsH.Get(JsH.TextBoxWrapperSetEditable),
             UuidStr,
-            ".trmrk-address-bar",
-            ".trmrk-address-bar-readonly",
+            CssClassH.AddressBar.CssClsSel(),
+            CssClassH.AddressBarReadonly.CssClsSel(),
             editable);
 
         return AddressStrValue;
@@ -120,7 +128,7 @@
 
         if (OnSubmitAddress != null)
         {
-            var eventArgs = new TextEventArgsWrapper(args, AddressStrValue);
+            var eventArgs = new TextEventArgsWrapper(args, InitialAddressStrValue);
             await OnSubmitAddress.Invoke(eventArgs);
         }
 

@@ -14,6 +14,8 @@ namespace Turmerik.Blazor.Core.Pages
     {
         protected IDriveFolderService DriveFolderService { get; set; }
 
+        protected string AddressStrValue { get; set; }
+
         protected async Task OnAddressBarGoBackClick(MouseEventArgs args)
         {
 
