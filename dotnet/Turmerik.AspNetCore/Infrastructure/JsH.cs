@@ -15,12 +15,20 @@ namespace Turmerik.AspNetCore.Infrastructure
         public static readonly string SelectDomEl;
         public static readonly string AddCssClass;
         public static readonly string RemoveCssClass;
+        public static readonly string GetDomElValue;
+        public static readonly string GetDomElInnerText;
+        public static readonly string GetDomElInnerHTML;
+        public static readonly string GetDomElOuterHTML;
 
         static JsH()
         {
             SelectDomEl = nameof(SelectDomEl).DecapitalizeFirstLetter();
             AddCssClass = nameof(AddCssClass).DecapitalizeFirstLetter();
             RemoveCssClass = nameof(RemoveCssClass).DecapitalizeFirstLetter();
+            GetDomElValue = nameof(GetDomElValue).DecapitalizeFirstLetter();
+            GetDomElInnerText = nameof(GetDomElInnerText).DecapitalizeFirstLetter();
+            GetDomElInnerHTML = nameof(GetDomElInnerHTML).DecapitalizeFirstLetter();
+            GetDomElOuterHTML = nameof(GetDomElOuterHTML).DecapitalizeFirstLetter();
         }
 
         public static string Get(params string[] segments)

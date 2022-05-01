@@ -38,21 +38,31 @@ export class DomHelper {
 const trmrk = {
     selectDomEl: (domElId, selector) => {
         let helper = new DomHelper(domElId, selector);
-        let domEl = helper.DomEl;
-
-        domEl.select();
+        helper.DomEl.select();
     },
     addCssClass: (domElId, selector, cssClass) => {
         let helper = new DomHelper(domElId, selector);
-        let domEl = helper.DomEl;
-
-        domEl.classList.add(cssClass);
+        helper.DomEl.classList.add(cssClass);
     },
     removeCssClass: (domElId, selector, cssClass) => {
         let helper = new DomHelper(domElId, selector);
-        let domEl = helper.DomEl;
-
-        domEl.classList.remove(cssClass);
+        helper.DomEl.classList.remove(cssClass);
+    },
+    getDomElValue: (domElId, selector) => {
+        let helper = new DomHelper(domElId, selector);
+        return helper.DomEl.value;
+    },
+    getDomElInnerText: (domElId, selector) => {
+        let helper = new DomHelper(domElId, selector);
+        return helper.DomEl.innerText;
+    },
+    getDomElInnerHTML: (domElId, selector) => {
+        let helper = new DomHelper(domElId, selector);
+        return helper.DomEl.innerHTML;
+    },
+    getDomElOuterHTML: (domElId, selector) => {
+        let helper = new DomHelper(domElId, selector);
+        return helper.DomEl.outerHTML;
     }
 };
 

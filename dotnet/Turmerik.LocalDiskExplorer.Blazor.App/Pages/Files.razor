@@ -1,6 +1,39 @@
 ﻿@page "/files"
+@using Turmerik.AspNetCore.Infrastructure
 @using Turmerik.Blazor.Core.Pages.Components
 
 @inherits Turmerik.Blazor.Core.Pages.Files
 
-<AddressBar></AddressBar>
+<AddressBar
+    OnGoBackClick=@OnAddressBarGoBackClick
+    OnGoUpClick=@OnAddressBarGoUpClick
+    OnGoForwardClick=@OnAddressBarGoForwardClick
+    OnReloadClick=@OnAddressBarReloadClick
+    OnAddressBarTextSubmit=@OnAddressBarTextSubmit></AddressBar>
+
+@code {
+    protected async Task OnAddressBarGoBackClick(MouseEventArgs args)
+    {
+
+    }
+
+    protected async Task OnAddressBarGoUpClick(MouseEventArgs args)
+    {
+
+    }
+
+    protected async Task OnAddressBarGoForwardClick(MouseEventArgs args)
+    {
+
+    }
+
+    protected async Task OnAddressBarReloadClick(MouseEventArgs args)
+    {
+
+    }
+
+    protected async Task OnAddressBarTextSubmit(KeyboardEventArgsWrapper args)
+    {
+        
+    }
+}

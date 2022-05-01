@@ -1,6 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Components.Web
 @using Microsoft.JSInterop
 @using Turmerik.AspNetCore.Infrastructure
+@using System.Web;
 
 @inherits ComponentCoreBase;
 @inject IJSRuntime JSRuntime;
@@ -10,23 +11,35 @@
     <IconButton CssClass="oi oi-arrow-circle-top" Title="Go Up" OnMouseUp=@OnGoUpMouseUpAsyncEventHandler></IconButton>
 
     <IconButton CssClass="oi oi-arrow-circle-right" Title="Go Forward" OnMouseUp=@OnGoForwardMouseUpAsyncEventHandler></IconButton>
-    <input type="text" class="trmrk-address-bar" @onfocus=@OnAddressBarFocusAsync />
+    <input type="text" value="@InitialAddressStrValueCore" class="trmrk-address-bar" @onfocus=@OnAddressBarFocusAsync @onkeydown=@OnAddressBarKeyDownAsyncEventHandler />
 
     <IconButton CssClass="oi oi-reload" Title="Reload" OnMouseUp=@OnReloadMouseUpAsyncEventHandler></IconButton>
 </div>
 
 @code {
     [Parameter]
-    public Func<MouseEventArgs, Task> OnGoBackMouseUp { get; set; }
+    public string InitialAddressStrValue
+    {
+        get => HttpUtility.HtmlDecode(InitialAddressStrValueCore);
+        set => InitialAddressStrValueCore = HttpUtility.HtmlAttributeEncode(value);
+    }
 
     [Parameter]
-    public Func<MouseEventArgs, Task> OnGoUpMouseUp { get; set; }
-    
-    [Parameter]
-    public Func<MouseEventArgs, Task> OnGoForwardMouseUp { get; set; }
+    public Func<MouseEventArgs, Task> OnGoBackClick { get; set; }
 
     [Parameter]
-    public Func<MouseEventArgs, Task> OnReloadMouseUp { get; set; }
+    public Func<MouseEventArgs, Task> OnGoUpClick { get; set; }
+
+    [Parameter]
+    public Func<MouseEventArgs, Task> OnGoForwardClick { get; set; }
+
+    [Parameter]
+    public Func<MouseEventArgs, Task> OnReloadClick { get; set; }
+
+    [Parameter]
+    public Func<KeyboardEventArgsWrapper, Task> OnAddressBarTextSubmit { get; set; }
+
+    protected string  InitialAddressStrValueCore { get; set; }
 
     protected async Task OnAddressBarFocusAsync(FocusEventArgs args)
     {
@@ -36,21 +49,45 @@
 
     protected async Task OnGoBackMouseUpAsyncEventHandler(MouseEventArgs args)
     {
-        
+        if (args.Button.IsLeftMouseButton() && OnGoBackClick != null)
+        {
+            await OnGoBackClick(args);
+        }
     }
 
     protected async Task OnGoUpMouseUpAsyncEventHandler(MouseEventArgs args)
     {
-        
+        if (args.Button.IsLeftMouseButton() && OnGoUpClick != null)
+        {
+            await OnGoUpClick(args);
+        }
     }
 
     protected async Task OnGoForwardMouseUpAsyncEventHandler(MouseEventArgs args)
     {
-        
+        if (args.Button.IsLeftMouseButton() && OnGoForwardClick != null)
+        {
+            await OnGoForwardClick(args);
+        }
     }
 
     protected async Task OnReloadMouseUpAsyncEventHandler(MouseEventArgs args)
     {
-        
+        if (args.Button.IsLeftMouseButton() && OnReloadClick != null)
+        {
+            await OnReloadClick(args);
+        }
+    }
+
+    protected async Task OnAddressBarKeyDownAsyncEventHandler(KeyboardEventArgs args)
+    {
+        if (args.Code.KeyCodeIsEnter() && OnAddressBarTextSubmit != null)
+        {
+            string addressStrValue = await JSRuntime.InvokeAsync<string>(
+                JsH.Get(JsH.GetDomElValue), UuidStr, ".trmrk-address-bar");
+
+            var eventArgs = new KeyboardEventArgsWrapper(args, addressStrValue);
+            await OnAddressBarTextSubmit.Invoke(eventArgs);
+        }
     }
 }
