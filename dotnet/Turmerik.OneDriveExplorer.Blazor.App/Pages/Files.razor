@@ -1,13 +1,16 @@
 ﻿@page "/files"
+@using Blazored.LocalStorage
+@using Blazored.SessionStorage
 @using Turmerik.AspNetCore.Services.DriveItems
 @using Turmerik.Blazor.Core.Pages.Components
 
 @inherits Turmerik.Blazor.Core.Pages.FilesBase
 
+@inject ILocalStorageService localStorage;
+@inject ISessionStorageService sessionStorage;
 @inject IDriveFolderService driveFolderService;
 
 <AddressBar
-    InitialAddressStrValue="asdf"
     OnGoBackClick=@OnAddressBarGoBackClick
     OnGoUpClick=@OnAddressBarGoUpClick
     OnGoForwardClick=@OnAddressBarGoForwardClick
@@ -17,7 +20,10 @@
 @code {
     protected override async Task OnParametersSetAsync()
     {
-        await base.OnParametersSetAsync();
+        LocalStorage = localStorage;
+        SessionStorage = sessionStorage;
+
         DriveFolderService = driveFolderService;
+        await base.OnParametersSetAsync();
     }
 }

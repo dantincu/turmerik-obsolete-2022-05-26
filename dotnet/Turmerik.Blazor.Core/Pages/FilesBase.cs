@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using Blazored.LocalStorage;
+using Blazored.SessionStorage;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using System;
 using System.Collections.Generic;
@@ -12,9 +14,15 @@ namespace Turmerik.Blazor.Core.Pages
 {
     public abstract class FilesBase : ComponentBase
     {
+        protected ILocalStorageService LocalStorage { get; set; }
+        protected ISessionStorageService SessionStorage { get; set; }
         protected IDriveFolderService DriveFolderService { get; set; }
-
         protected string AddressStrValue { get; set; }
+
+        protected override Task OnAfterRenderAsync(bool firstRender)
+        {
+            return base.OnAfterRenderAsync(firstRender);
+        }
 
         protected async Task OnAddressBarGoBackClick(MouseEventArgs args)
         {

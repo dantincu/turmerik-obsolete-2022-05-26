@@ -26,7 +26,7 @@
 </div>
 
 @code {
-    protected async override Task OnInitializedAsync()
+    protected override Task OnParametersSetAsync()
     {
         this.LocalSessionsManager = localSessionsManager;
         this.NavManager = navManager;
@@ -34,6 +34,6 @@
         this.HttpContextAccessor = httpContextAccessor;
         this.SessionStorage = sessionStorage;
 
-        await base.OnInitializedAsync();
+        return base.OnParametersSetAsync();
     }
 }

@@ -2,6 +2,7 @@
 @using Microsoft.JSInterop
 @using Turmerik.AspNetCore.Infrastructure
 @using System.Web;
+@using Turmerik.Core.Helpers;
 
 @inherits ComponentCoreBase;
 @inject IJSRuntime JSRuntime;
@@ -57,26 +58,17 @@
 
     protected async Task OnGoBackMouseUpAsyncEventHandler(MouseEventArgs args)
     {
-        if (args.Button.IsLeftMouseButton() && OnGoBackClick != null)
-        {
-            await OnGoBackClick(args);
-        }
+        await OnGoBackClick.InvokeMouseClickAsyncIfLeftBtn(args);
     }
 
     protected async Task OnGoUpMouseUpAsyncEventHandler(MouseEventArgs args)
     {
-        if (args.Button.IsLeftMouseButton() && OnGoUpClick != null)
-        {
-            await OnGoUpClick(args);
-        }
+        await OnGoUpClick.InvokeMouseClickAsyncIfLeftBtn(args);
     }
 
     protected async Task OnGoForwardMouseUpAsyncEventHandler(MouseEventArgs args)
     {
-        if (args.Button.IsLeftMouseButton() && OnGoForwardClick != null)
-        {
-            await OnGoForwardClick(args);
-        }
+        await OnGoForwardClick.InvokeMouseClickAsyncIfLeftBtn(args);
     }
 
     protected async Task OnGoToAddressMouseUpAsyncEventHandler(MouseEventArgs args)
@@ -89,10 +81,7 @@
 
     protected async Task OnReloadMouseUpAsyncEventHandler(MouseEventArgs args)
     {
-        if (args.Button.IsLeftMouseButton() && OnReloadClick != null)
-        {
-            await OnReloadClick(args);
-        }
+        await OnReloadClick.InvokeMouseClickAsyncIfLeftBtn(args);
     }
 
     protected async Task OnAddressBarReadonlyClickAsyncEventHandler(MouseEventArgs args)

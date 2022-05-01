@@ -96,5 +96,63 @@ namespace Turmerik.Core.Helpers
             int retVal = listLen - len;
             return retVal;
         }
+
+        public static async Task InvokeAsyncIfReq(
+            this Func<Task> action,
+            Func<bool> condition = null)
+        {
+            if (action != null && (condition?.Invoke() ?? true))
+            {
+                await action();
+            }
+        }
+
+        public static async Task<TOut> InvokeAsyncIfReq<TOut>(
+            this Func<Task<TOut>> action,
+            Func<bool> condition = null)
+        {
+            TOut retVal;
+
+            if (action != null && (condition?.Invoke() ?? true))
+            {
+                retVal = await action();
+            }
+            else
+            {
+                retVal = default;
+            }
+
+            return retVal;
+        }
+
+        public static async Task InvokeAsyncIfReq<TIn>(
+            this Func<TIn, Task> action,
+            TIn inVal,
+            Func<TIn, bool> condition = null)
+        {
+            if (action != null && (condition?.Invoke(inVal) ?? true))
+            {
+                await action(inVal);
+            }
+        }
+
+        public static async Task<TOut> InvokeAsyncIfReq<TIn, TOut>(
+            this Func<TIn, Task<TOut>> action,
+            TIn inVal,
+            Func<TIn, bool> condition = null)
+        {
+            TOut retVal;
+
+            if (action != null && (condition?.Invoke(inVal) ?? true))
+            {
+                retVal = await action(inVal);
+            }
+            else
+            {
+                retVal = default;
+            }
+
+            return retVal;
+        }
     }
 }

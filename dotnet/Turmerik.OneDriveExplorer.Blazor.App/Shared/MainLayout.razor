@@ -40,15 +40,15 @@
 </div>
 
 @code {
-    protected async override Task OnInitializedAsync()
+    protected override Task OnParametersSetAsync()
     {
         this.LocalSessionsManager = localSessionsManager;
         this.NavManager = navManager;
         this.AppSettings = appSettings;
-        this.UserSessionsManager = userSessionsManager;
-        this.SessionStorage = sessionStorage;
         this.HttpContextAccessor = httpContextAccessor;
+        this.SessionStorage = sessionStorage;
+        this.UserSessionsManager = userSessionsManager;
 
-        await base.OnInitializedAsync();
+        return base.OnParametersSetAsync();
     }
 }
