@@ -34,7 +34,7 @@ namespace Turmerik.Blazor.Core.Pages
 
         }
 
-        protected async Task OnAddressBarTextSubmit(KeyboardEventArgsWrapper args)
+        protected async Task OnSubmitAddress(TextEventArgsWrapper args)
         {
 
         }

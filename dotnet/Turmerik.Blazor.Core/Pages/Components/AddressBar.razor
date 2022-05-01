@@ -13,7 +13,8 @@
     <IconButton CssClass="oi oi-arrow-circle-right" Title="Go Forward" OnMouseUp=@OnGoForwardMouseUpAsyncEventHandler></IconButton>
     <input type="text" value="@AddressStrValueCore" class="trmrk-address-bar trmrk-hidden" @onfocus=@OnAddressBarFocusAsync @onkeydown=@OnAddressBarKeyDownAsyncEventHandler />
     <input type="text" readonly value="@AddressStrValueCore" class="trmrk-address-bar-readonly" @onclick=@OnAddressBarReadonlyClickAsyncEventHandler></input>
-
+    
+    <IconButton CssClass="oi oi-arrow-circle-right" Title="Go to address" OnMouseUp=@OnGoToAddressMouseUpAsyncEventHandler></IconButton>
     <IconButton CssClass="oi oi-reload" Title="Reload" OnMouseUp=@OnReloadMouseUpAsyncEventHandler></IconButton>
 </div>
 
@@ -35,10 +36,10 @@
     public Func<MouseEventArgs, Task> OnGoForwardClick { get; set; }
 
     [Parameter]
-    public Func<MouseEventArgs, Task> OnReloadClick { get; set; }
+    public Func<TextEventArgsWrapper, Task> OnSubmitAddress { get; set; }
 
     [Parameter]
-    public Func<KeyboardEventArgsWrapper, Task> OnAddressBarTextSubmit { get; set; }
+    public Func<MouseEventArgs, Task> OnReloadClick { get; set; }
 
     protected string  AddressStrValueCore { get; set; }
 
@@ -72,6 +73,14 @@
         }
     }
 
+    protected async Task OnGoToAddressMouseUpAsyncEventHandler(MouseEventArgs args)
+    {
+        if (args.Button.IsLeftMouseButton())
+        {
+            await SubmitAddress(args);
+        }
+    }
+
     protected async Task OnReloadMouseUpAsyncEventHandler(MouseEventArgs args)
     {
         if (args.Button.IsLeftMouseButton() && OnReloadClick != null)
@@ -87,12 +96,9 @@
 
     protected async Task OnAddressBarKeyDownAsyncEventHandler(KeyboardEventArgs args)
     {
-        if (args.Code.KeyCodeIsEnter() && OnAddressBarTextSubmit != null)
+        if (args.Code.KeyCodeIsEnter())
         {
-            await SetEditable(false);
-
-            var eventArgs = new KeyboardEventArgsWrapper(args, AddressStrValue);
-            await OnAddressBarTextSubmit.Invoke(eventArgs);
+            await SubmitAddress(args);
         }
     }
 
@@ -104,6 +110,19 @@
             ".trmrk-address-bar",
             ".trmrk-address-bar-readonly",
             editable);
+
+        return AddressStrValue;
+    }
+
+    protected async Task<string> SubmitAddress(EventArgs args)
+    {
+        await SetEditable(false);
+
+        if (OnSubmitAddress != null)
+        {
+            var eventArgs = new TextEventArgsWrapper(args, AddressStrValue);
+            await OnSubmitAddress.Invoke(eventArgs);
+        }
 
         return AddressStrValue;
     }
