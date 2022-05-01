@@ -7,14 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Javascript\browser-utility\main.js" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="Javascript\browser-utility\main.js">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
+    <Compile Remove="css\**" />
+    <Compile Remove="Javascript\**" />
+    <EmbeddedResource Remove="css\**" />
+    <EmbeddedResource Remove="Javascript\**" />
+    <None Remove="css\**" />
+    <None Remove="Javascript\**" />
   </ItemGroup>
 
   <ItemGroup>

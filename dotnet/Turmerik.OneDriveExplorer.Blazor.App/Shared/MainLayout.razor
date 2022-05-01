@@ -22,6 +22,17 @@
 @inject ISessionStorageService sessionStorage;
 @inject IUserSessionsManager userSessionsManager;
 
+<style>
+    main .content {
+        margin-top: 1rem;
+    }
+
+    .top-row.auth {
+        background-color: #080808;
+        border-bottom: none;
+    }
+</style>
+
 <PageTitle>Turmerik OneDrive Explorer</PageTitle>
 
 <div class="page">
@@ -29,7 +40,7 @@
         <LoginDisplay />
     </div>
     <div class="sidebar trmrk-app-sidebar @SideBarSizeCssClass">
-        <NavMenu SizeChangedCallback="@SizeChangedCallback" />
+        <NavMenu SizeChangedCallback="@SizeChangedCallback" Title="Turmerik OneDrive Explorer" />
     </div>
 
     <main>

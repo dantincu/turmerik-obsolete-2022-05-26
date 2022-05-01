@@ -12,16 +12,21 @@ using Turmerik.AspNetCore.Services.DriveItems;
 
 namespace Turmerik.Blazor.Core.Pages
 {
-    public abstract class FilesBase : ComponentBase
+    public abstract class FilesBase : PageBase
     {
         protected ILocalStorageService LocalStorage { get; set; }
         protected ISessionStorageService SessionStorage { get; set; }
         protected IDriveFolderService DriveFolderService { get; set; }
         protected string AddressStrValue { get; set; }
 
-        protected override Task OnAfterRenderAsync(bool firstRender)
+        protected async override Task OnAfterRenderAsync(bool firstRender)
         {
-            return base.OnAfterRenderAsync(firstRender);
+            await base.OnAfterRenderAsync(firstRender);
+
+            await IfLocalSessionGuidHasValueAsync(async localSessionGuid =>
+            {
+
+            });
         }
 
         protected async Task OnAddressBarGoBackClick(MouseEventArgs args)

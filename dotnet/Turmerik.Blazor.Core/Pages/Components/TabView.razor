@@ -1,0 +1,12 @@
+﻿@using Turmerik.Blazor.Core.Pages.Components
+@using Turmerik.AspNetCore.Infrastructure;
+
+@inherits ComponentCoreBase
+
+<div class="container @CssClassH.TabView"></div>
+
+@code {
+    [Parameter]
+    public List<ITabPageHead> PageHeadsList { get; set; }
+
+}

@@ -1,11 +1,13 @@
 ﻿@page "/files"
 @using Blazored.LocalStorage
 @using Blazored.SessionStorage
+@using Turmerik.AspNetCore.Services
 @using Turmerik.AspNetCore.Services.DriveItems
 @using Turmerik.Blazor.Core.Pages.Components
 
 @inherits Turmerik.Blazor.Core.Pages.FilesBase
 
+@inject INavManager navManager;
 @inject ILocalStorageService localStorage;
 @inject ISessionStorageService sessionStorage;
 @inject IDriveFolderService driveFolderService;
@@ -20,6 +22,8 @@
 @code {
     protected override async Task OnParametersSetAsync()
     {
+        this.NavManager = navManager;
+
         LocalStorage = localStorage;
         SessionStorage = sessionStorage;
 

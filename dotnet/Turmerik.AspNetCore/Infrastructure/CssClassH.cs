@@ -26,6 +26,8 @@ namespace Turmerik.AspNetCore.Infrastructure
         public const string CONTAINER = "container";
         public const string SHRINK = "shrink";
         public const string ENLARGE = "enlarge";
+        public const string TAB = "tab";
+        public const string VIEW = "view";
 
         public const string NAVBAR = "navbar";
         public const string GREET = "greet";
@@ -37,14 +39,17 @@ namespace Turmerik.AspNetCore.Infrastructure
         public static readonly string Btn = Class(BTN);
         public static readonly string Table = Class(TABLE);
         public static readonly string TopRow = Class(TOP, ROW);
+        public static readonly string Container = Class(CONTAINER);
 
         public static readonly string Large = Class(LARGE);
         public static readonly string Small = Class(SMALL);
         public static readonly string ShrinkEnlarge = Class(SHRINK, ENLARGE);
 
         public static readonly string Navbar = Class(NAVBAR);
-        public static readonly string NavbarBrand = Class(Navbar, BRAND);
+        public static readonly string NavbarBrand = Class(false, Navbar, BRAND);
         public static readonly string Greet = Class(GREET);
+
+        public static readonly string TabView = Class(TAB, VIEW);
 
         public static readonly string Address = Class(ADDRESS);
         public static readonly string AddressBar = Class(false, Address, BAR);

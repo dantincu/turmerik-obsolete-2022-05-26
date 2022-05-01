@@ -1,2 +1,2 @@
-﻿import { Trmrk } from './browser-utility/main.js';
+﻿import { Trmrk } from './common/main.js';
 window.Trmrk = Trmrk;

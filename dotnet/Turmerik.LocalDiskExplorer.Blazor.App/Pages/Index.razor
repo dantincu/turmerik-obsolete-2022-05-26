@@ -1,1 +1,14 @@
 ﻿@page "/"
+@using Turmerik.AspNetCore.Services
+
+@inherits Turmerik.Blazor.Core.Pages.PageBase
+
+@inject INavManager navManager;
+
+@code {
+    protected override async Task OnParametersSetAsync()
+    {
+        this.NavManager = navManager;
+        await base.OnParametersSetAsync();
+    }
+}

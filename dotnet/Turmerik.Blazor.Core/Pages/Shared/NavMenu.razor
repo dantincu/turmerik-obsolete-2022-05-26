@@ -7,7 +7,7 @@
 
 <div class="top-row ps-3 navbar navbar-dark @CssClassH.TopRow">
     <div class="container-fluid">
-        <a class="navbar-brand @CssClassH.NavbarBrand" href="">Turmerik Local Disk Explorer</a>
+        <a class="navbar-brand @CssClassH.NavbarBrand" href="">@Title</a>
         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -38,6 +38,9 @@
 
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
     private string? NavMenuEnlargerCssClass => sideBarLarge ? "oi-chevron-left" : "oi-chevron-right";
+
+    [Parameter]
+    public string Title { get; set; }
 
     [Parameter]
     public EventCallback<MouseEventArgs> SizeChangedCallback { get; set; }
