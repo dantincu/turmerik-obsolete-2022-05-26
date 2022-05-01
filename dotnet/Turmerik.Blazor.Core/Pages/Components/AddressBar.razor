@@ -11,17 +11,18 @@
     <IconButton CssClass="oi oi-arrow-circle-top" Title="Go Up" OnMouseUp=@OnGoUpMouseUpAsyncEventHandler></IconButton>
 
     <IconButton CssClass="oi oi-arrow-circle-right" Title="Go Forward" OnMouseUp=@OnGoForwardMouseUpAsyncEventHandler></IconButton>
-    <input type="text" value="@InitialAddressStrValueCore" class="trmrk-address-bar" @onfocus=@OnAddressBarFocusAsync @onkeydown=@OnAddressBarKeyDownAsyncEventHandler />
+    <input type="text" value="@AddressStrValueCore" class="trmrk-address-bar trmrk-hidden" @onfocus=@OnAddressBarFocusAsync @onkeydown=@OnAddressBarKeyDownAsyncEventHandler />
+    <input type="text" readonly value="@AddressStrValueCore" class="trmrk-address-bar-readonly" @onclick=@OnAddressBarReadonlyClickAsyncEventHandler></input>
 
     <IconButton CssClass="oi oi-reload" Title="Reload" OnMouseUp=@OnReloadMouseUpAsyncEventHandler></IconButton>
 </div>
 
 @code {
     [Parameter]
-    public string InitialAddressStrValue
+    public string AddressStrValue
     {
-        get => HttpUtility.HtmlDecode(InitialAddressStrValueCore);
-        set => InitialAddressStrValueCore = HttpUtility.HtmlAttributeEncode(value);
+        get => HttpUtility.HtmlDecode(AddressStrValueCore);
+        set => AddressStrValueCore = HttpUtility.HtmlAttributeEncode(value);
     }
 
     [Parameter]
@@ -39,7 +40,7 @@
     [Parameter]
     public Func<KeyboardEventArgsWrapper, Task> OnAddressBarTextSubmit { get; set; }
 
-    protected string  InitialAddressStrValueCore { get; set; }
+    protected string  AddressStrValueCore { get; set; }
 
     protected async Task OnAddressBarFocusAsync(FocusEventArgs args)
     {
@@ -79,15 +80,31 @@
         }
     }
 
+    protected async Task OnAddressBarReadonlyClickAsyncEventHandler(MouseEventArgs args)
+    {
+        await SetEditable(true);
+    }
+
     protected async Task OnAddressBarKeyDownAsyncEventHandler(KeyboardEventArgs args)
     {
         if (args.Code.KeyCodeIsEnter() && OnAddressBarTextSubmit != null)
         {
-            string addressStrValue = await JSRuntime.InvokeAsync<string>(
-                JsH.Get(JsH.GetDomElValue), UuidStr, ".trmrk-address-bar");
+            await SetEditable(false);
 
-            var eventArgs = new KeyboardEventArgsWrapper(args, addressStrValue);
+            var eventArgs = new KeyboardEventArgsWrapper(args, AddressStrValue);
             await OnAddressBarTextSubmit.Invoke(eventArgs);
         }
+    }
+
+    protected async Task<string> SetEditable(bool editable)
+    {
+        AddressStrValue = await JSRuntime.InvokeAsync<string>(
+            JsH.Get(JsH.TextBoxWrapperSetEditable),
+            UuidStr,
+            ".trmrk-address-bar",
+            ".trmrk-address-bar-readonly",
+            editable);
+
+        return AddressStrValue;
     }
 }

@@ -8,13 +8,19 @@ namespace Turmerik.Core.Services
 {
     public class FileSystemFolderService : IDriveFolderService
     {
-        public Task<IDriveFolder> GetDriveFolderAsync(string id, bool refreshCache = false)
+        public Task<IDriveFolder> GetDriveFolderAsync(string address, string id, bool refreshCache = false)
         {
             throw new NotImplementedException();
         }
 
         public Task<IDriveFolder> GetRootFolderAsync(bool refreshCache = false)
         {
+            throw new NotImplementedException();
+        }
+
+        public bool TryNormalizeAddress(ref string address, out string id)
+        {
+            id = null;
             throw new NotImplementedException();
         }
     }

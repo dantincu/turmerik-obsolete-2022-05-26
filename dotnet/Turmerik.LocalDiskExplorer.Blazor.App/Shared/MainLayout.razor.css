@@ -8,6 +8,11 @@ main {
     flex: 1;
 }
 
+    main > article.content {
+        padding-right: 1rem !important;
+        padding-left: 1rem !important;
+    }
+
 .sidebar {
     background-image: linear-gradient(180deg, rgb(32, 16, 8) 0%, #201008 70%);
 }
@@ -81,4 +86,18 @@ main {
         min-width: 500px;
         width: 50%;
     }
+}
+
+::deep .trmrk-hidden {
+    display: none;
+}
+
+::deep .trmrk.table th {
+    border-bottom: 2px solid #444;
+    color: #ddd;
+}
+
+::deep .trmrk.table th, .trmrk.table td {
+    border-top: 2px solid #444;
+    color: #bbb;
 }

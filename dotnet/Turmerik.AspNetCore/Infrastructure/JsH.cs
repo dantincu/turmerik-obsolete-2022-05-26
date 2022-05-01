@@ -19,6 +19,7 @@ namespace Turmerik.AspNetCore.Infrastructure
         public static readonly string GetDomElInnerText;
         public static readonly string GetDomElInnerHTML;
         public static readonly string GetDomElOuterHTML;
+        public static readonly string TextBoxWrapperSetEditable;
 
         static JsH()
         {
@@ -29,6 +30,7 @@ namespace Turmerik.AspNetCore.Infrastructure
             GetDomElInnerText = nameof(GetDomElInnerText).DecapitalizeFirstLetter();
             GetDomElInnerHTML = nameof(GetDomElInnerHTML).DecapitalizeFirstLetter();
             GetDomElOuterHTML = nameof(GetDomElOuterHTML).DecapitalizeFirstLetter();
+            TextBoxWrapperSetEditable = nameof(TextBoxWrapperSetEditable).DecapitalizeFirstLetter();
         }
 
         public static string Get(params string[] segments)

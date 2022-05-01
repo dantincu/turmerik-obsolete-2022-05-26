@@ -8,8 +8,9 @@ namespace Turmerik.AspNetCore.Services.DriveItems
 {
     public interface IDriveFolderService
     {
-        Task<IDriveFolder> GetDriveFolderAsync(string id, bool refreshCache = false);
+        Task<IDriveFolder> GetDriveFolderAsync(string address, string id, bool refreshCache = false);
         Task<IDriveFolder> GetRootFolderAsync(bool refreshCache = false);
+        bool TryNormalizeAddress(ref string address, out string id);
     }
 
 }

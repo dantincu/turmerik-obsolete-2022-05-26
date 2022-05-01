@@ -3,16 +3,25 @@
     flex-direction: row;
 }
 
-.trmrk-address-bar {
+.trmrk-address-bar, .trmrk-address-bar-readonly {
     width: 100%;
     display: inline-flex;
     background-color: black;
     color: #d7d7d7;
     font-size: 0.9em;
     margin: 0px 4px 0px 4px;
+    border: 1px solid #a0a0a0;
+    border-radius: 2px;
 }
 
+    .trmrk-address-bar-readonly {
+        color: #c0c0c0;
+        border: 1px solid #404040;
+        border-radius: 2px;
+    }
+
 .trmrk-address-bar-container ::deep .trmrk-btn {
-    padding: 6px 4px 0px 4px;
+    padding: 4px 6px 0px 6px;
     cursor: grab;
+    font-size: 1.1rem;
 }
