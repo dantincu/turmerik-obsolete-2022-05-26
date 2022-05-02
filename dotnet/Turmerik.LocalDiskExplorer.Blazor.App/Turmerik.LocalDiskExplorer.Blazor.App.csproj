@@ -7,13 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="wwwroot\js\browser-utility\**" />
-    <Content Remove="wwwroot\js\browser-utility\**" />
-    <EmbeddedResource Remove="wwwroot\js\browser-utility\**" />
-    <None Remove="wwwroot\js\browser-utility\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Turmerik.Blazor.Core\Turmerik.Blazor.Core.csproj" />
   </ItemGroup>
 

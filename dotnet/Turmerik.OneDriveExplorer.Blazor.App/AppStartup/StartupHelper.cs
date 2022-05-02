@@ -6,7 +6,7 @@ using Turmerik.AspNetCore.MsIdentity.AppStartup;
 using Turmerik.AspNetCore.MsIdentity.Services.DriveItems;
 using Turmerik.AspNetCore.Services;
 using Turmerik.AspNetCore.Services.DriveItems;
-using Turmerik.Core.Services;
+using Turmerik.Core.Services.DriveItems;
 
 namespace Turmerik.OneDriveExplorer.Blazor.App.AppStartup
 {

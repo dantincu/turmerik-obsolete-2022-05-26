@@ -3,10 +3,48 @@
 
 @inherits ComponentCoreBase
 
-<div class="container @CssClassH.TabView"></div>
+<div class="@CssClassH.TabView">
+    @if (PageHeadsList != null)
+    {
+        <div class="@CssClassH.TabViewHeader">
+            @foreach (var tabPageHead in PageHeadsList)
+            {
+                <div class="@CssClassH.TabPageHead">
+                    <label class="@GetTabPageHeadLabelCssClass(tabPageHead)">
+                        @tabPageHead.Name
+                    </label>
+                </div>
+            }
+        </div>
+        
+        <div class="@CssClassH.TabPage">
+        </div>
+    }
+    else
+    {
+        <div class="@CssClassH.Loading">LOADING...</div>
+    }
+    
+</div>
 
 @code {
     [Parameter]
     public List<ITabPageHead> PageHeadsList { get; set; }
 
+    protected string GetTabPageHeadLabelCssClass(
+        ITabPageHead tabPageHead)
+    {
+        var cssClassList = new List<string>
+        {
+            CssClassH.Name
+        };
+
+        if (tabPageHead.IsCurrent)
+        {
+            cssClassList.Add(CssClassH.Current);
+        }
+
+        string cssClasses = string.Join(' ', cssClassList);
+        return cssClasses;
+    }
 }

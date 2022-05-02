@@ -8,19 +8,15 @@ using Turmerik.AspNetCore.Infrastructure;
 using Turmerik.AspNetCore.LocalSession;
 using Turmerik.AspNetCore.Services;
 using Turmerik.AspNetCore.Settings;
+using Turmerik.Core.Cloneable;
 
 namespace Turmerik.Blazor.Core.Pages
 {
     public class PageBase : ComponentBase
     {
+        protected ICloneableMapper Mapper { get; set; }
         protected INavManager NavManager { get; set; }
-        protected Guid? LocalSessionGuid { get; set; }
-
-        protected async override Task OnParametersSetAsync()
-        {
-            await base.OnParametersSetAsync();
-            LocalSessionGuid = NavManager.LocalSessionGuid;
-        }
+        protected Guid? LocalSessionGuid => NavManager?.LocalSessionGuid;
 
         protected void IfLocalSessionGuidHasValue(Action<Guid> action)
         {

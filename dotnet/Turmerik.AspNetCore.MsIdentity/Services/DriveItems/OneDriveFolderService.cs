@@ -1,29 +1,37 @@
 ﻿using Turmerik.AspNetCore.Services.DriveItems;
+using Turmerik.AspNetCore.Services.LocalSessionStorage;
 using Turmerik.Core.Cloneable;
+using Turmerik.Core.Services.DriveItems;
 
 namespace Turmerik.AspNetCore.MsIdentity.Services.DriveItems
 {
-    public class OneDriveFolderService : IDriveFolderService
+    public class OneDriveFolderService : DriveFolderServiceBase, IDriveFolderService
     {
-        private readonly ICloneableMapper mapper;
-
         public OneDriveFolderService(
-            ICloneableMapper mapper)
+            ICloneableMapper mapper,
+            ISessionStorageWrapper localStorageWrapper) : base(mapper)
         {
-            this.mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            Storage = localStorageWrapper;
         }
 
-        public Task<IDriveFolder> GetDriveFolderAsync(string address, string id, bool refreshCache = false)
-        {
-            throw new NotImplementedException();
-        }
+        protected override IWebStorageWrapper Storage { get; }
 
-        public Task<IDriveFolder> GetRootFolderAsync(bool refreshCache = false)
+        public override bool TryNormalizeAddress(ref string path, out string id)
         {
             throw new NotImplementedException();
         }
 
-        public bool TryNormalizeAddress(ref string address, out string id)
+        public override bool DriveItemsHaveSameAddress(IDriveItemCore trgItem, IDriveItemCore refItem, bool normalizeFirst)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override async Task<IDriveFolder> GetDriveFolderCoreAsync(string pathOrId)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override async Task<IDriveFolder> GetRootDriveFolderCoreAsync()
         {
             throw new NotImplementedException();
         }

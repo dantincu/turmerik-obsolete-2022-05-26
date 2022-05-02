@@ -1,6 +1,6 @@
 ﻿using Turmerik.AspNetCore.AppStartup;
 using Turmerik.AspNetCore.Services.DriveItems;
-using Turmerik.Core.Services;
+using Turmerik.Core.Services.DriveItems;
 
 namespace Turmerik.LocalDiskExplorer.Blazor.App.AppStartup
 {

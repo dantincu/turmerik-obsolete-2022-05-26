@@ -99,7 +99,7 @@ namespace Turmerik.AspNetCore.OpenId.UserSession
                 await ClearStorage(localStorage, sessionStorage);
 
                 await localStorage.SetItemAsync(
-                    LocalStorageKeys.UserSession,
+                    LocalStorageKeys.UserSessionId,
                     mtbl);
             }
 
@@ -148,10 +148,10 @@ namespace Turmerik.AspNetCore.OpenId.UserSession
             ILocalStorageService localStorage,
             ISessionStorageService sessionStorage)
         {
-            if (await localStorage.ContainKeyAsync(LocalStorageKeys.UserSession))
+            if (await localStorage.ContainKeyAsync(LocalStorageKeys.UserSessionId))
             {
                 await localStorage.RemoveItemAsync(
-                    LocalStorageKeys.UserSession);
+                    LocalStorageKeys.UserSessionId);
             }
 
             var keysArr = (await localStorage.KeysAsync(

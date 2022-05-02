@@ -1,6 +1,7 @@
 ﻿@using Blazored.SessionStorage
 @using Turmerik.AspNetCore.LocalSession
 @using Turmerik.AspNetCore.Services
+@using Turmerik.AspNetCore.Services.LocalSessionStorage
 @using Turmerik.AspNetCore.Settings
 @using Turmerik.Blazor.Core.Pages.Shared
 @inherits MainLayoutComponentBase
@@ -9,7 +10,8 @@
 @inject ILocalSessionsManager localSessionsManager;
 @inject ITrmrkAppSettings appSettings;
 @inject IHttpContextAccessor httpContextAccessor;
-@inject ISessionStorageService sessionStorage;
+@inject ILocalStorageWrapper localStorage;
+@inject ISessionStorageWrapper sessionStorage
 
 <PageTitle>Turmerik Local Disk Explorer</PageTitle>
 
@@ -26,14 +28,15 @@
 </div>
 
 @code {
-    protected override Task OnParametersSetAsync()
+    protected override Task OnInitializedAsync()
     {
         this.LocalSessionsManager = localSessionsManager;
         this.NavManager = navManager;
         this.AppSettings = appSettings;
         this.HttpContextAccessor = httpContextAccessor;
+        this.LocalStorage = localStorage;
         this.SessionStorage = sessionStorage;
 
-        return base.OnParametersSetAsync();
+        return base.OnInitializedAsync();
     }
 }

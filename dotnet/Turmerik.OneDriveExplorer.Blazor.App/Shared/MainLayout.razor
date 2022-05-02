@@ -4,6 +4,7 @@
 @using Microsoft.Extensions.Primitives
 @using Turmerik.AspNetCore.LocalSession
 @using Turmerik.AspNetCore.Services
+@using Turmerik.AspNetCore.Services.LocalSessionStorage
 @using Turmerik.AspNetCore.Settings
 @using Turmerik.AspNetCore.AppStartup
 @using Turmerik.AspNetCore.Infrastructure
@@ -19,7 +20,8 @@
 @inject ILocalSessionsManager localSessionsManager;
 @inject ITrmrkAppSettings appSettings;
 @inject IHttpContextAccessor httpContextAccessor;
-@inject ISessionStorageService sessionStorage;
+@inject ILocalStorageWrapper localStorage;
+@inject ISessionStorageWrapper sessionStorage
 @inject IUserSessionsManager userSessionsManager;
 
 <style>
@@ -51,15 +53,16 @@
 </div>
 
 @code {
-    protected override Task OnParametersSetAsync()
+    protected override Task OnInitializedAsync()
     {
         this.LocalSessionsManager = localSessionsManager;
         this.NavManager = navManager;
         this.AppSettings = appSettings;
         this.HttpContextAccessor = httpContextAccessor;
+        this.LocalStorage = localStorage;
         this.SessionStorage = sessionStorage;
         this.UserSessionsManager = userSessionsManager;
 
-        return base.OnParametersSetAsync();
+        return base.OnInitializedAsync();
     }
 }

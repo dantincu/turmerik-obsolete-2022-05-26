@@ -1,33 +1,43 @@
 ﻿@page "/files"
 @using Blazored.LocalStorage
 @using Blazored.SessionStorage
+@using Turmerik.AspNetCore.Infrastructure
 @using Turmerik.AspNetCore.Services
 @using Turmerik.AspNetCore.Services.DriveItems
+@using Turmerik.AspNetCore.Services.LocalSessionStorage
 @using Turmerik.Blazor.Core.Pages.Components
+@using Turmerik.Core.Cloneable
+@using Turmerik.Core.Services.DriveItems
 
 @inherits Turmerik.Blazor.Core.Pages.FilesBase
 
+@inject ICloneableMapper mapper;
 @inject INavManager navManager;
-@inject ILocalStorageService localStorage;
-@inject ISessionStorageService sessionStorage;
+@inject ILocalStorageWrapper localStorage;
+@inject ISessionStorageWrapper sessionStorage;
 @inject IDriveFolderService driveFolderService;
 
-<AddressBar
-    OnGoBackClick=@OnAddressBarGoBackClick
-    OnGoUpClick=@OnAddressBarGoUpClick
-    OnGoForwardClick=@OnAddressBarGoForwardClick
-    OnReloadClick=@OnAddressBarReloadClick
-    OnSubmitAddress=@OnSubmitAddress></AddressBar>
+<div class="@CssClassH.Container">
+    <AddressBar
+        OnGoBackClick=@OnAddressBarGoBackClick
+        OnGoUpClick=@OnAddressBarGoUpClick
+        OnGoForwardClick=@OnAddressBarGoForwardClick
+        OnReloadClick=@OnAddressBarReloadClick
+        OnSubmitAddress=@OnSubmitAddress></AddressBar>
+
+        <TabView PageHeadsList=@TabPageHeadsList></TabView>
+</div>
 
 @code {
-    protected override async Task OnParametersSetAsync()
+    protected override async Task OnInitializedAsync()
     {
+        this.Mapper = mapper;
         this.NavManager = navManager;
 
         LocalStorage = localStorage;
         SessionStorage = sessionStorage;
 
         DriveFolderService = driveFolderService;
-        await base.OnParametersSetAsync();
+        await base.OnInitializedAsync();
     }
 }

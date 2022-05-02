@@ -7,6 +7,7 @@ using Turmerik.Core.Cloneable;
 using Turmerik.Core.Cloneable.Nested;
 using Turmerik.Core.Threading;
 using Turmerik.Core.Components;
+using Turmerik.Core.FileSystem;
 
 namespace Turmerik.Core.Infrastucture
 {
@@ -85,7 +86,9 @@ namespace Turmerik.Core.Infrastucture
             services.AddSingleton<IClonnerFactory, ClonnerFactory>();
             services.AddSingleton<ICloneableMapper, CloneableMapper>();
             services.AddSingleton<INestedObjMapperMainFactory, NestedObjMapperMainFactory>();
-            
+
+            services.AddSingleton<IFsPathNormalizer, FsPathNormalizer>();
+
             return immtbl;
         }
     }

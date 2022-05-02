@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using Turmerik.AspNetCore.Infrastructure;
 using Turmerik.AspNetCore.LocalSession;
 using Turmerik.AspNetCore.Services;
+using Turmerik.AspNetCore.Services.LocalSessionStorage;
 using Turmerik.AspNetCore.Settings;
 
 namespace Turmerik.Blazor.Core.Pages.Shared
@@ -16,7 +17,8 @@ namespace Turmerik.Blazor.Core.Pages.Shared
         protected INavManager NavManager { get; set; }
         protected ITrmrkAppSettings AppSettings { get; set; }
         protected IHttpContextAccessor HttpContextAccessor { get; set; }
-        protected ISessionStorageService SessionStorage { get; set; }
+        protected ILocalStorageWrapper LocalStorage { get; set; }
+        protected ISessionStorageWrapper SessionStorage { get; set; }
         protected bool SideBarLarge { get; set; } = false;
         protected string? SideBarSizeCssClass => SideBarLarge ? CssClassH.Large : CssClassH.Small;
         protected Guid? LocalSessionGuid { get; set; }
@@ -25,20 +27,6 @@ namespace Turmerik.Blazor.Core.Pages.Shared
         {
             await base.OnAfterRenderAsync(firstRender);
             LocalSessionGuid = NavManager.LocalSessionGuid;
-
-            if (!LocalSessionGuid.HasValue)
-            {
-                var tuple = await SessionStorage.TryGetValueAsync<Guid>(
-                    LocalStorageKeys.LocalSession, true);
-
-                if (tuple.Item1)
-                {
-                    LocalSessionGuid = tuple.Item2;
-                    await LocalSessionsManager.TryAddOrUpdateLocalSessionAsync(tuple.Item2);
-
-                    NavigateToLocalSessionId(tuple.Item2, false);
-                }
-            }
 
             if (!LocalSessionGuid.HasValue)
             {

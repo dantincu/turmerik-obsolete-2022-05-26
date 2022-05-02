@@ -139,6 +139,32 @@ namespace Turmerik.Core.Helpers
             return retTpl;
         }
 
+        public static string SubStr(
+            this string inputStr,
+            int startIdx,
+            int length,
+            bool trimEntry = false)
+        {
+            if (length < 0)
+            {
+                length = inputStr.Length - length;
+                length = Math.Max(0, length);
+            }
+            else
+            {
+                length = Math.Min(length, inputStr.Length - startIdx);
+            }
+
+            string subStr = inputStr.Substring(startIdx, length);
+
+            if (trimEntry)
+            {
+                subStr = subStr.Trim();
+            }
+
+            return subStr;
+        }
+
         public static bool StrEquals(this string target, string reference, bool ignoreCase = false)
         {
             bool retVal = string.Compare(target, reference, ignoreCase) == 0;
@@ -242,6 +268,50 @@ namespace Turmerik.Core.Helpers
                 c => char.ToLower(c));
 
             return str;
+        }
+
+        public static List<SplitStrTuple> SplitStr(
+            this string str,
+            char[] splitChars,
+            bool trimEntries = false)
+        {
+            var tuplesList = new List<SplitStrTuple>();
+            int len = str.Length;
+
+            int stIdx = 0;
+
+            for (int idx = 0; idx < len; idx++)
+            {
+                char chr = str[idx];
+
+                if (splitChars.Contains(chr))
+                {
+                    string subStr = str.SubStr(stIdx, idx - stIdx, trimEntries);
+                    stIdx = idx + 1;
+
+                    var tuple = new SplitStrTuple(subStr, chr);
+                    tuplesList.Add(tuple);
+                }
+            }
+
+            if (stIdx < len)
+            {
+                string subStr = str.SubStr(stIdx, int.MaxValue, trimEntries);
+
+                var tuple = new SplitStrTuple(subStr, default(char));
+                tuplesList.Add(tuple);
+            }
+
+            return tuplesList;
+        }
+
+        public static bool IsLatinLetter(this char chr)
+        {
+            bool isLtnTtr = (
+                chr >= 'a' && chr <= 'z') || (
+                chr >= 'A' && chr <= 'Z');
+
+            return isLtnTtr;
         }
     }
 }

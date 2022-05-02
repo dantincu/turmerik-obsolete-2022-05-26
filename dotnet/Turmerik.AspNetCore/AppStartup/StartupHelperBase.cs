@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Turmerik.AspNetCore.Infrastructure;
 using Turmerik.AspNetCore.LocalSession;
 using Turmerik.AspNetCore.Services;
+using Turmerik.AspNetCore.Services.LocalSessionStorage;
 using Turmerik.AspNetCore.Settings;
 using Turmerik.Core.Infrastucture;
 
@@ -58,6 +59,12 @@ namespace Turmerik.AspNetCore.AppStartup
 
             services.AddSingleton<ILocalSessionsDictnr, LocalSessionsDictnr>();
             services.AddScoped<ILocalSessionsManager, LocalSessionsManager>();
+
+            services.AddScoped<ISessionStorageSvc, SessionStorageSvc>();
+            services.AddScoped<ILocalStorageSvc, LocalStorageSvc>();
+
+            services.AddScoped<ILocalStorageWrapper, LocalStorageWrapper>();
+            services.AddScoped<ISessionStorageWrapper, SessionStorageWrapper>();
         }
     }
 }

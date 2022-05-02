@@ -13,10 +13,14 @@ namespace Turmerik.AspNetCore.Infrastructure
         public const string HIDDEN = "hidden";
         public const string READONLY = "readonly";
         public const string EDITABLE = "editable";
+        public const string CURRENT = "current";
+        public const string SELECTED = "selected";
+        public const string LOADING = "loading";
 
         public const string TOP = "top";
         public const string BAR = "bar";
         public const string BRAND = "brand";
+        public const string NAME = "name";
 
         public const string LARGE = "large";
         public const string SMALL = "small";
@@ -28,6 +32,9 @@ namespace Turmerik.AspNetCore.Infrastructure
         public const string ENLARGE = "enlarge";
         public const string TAB = "tab";
         public const string VIEW = "view";
+        public const string HEAD = "head";
+        public const string HEADER = "header";
+        public const string PAGE = "PAGE";
 
         public const string NAVBAR = "navbar";
         public const string GREET = "greet";
@@ -35,6 +42,10 @@ namespace Turmerik.AspNetCore.Infrastructure
         public const string ADDRESS = "address";
 
         public static readonly string Hidden = Class(HIDDEN);
+        public static readonly string Current = Class(CURRENT);
+        public static readonly string Selected = Class(SELECTED);
+        public static readonly string Name = Class(NAME);
+        public static readonly string Loading = Class(LOADING);
 
         public static readonly string Btn = Class(BTN);
         public static readonly string Table = Class(TABLE);
@@ -46,15 +57,18 @@ namespace Turmerik.AspNetCore.Infrastructure
         public static readonly string ShrinkEnlarge = Class(SHRINK, ENLARGE);
 
         public static readonly string Navbar = Class(NAVBAR);
-        public static readonly string NavbarBrand = Class(false, Navbar, BRAND);
+        public static readonly string NavbarBrand = Class(NAVBAR, BRAND);
         public static readonly string Greet = Class(GREET);
 
         public static readonly string TabView = Class(TAB, VIEW);
+        public static readonly string TabViewHeader = Class(TAB, VIEW, HEADER);
+        public static readonly string TabPage = Class(TAB, PAGE);
+        public static readonly string TabPageHead = Class(TAB, PAGE, HEAD);
 
         public static readonly string Address = Class(ADDRESS);
-        public static readonly string AddressBar = Class(false, Address, BAR);
-        public static readonly string AddressBarContainer = Class(false, AddressBar, CONTAINER);
-        public static readonly string AddressBarReadonly = Class(false, AddressBar, READONLY);
+        public static readonly string AddressBar = Class(ADDRESS, BAR);
+        public static readonly string AddressBarContainer = Class(ADDRESS, BAR, CONTAINER);
+        public static readonly string AddressBarReadonly = Class(ADDRESS, BAR, READONLY);
 
         public static string CssClsSel(this string cssClass)
         {

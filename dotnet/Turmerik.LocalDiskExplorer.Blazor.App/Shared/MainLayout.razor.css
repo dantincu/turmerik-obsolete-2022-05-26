@@ -115,10 +115,3 @@ main {
     border-top: 2px solid #444;
     color: #bbb;
 }
-
-::deep .trmrk-tab-view {
-    display: flex;
-    color: #c0c0c0;
-    border: 1px solid #404040;
-    border-radius: 2px;
-}

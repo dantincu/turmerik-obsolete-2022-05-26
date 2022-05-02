@@ -7,11 +7,11 @@ namespace Turmerik.Core.Infrastucture
 {
     public abstract class ComponentBase
     {
-        protected readonly ICloneableMapper ClblMppr;
+        protected readonly ICloneableMapper Mapper;
 
-        protected ComponentBase(ICloneableMapper clblMapper)
+        protected ComponentBase(ICloneableMapper mapper)
         {
-            ClblMppr = clblMapper ?? throw new ArgumentNullException(nameof(clblMapper));
+            Mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
     }
 }

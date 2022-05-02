@@ -4,18 +4,61 @@
     {
         public const string TRMRK = "trmrk";
         public const string SESSION = "trmrk";
+        public const string ID = "id";
 
         public const string LOCAL = "local";
         public const string USER = "user";
 
-        public static readonly string LocalSession = GetKey(LOCAL, SESSION);
-        public static readonly string UserSession = GetKey(USER, SESSION);
+        public const string SELECTED = "selected";
+        public const string CURRENT = "current";
+        public const string CURRENTLY = "currently";
+        public const string ROOT = "root";
+        public const string DRIVE = "drive";
+        public const string ITEM = "item";
+        public const string ITEMS = "items";
+        public const string FOLDER = "folder";
+        public const string OPEN = "open";
+        public const string TABS = "tabs";
 
-        public static string GetLocal(
-            string baseKey,
-            Guid localSessionGuid)
+        public static readonly string LocalSessionId = GetKey(LOCAL, SESSION, ID);
+        public static readonly string UserSessionId = GetKey(USER, SESSION, ID);
+
+        public static string RootDriveFolderKey(Guid localSessionGuid)
         {
-            string key = $"{baseKey}[{localSessionGuid.ToString("N")}]";
+            string key = GetLocalStorageKey(localSessionGuid, ROOT, DRIVE, FOLDER);
+            return key;
+        }
+
+        public static string DriveFolderKey(Guid localSessionGuid, string pathOrId)
+        {
+            string key = GetLocalStorageKey(localSessionGuid, DRIVE, FOLDER);
+            key = $"{key}|{pathOrId}|";
+
+            return key;
+        }
+
+        public static string CurrentDriveItemsKey(Guid localSessionGuid)
+        {
+            string key = GetLocalStorageKey(localSessionGuid, CURRENT, DRIVE, ITEMS);
+            return key;
+        }
+
+        public static string CurrentlyOpenDriveItemKey(Guid localSessionGuid)
+        {
+            string key = GetLocalStorageKey(localSessionGuid, CURRENTLY, OPEN, DRIVE, ITEM);
+            return key;
+        }
+
+        public static string GetLocalStorageKey(
+            Guid localSessionGuid,
+            params string[] segments)
+        {
+            string baseKey = $"{TRMRK}[{localSessionGuid.ToString("N")}]";
+            segments = segments.Prepend(TRMRK).ToArray();
+
+            string key = string.Join('-', segments);
+            key = string.Concat(baseKey, key);
+
             return key;
         }
 

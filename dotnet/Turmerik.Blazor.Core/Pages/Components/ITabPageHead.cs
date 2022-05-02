@@ -9,7 +9,8 @@ namespace Turmerik.Blazor.Core.Pages.Components
 {
     public interface ITabPageHead : ICloneableObject
     {
-        string Title { get; }
+        string Name { get; }
+        bool IsCurrent { get; }
     }
 
     public class TabPageHeadImmtbl : CloneableObjectImmtblBase, ITabPageHead
@@ -22,7 +23,8 @@ namespace Turmerik.Blazor.Core.Pages.Components
         {
         }
 
-        public string Title { get; protected set; }
+        public string Name { get; protected set; }
+        public bool IsCurrent { get; protected set; }
     }
 
     public class TabPageHeadMtbl : CloneableObjectMtblBase, ITabPageHead
@@ -39,6 +41,7 @@ namespace Turmerik.Blazor.Core.Pages.Components
         {
         }
 
-        public string Title { get; set; }
+        public string Name { get; set; }
+        public bool IsCurrent { get; set; }
     }
 }

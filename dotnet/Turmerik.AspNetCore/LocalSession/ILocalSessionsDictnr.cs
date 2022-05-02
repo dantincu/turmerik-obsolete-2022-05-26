@@ -51,7 +51,11 @@ namespace Turmerik.AspNetCore.LocalSession
                     }));
 
             await sessionStorage.SetItemAsync(
-                LocalStorageKeys.LocalSession,
+                LocalStorageKeys.LocalSessionId,
+                localSessionGuid);
+
+            await localStorage.SetItemAsync(
+                LocalStorageKeys.LocalSessionId,
                 localSessionGuid);
 
             return localSessionData;
@@ -67,6 +71,9 @@ namespace Turmerik.AspNetCore.LocalSession
             dictnr.TryRemove(
                 localSessionGuid,
                 out localSessionData);
+
+            await sessionStorage.RemoveItemAsync(LocalStorageKeys.LocalSessionId);
+            await localStorage.RemoveItemAsync(LocalStorageKeys.LocalSessionId);
 
             return localSessionData;
         }

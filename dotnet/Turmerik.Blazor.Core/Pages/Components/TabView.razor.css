@@ -1,0 +1,28 @@
+﻿.trmrk-tab-view, .trmrk-tab-view-header, .trmrk-tab-page-head {
+    border: 1px solid #404040;
+    border-radius: 2px;
+    font-size: 0.9rem;
+}
+
+.trmrk-name {
+    padding: 0px;
+}
+
+.trmrk-tab-view {
+    padding: 2px;
+    display: flex;
+    flex-flow: column nowrap;
+}
+
+.trmrk-tab-view-header {
+    display: flex;
+    flex-flow: row wrap;
+}
+
+.trmrk-tab-page-head {
+    display: inline-flex;
+}
+
+.trmrk-tab-page {
+    display: flex;
+}
