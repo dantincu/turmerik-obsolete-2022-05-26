@@ -43,7 +43,8 @@ trmrk.textBoxWrapperSetEditable = (
     domElId,
     editableTextBoxSelector,
     readonlyTextBoxSelector,
-    isEditable) => {
+    isEditable,
+    revertChanges) => {
     let wrapper = new EdtblRdnlTextBoxWrapper(
         domElId,
         editableTextBoxSelector,
@@ -51,9 +52,12 @@ trmrk.textBoxWrapperSetEditable = (
 
     wrapper.IsEditable = isEditable;
 
-    if (isEditable) {
+    if (isEditable || revertChanges) {
         wrapper.EditableTextBox.value = wrapper.ReadonlyTextBox.value;
-        wrapper.EditableTextBox.select();
+
+        if (isEditable) {
+            wrapper.EditableTextBox.select();
+        };
     } else {
         wrapper.ReadonlyTextBox.value = wrapper.EditableTextBox.value;
     }

@@ -36,6 +36,9 @@
     public Func<TextEventArgsWrapper, Task> OnSubmitAddress { get; set; }
 
     [Parameter]
+    public Func<TextEventArgsWrapper, Task> OnCancelAddress { get; set; }
+
+    [Parameter]
     public Func<MouseEventArgs, Task> OnReloadClick { get; set; }
 
     protected string AddressStrValue { get; set; }
@@ -50,9 +53,14 @@
 
     protected async Task OnAddressBarKeyDownAsyncEventHandler(KeyboardEventArgs args)
     {
-        if (args.Code.KeyCodeIsEnter())
+        switch (args.Code)
         {
-            await SubmitAddress(args);
+            case KeyboardKeyCodes.ENTER:
+                await SubmitAddress(args);
+                break;
+            case KeyboardKeyCodes.ESCAPE:
+                await CancelAddress(args);
+                break;
         }
     }
 
@@ -99,14 +107,15 @@
         return AddressStrValue;
     }
 
-    protected async Task<string> SetEditable(bool editable)
+    protected async Task<string> SetEditable(bool editable, bool revertChanges = false)
     {
         AddressStrValue = await JSRuntime.InvokeAsync<string>(
             JsH.Get(JsH.TextBoxWrapperSetEditable),
             UuidStr,
             CssClassH.AddressBar.CssClsSel(),
             CssClassH.AddressBarReadonly.CssClsSel(),
-            editable);
+            editable,
+            revertChanges);
 
         return AddressStrValue;
     }
@@ -117,8 +126,21 @@
 
         if (OnSubmitAddress != null)
         {
-            var eventArgs = new TextEventArgsWrapper(args, InitialAddressStrValue);
+            var eventArgs = new TextEventArgsWrapper(args, AddressStrValue);
             await OnSubmitAddress.Invoke(eventArgs);
+        }
+
+        return AddressStrValue;
+    }
+
+    protected async Task<string> CancelAddress(EventArgs args)
+    {
+        await SetEditable(false, true);
+
+        if (OnCancelAddress != null)
+        {
+            var eventArgs = new TextEventArgsWrapper(args, AddressStrValue);
+            await OnCancelAddress.Invoke(eventArgs);
         }
 
         return AddressStrValue;
