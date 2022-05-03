@@ -35,6 +35,7 @@ namespace Turmerik.AspNetCore.Infrastructure
         public const string CELL = "cell";
         public const string TABLE = "table";
         public const string CONTAINER = "container";
+        public const string SPACER = "spacer";
         public const string SHRINK = "shrink";
         public const string ENLARGE = "enlarge";
         public const string TAB = "tab";
@@ -69,6 +70,7 @@ namespace Turmerik.AspNetCore.Infrastructure
         public static readonly string DataGridHeaderRow = Class(DATA, GRID, HEADER, ROW);
         public static readonly string TopRow = Class(TOP, ROW);
         public static readonly string Container = Class(CONTAINER);
+        public static readonly string Spacer = Class(SPACER);
 
         public static readonly string Large = Class(LARGE);
         public static readonly string Small = Class(SMALL);
