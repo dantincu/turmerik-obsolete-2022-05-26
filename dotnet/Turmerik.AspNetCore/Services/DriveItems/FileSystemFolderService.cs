@@ -6,6 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Turmerik.AspNetCore.Services.LocalSessionStorage;
 using Turmerik.Core.Cloneable;
+using Turmerik.Core.FileSystem;
+using Turmerik.Core.Helpers;
 using Turmerik.Core.Services.DriveItems;
 using static System.Environment;
 
@@ -15,7 +17,10 @@ namespace Turmerik.AspNetCore.Services.DriveItems
     {
         public FileSystemFolderService(
             ICloneableMapper clblMapper,
-            ISessionStorageWrapper sessionStorageWrapper) : base(clblMapper)
+            IFsPathNormalizer fsPathNormalizer,
+            ISessionStorageWrapper sessionStorageWrapper) : base(
+                clblMapper,
+                fsPathNormalizer)
         {
             Storage = sessionStorageWrapper;
         }
@@ -24,17 +29,67 @@ namespace Turmerik.AspNetCore.Services.DriveItems
 
         public override bool TryNormalizeAddress(ref string address, out string pathOrId)
         {
-            throw new NotImplementedException();
+            var normalizerResult = FsPathNormalizer.TryNormalizePath(address);
+            bool retVal = normalizerResult.IsValid;
+
+            if (retVal)
+            {
+                address = normalizerResult.NormalizedPath;
+
+                if (normalizerResult.IsAbsUri == true && address.StartsWith(
+                    FsH.FILE_URI_SCHEME,
+                    StringComparison.InvariantCultureIgnoreCase))
+                {
+                    address = address.Substring(FsH.FILE_URI_SCHEME.Length);
+                }
+            }
+            else
+            {
+                address = null;
+            }
+
+            pathOrId = address;
+            return retVal;
         }
 
         public override bool DriveItemsHaveSameAddress(IDriveItemCore trgItem, IDriveItemCore refItem, bool normalizeFirst)
         {
-            throw new NotImplementedException();
+            string trgPath = trgItem.Path;
+            string refPath = refItem.Path;
+
+            bool retVal = true;
+
+            if (normalizeFirst)
+            {
+                retVal = TryNormalizeAddress(ref trgPath, out trgPath);
+                retVal = retVal && TryNormalizeAddress(ref refPath, out refPath);
+            }
+
+            retVal = retVal && trgPath.StrEquals(refPath, true);
+            return retVal;
         }
 
         protected override async Task<IDriveFolder> GetDriveFolderCoreAsync(string pathOrId)
         {
-            throw new NotImplementedException();
+            IDriveFolder driveFolderImmtbl = null;
+
+            if (TryNormalizeAddress(ref pathOrId, out pathOrId))
+            {
+                string[] files = Directory.GetFiles(pathOrId);
+                string[] folders = Directory.GetDirectories(pathOrId);
+
+                var mtblFiles = files.Select(GetDriveItemMtbl).ToList();
+                var mtblFolders = folders.Select(GetDriveFolderMtbl).ToList();
+
+                var driveFolder = GetDriveFolderMtbl(pathOrId);
+
+                driveFolder.DriveFoldersList = new DriveFoldersList(null, mtblFolders);
+                driveFolder.DriveItemsList = new DriveItemsList(null, mtblFiles);
+
+                driveFolderImmtbl = new DriveFolderImmtbl(Mapper, driveFolder);
+            }
+
+            return driveFolderImmtbl;
         }
 
         protected override async Task<IDriveFolder> GetRootDriveFolderCoreAsync()
@@ -43,6 +98,36 @@ namespace Turmerik.AspNetCore.Services.DriveItems
             var immtbl = new DriveFolderImmtbl(Mapper, mtbl);
 
             return immtbl;
+        }
+
+        private DriveFolderMtbl GetDriveFolderMtbl(string fsEntryPath)
+        {
+            var mtbl = new DriveFolderMtbl
+            {
+                IsFolder = true,
+            };
+
+            FillDriveItemCoreMtblProps(mtbl, fsEntryPath);
+            return mtbl;
+        }
+
+        private DriveItemMtbl GetDriveItemMtbl(string fsEntryPath)
+        {
+            var mtbl = new DriveItemMtbl
+            {
+                Extension = Path.GetExtension(fsEntryPath)?.TrimStart('.'),
+                NameWithoutExtension = Path.GetFileNameWithoutExtension(fsEntryPath),
+                IsFolder = false,
+            };
+
+            FillDriveItemCoreMtblProps(mtbl, fsEntryPath);
+            return mtbl;
+        }
+
+        private void FillDriveItemCoreMtblProps(DriveItemCoreMtbl mtbl, string fsEntryPath)
+        {
+            mtbl.Name = Path.GetFileName(fsEntryPath);
+            mtbl.Path = fsEntryPath;
         }
 
         private List<DriveFolderMtbl> GetRootDriveFoldersList()
@@ -89,7 +174,7 @@ namespace Turmerik.AspNetCore.Services.DriveItems
         {
             DriveInfo[] drives = DriveInfo.GetDrives();
 
-            var drivesArr = drives.Select(
+            var drivesArr = drives.Where(d => d.IsReady).Select(
                 d => new DriveFolderMtbl
                 {
                     Name = d.Name,

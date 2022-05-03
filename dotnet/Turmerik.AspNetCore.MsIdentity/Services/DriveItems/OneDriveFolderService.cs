@@ -1,6 +1,7 @@
 ﻿using Turmerik.AspNetCore.Services.DriveItems;
 using Turmerik.AspNetCore.Services.LocalSessionStorage;
 using Turmerik.Core.Cloneable;
+using Turmerik.Core.FileSystem;
 using Turmerik.Core.Services.DriveItems;
 
 namespace Turmerik.AspNetCore.MsIdentity.Services.DriveItems
@@ -8,10 +9,13 @@ namespace Turmerik.AspNetCore.MsIdentity.Services.DriveItems
     public class OneDriveFolderService : DriveFolderServiceBase, IDriveFolderService
     {
         public OneDriveFolderService(
-            ICloneableMapper mapper,
-            ISessionStorageWrapper localStorageWrapper) : base(mapper)
+            ICloneableMapper clblMapper,
+            IFsPathNormalizer fsPathNormalizer,
+            ISessionStorageWrapper sessionStorageWrapper) : base(
+                clblMapper,
+                fsPathNormalizer)
         {
-            Storage = localStorageWrapper;
+            Storage = sessionStorageWrapper;
         }
 
         protected override IWebStorageWrapper Storage { get; }

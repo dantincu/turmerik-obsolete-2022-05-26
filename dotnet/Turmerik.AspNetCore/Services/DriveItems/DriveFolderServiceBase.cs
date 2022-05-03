@@ -7,16 +7,21 @@ using Turmerik.Core.Cloneable;
 using Turmerik.Core.Infrastucture;
 using Turmerik.Core.Services.DriveItems;
 using Turmerik.Core.Helpers;
+using Turmerik.Core.FileSystem;
 
 namespace Turmerik.AspNetCore.Services.DriveItems
 {
     public abstract class DriveFolderServiceBase : ComponentBase, IDriveFolderService
     {
-        protected DriveFolderServiceBase(ICloneableMapper clblMapper) : base(clblMapper)
+        protected DriveFolderServiceBase(
+            ICloneableMapper clblMapper,
+            IFsPathNormalizer fsPathNormalizer) : base(clblMapper)
         {
+            this.FsPathNormalizer = fsPathNormalizer ?? throw new ArgumentNullException(nameof(fsPathNormalizer));
         }
 
         protected abstract IWebStorageWrapper Storage { get; }
+        protected IFsPathNormalizer FsPathNormalizer { get; }
 
         public abstract bool TryNormalizeAddress(ref string address, out string pathOrId);
         public abstract bool DriveItemsHaveSameAddress(IDriveItemCore trgItem, IDriveItemCore refItem, bool normalizeFirst);
@@ -34,9 +39,18 @@ namespace Turmerik.AspNetCore.Services.DriveItems
                 () => new List<DriveItemCoreMtbl>(),
                 list =>
                 {
-                    if (list.None(item => DriveItemsHaveSameAddress(item, currentlyOpen)))
+                    if (list.None(item => DriveItemsHaveSameAddress(item, currentlyOpen, false)))
                     {
-                        var mtbl = ItemCoreToMtbl(currentlyOpen);
+                        var mtbl = new DriveItemCoreMtbl
+                        {
+                            Id = currentlyOpen.Id,
+                            Name = currentlyOpen.DisplayName ?? currentlyOpen.Name,
+                            Path = currentlyOpen.Path,
+                            Uri = currentlyOpen.Uri,
+                            IsFolder = currentlyOpen.IsFolder,
+                            ParentFolder = currentlyOpen.ParentFolder
+                        };
+
                         list.Add(mtbl);
                     }
 

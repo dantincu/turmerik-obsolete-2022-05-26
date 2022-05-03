@@ -1,8 +1,7 @@
 ﻿using Turmerik.Core.Cloneable;
 using Turmerik.Core.Cloneable.Nested.Clnbl;
-using Turmerik.Core.Services.DriveItems;
 
-namespace Turmerik.AspNetCore.Services.DriveItems
+namespace Turmerik.Core.Services.DriveItems
 {
     public interface IDriveFolder : IDriveItemCore
     {

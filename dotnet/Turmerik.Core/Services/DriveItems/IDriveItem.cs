@@ -1,9 +1,11 @@
 ﻿using Turmerik.Core.Cloneable;
 
-namespace Turmerik.AspNetCore.Services.DriveItems
+namespace Turmerik.Core.Services.DriveItems
 {
     public interface IDriveItem : IDriveItemCore
     {
+        string Extension { get; }
+        string NameWithoutExtension { get; }
     }
 
     public class DriveItemImmtbl : DriveItemCoreImmtbl, IDriveItem
@@ -15,6 +17,9 @@ namespace Turmerik.AspNetCore.Services.DriveItems
         public DriveItemImmtbl(ICloneableMapper mapper, ICloneableObject src) : base(mapper, src)
         {
         }
+
+        public string Extension { get; protected set; }
+        public string NameWithoutExtension { get; protected set; }
     }
 
     public class DriveItemMtbl : DriveItemCoreMtbl, IDriveItem
@@ -30,5 +35,8 @@ namespace Turmerik.AspNetCore.Services.DriveItems
         public DriveItemMtbl(ICloneableMapper mapper, ICloneableObject src) : base(mapper, src)
         {
         }
+
+        public string Extension { get; set; }
+        public string NameWithoutExtension { get; set; }
     }
 }

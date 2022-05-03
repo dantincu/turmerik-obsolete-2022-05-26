@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Turmerik.AspNetCore.Services.DriveItems;
 
 namespace Turmerik.Core.Services.DriveItems
 {
