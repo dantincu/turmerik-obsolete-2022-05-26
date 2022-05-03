@@ -12,16 +12,21 @@ namespace Turmerik.Core.Services.DriveItems
         SpecialFolder
     }
 
-    public class CurrentDriveItemsTuple
+    public class CurrentDriveFoldersTuple
     {
-        public CurrentDriveItemsTuple(IReadOnlyCollection<IDriveItemCore> currentItems, IDriveItemCore currentlyOpenItem)
+        public CurrentDriveFoldersTuple(
+            IReadOnlyCollection<IDriveFolder> currentFolders,
+            IDriveFolder currentlyOpenFolder,
+            int currentlyOpenFolderIdx)
         {
-            CurrentItems = currentItems ?? throw new ArgumentNullException(nameof(currentItems));
-            CurrentlyOpenItem = currentlyOpenItem ?? throw new ArgumentNullException(nameof(currentlyOpenItem));
+            CurrentFolders = currentFolders ?? throw new ArgumentNullException(nameof(currentFolders));
+            CurrentlyOpenFolder = currentlyOpenFolder ?? throw new ArgumentNullException(nameof(currentlyOpenFolder));
+            this.CurrentlyOpenFolderIdx = currentlyOpenFolderIdx;
         }
 
-        public IReadOnlyCollection<IDriveItemCore> CurrentItems { get; }
-        public IDriveItemCore CurrentlyOpenItem { get; }
+        public IReadOnlyCollection<IDriveFolder> CurrentFolders { get; }
+        public IDriveFolder CurrentlyOpenFolder { get; }
+        public int CurrentlyOpenFolderIdx { get; }
     }
 
     public class NestedDriveFolder : NestedClnbl<IDriveFolder, DriveFolderImmtbl, DriveFolderMtbl>

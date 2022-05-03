@@ -1,15 +1,25 @@
-﻿.trmrk-tab-view, .trmrk-tab-view-header, .trmrk-tab-page-head {
+﻿.trmrk-tab-view,
+.trmrk-tab-view-header,
+.trmrk-tab-page-head {
+    margin: 0;
     border: 1px solid #404040;
     border-radius: 2px;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
 }
 
+    .trmrk-tab-page-head.trmrk-current {
+        border: 1px solid #606060;
+        border-width: 1px 1px 1px 1px;
+    }
+
 .trmrk-name {
-    padding: 0px;
+    padding: 4px 3px 0px 3px;
+    margin: 0;
+    line-height: 0.8rem;
 }
 
 .trmrk-tab-view {
-    padding: 2px;
+    padding: 0px;
     display: flex;
     flex-flow: column nowrap;
 }
@@ -24,5 +34,7 @@
 }
 
 .trmrk-tab-page {
-    display: flex;
+    display: block;
+    min-height: 100px;
+    padding: 5px;
 }

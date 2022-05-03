@@ -26,39 +26,48 @@ namespace Turmerik.AspNetCore.Services.DriveItems
         public abstract bool TryNormalizeAddress(ref string address, out string pathOrId);
         public abstract bool DriveItemsHaveSameAddress(IDriveItemCore trgItem, IDriveItemCore refItem, bool normalizeFirst);
 
-        public async Task<CurrentDriveItemsTuple> GetCurrentDriveItemsAsync(Guid cacheKeyGuid, bool refreshCache)
+        public async Task<CurrentDriveFoldersTuple> GetCurrentDriveFoldersAsync(Guid cacheKeyGuid, bool refreshCache)
         {
             var mtbl = await Storage.GetOrCreateAsync(
-                LocalStorageKeys.CurrentlyOpenDriveItemKey(cacheKeyGuid),
+                LocalStorageKeys.CurrentlyOpenDriveFolderKey(cacheKeyGuid),
                 async () => FolderToMtbl(await GetRootDriveFolderAsync(cacheKeyGuid, refreshCache)));
 
             var currentlyOpen = MtblToFolder(mtbl);
+            int currentlyOpenIdx = -1;
 
             var mtblList = await Storage.AddOrUpdateAsync(
-                LocalStorageKeys.CurrentDriveItemsKey(cacheKeyGuid),
-                () => new List<DriveItemCoreMtbl>(),
+                LocalStorageKeys.CurrentDriveFoldersKey(cacheKeyGuid),
+                () => new List<DriveFolderMtbl>(),
                 list =>
                 {
-                    if (list.None(item => DriveItemsHaveSameAddress(item, currentlyOpen, false)))
+                    list = list ?? new List<DriveFolderMtbl>();
+
+                    var match = list.FindVal(item => DriveItemsHaveSameAddress(item, currentlyOpen, false));
+                    currentlyOpenIdx = match.Key;
+
+                    if (currentlyOpenIdx < 0)
                     {
-                        var mtbl = new DriveItemCoreMtbl
+                        var mtbl = new DriveFolderMtbl
                         {
                             Id = currentlyOpen.Id,
                             Name = currentlyOpen.DisplayName ?? currentlyOpen.Name,
                             Path = currentlyOpen.Path,
-                            Uri = currentlyOpen.Uri,
-                            IsFolder = currentlyOpen.IsFolder,
-                            ParentFolder = currentlyOpen.ParentFolder
+                            Uri = currentlyOpen.Uri
                         };
 
+                        currentlyOpenIdx = list.Count;
                         list.Add(mtbl);
                     }
 
                     return list;
                 });
 
-            var immtblList = mtblList.Select(MtblToItemCore).RdnlC();
-            var tuple = new CurrentDriveItemsTuple(immtblList, currentlyOpen);
+            var immtblList = mtblList.Select(MtblToFolder).RdnlC();
+
+            var tuple = new CurrentDriveFoldersTuple(
+                immtblList,
+                currentlyOpen,
+                currentlyOpenIdx);
 
             return tuple;
         }
@@ -96,7 +105,7 @@ namespace Turmerik.AspNetCore.Services.DriveItems
 
         protected IDriveFolder MtblToFolder(DriveFolderMtbl mtbl)
         {
-            var immtbl = new DriveFolderMtbl(Mapper, mtbl);
+            var immtbl = new DriveFolderImmtbl(Mapper, mtbl);
             return immtbl;
         }
 
@@ -108,7 +117,7 @@ namespace Turmerik.AspNetCore.Services.DriveItems
 
         protected IDriveItemCore MtblToItemCore(DriveItemCoreMtbl mtbl)
         {
-            var immtbl = new DriveItemCoreMtbl(Mapper, mtbl);
+            var immtbl = new DriveItemCoreImmtbl(Mapper, mtbl);
             return immtbl;
         }
 

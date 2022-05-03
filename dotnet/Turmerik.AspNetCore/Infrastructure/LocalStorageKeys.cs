@@ -17,6 +17,7 @@
         public const string ITEM = "item";
         public const string ITEMS = "items";
         public const string FOLDER = "folder";
+        public const string FOLDERS = "folders";
         public const string OPEN = "open";
         public const string TABS = "tabs";
 
@@ -37,15 +38,15 @@
             return key;
         }
 
-        public static string CurrentDriveItemsKey(Guid localSessionGuid)
+        public static string CurrentDriveFoldersKey(Guid localSessionGuid)
         {
-            string key = GetLocalStorageKey(localSessionGuid, CURRENT, DRIVE, ITEMS);
+            string key = GetLocalStorageKey(localSessionGuid, CURRENT, DRIVE, FOLDERS);
             return key;
         }
 
-        public static string CurrentlyOpenDriveItemKey(Guid localSessionGuid)
+        public static string CurrentlyOpenDriveFolderKey(Guid localSessionGuid)
         {
-            string key = GetLocalStorageKey(localSessionGuid, CURRENTLY, OPEN, DRIVE, ITEM);
+            string key = GetLocalStorageKey(localSessionGuid, CURRENTLY, OPEN, DRIVE, FOLDER);
             return key;
         }
 

@@ -15,10 +15,6 @@
     <ProjectReference Include="..\Turmerik.AspNetCore\Turmerik.AspNetCore.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Services\" />
-  </ItemGroup>
-
 
 
 </Project>

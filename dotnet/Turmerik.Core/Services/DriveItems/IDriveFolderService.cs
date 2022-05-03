@@ -28,7 +28,7 @@ namespace Turmerik.Core.Services.DriveItems
         /// <returns>Information associated with the requested drive folder</returns>
         Task<IDriveFolder> GetRootDriveFolderAsync(Guid cacheKeyGuid, bool refreshCache);
 
-        Task<CurrentDriveItemsTuple> GetCurrentDriveItemsAsync(Guid cacheKeyGuid, bool refreshCache);
+        Task<CurrentDriveFoldersTuple> GetCurrentDriveFoldersAsync(Guid cacheKeyGuid, bool refreshCache);
         bool TryNormalizeAddress(ref string address, out string pathOrId);
         bool DriveItemsHaveSameAddress(IDriveItemCore trgItem, IDriveItemCore refItem, bool normalizeFirst);
     }

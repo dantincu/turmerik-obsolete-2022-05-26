@@ -25,10 +25,52 @@
         OnReloadClick=@OnAddressBarReloadClick
         OnSubmitAddress=@OnSubmitAddress></AddressBar>
 
-        <TabView PageHeadsList=@TabPageHeadsList></TabView>
+        <TabView PageItem=TabPageViewModel PageHeadsList=@TabPageHeadsList>
+            <PageTemplate>
+                <div class="@CssClassH.DriveTabViewPage">
+                    <h6>Folders</h6>
+
+                    <table class="table table-dark @CssClassH.DriveFoldersGrid">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var subFolder in TabViewPageDriveFolders)
+                            {
+                                <tr>
+                                    <td title="@subFolder.DisplayName">@subFolder.Name</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+
+                    <h6>Files</h6>
+
+                    <table class="table table-dark @CssClassH.DriveItemsGrid">
+                        <thead>
+                            <tr>
+                                <th>Name</th><th>Ext</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var subFolder in TabViewPageDriveItems)
+                            {
+                                <tr>
+                                    <td title="@subFolder.Name">@subFolder.Name</td>
+                                    <td title="@subFolder.Extension">@subFolder.Extension</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </PageTemplate>
+        </TabView>
 </div>
 
 @code {
+
     protected override async Task OnInitializedAsync()
     {
         this.Mapper = mapper;

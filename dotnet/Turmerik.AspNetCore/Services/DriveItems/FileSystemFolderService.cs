@@ -178,12 +178,27 @@ namespace Turmerik.AspNetCore.Services.DriveItems
                 d => new DriveFolderMtbl
                 {
                     Name = d.Name,
-                    DisplayName = $"{d.Name} ({d.VolumeLabel})",
+                    DisplayName = GetDriveInfoDisplayName(d),
                     Path = d.Name,
                     FileSystemFolderType = FileSystemFolderType.DriveRoot
                 }).ToArray();
 
             rootFoldersList.AddRange(drivesArr);
+        }
+
+        private string GetDriveInfoDisplayName(DriveInfo info)
+        {
+            string displayName = info.Name;
+
+            if (!string.IsNullOrWhiteSpace(info.VolumeLabel))
+            {
+                displayName = string.Join(
+                    " ",
+                    displayName,
+                    $"{(info.VolumeLabel)}");
+            }
+
+            return displayName;
         }
 
         private DriveFolderMtbl GetRootDriveFolder()

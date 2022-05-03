@@ -36,7 +36,7 @@ namespace Turmerik.Core.Helpers
             return rdnlDictnr;
         }
 
-        public static KeyValuePair<int, T> Find<T>(
+        public static KeyValuePair<int, T> FindVal<T>(
             this IEnumerable<T> nmrbl,
             Func<T, int, bool> predicate,
             bool retFirst = true)
@@ -50,6 +50,12 @@ namespace Turmerik.Core.Helpers
             {
                 if (predicate(val, i))
                 {
+                    if (idx >= 0)
+                    {
+                        throw new InvalidOperationException(
+                            $"Sequence contains more than 1 element and the ${nameof(retFirst)} flag has been set to false");
+                    }
+
                     retVal = val;
                     idx = i;
 
@@ -63,6 +69,17 @@ namespace Turmerik.Core.Helpers
             }
 
             return new KeyValuePair<int, T>(idx, retVal);
+        }
+
+        public static KeyValuePair<int, T> FindVal<T>(
+            this IEnumerable<T> nmrbl,
+            Func<T, bool> predicate,
+            bool retFirst = true)
+        {
+            var retKvp = nmrbl.FindVal(
+                (val, idx) => predicate(val), retFirst);
+
+            return retKvp;
         }
 
         public static ReadOnlyCollection<TOut> RdnlC<TIn, TOut>(

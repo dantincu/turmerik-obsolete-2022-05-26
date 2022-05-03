@@ -106,12 +106,25 @@ main {
     display: none;
 }
 
-::deep .trmrk.table th {
+::deep .trmrk-table thead th {
     border-bottom: 2px solid #444;
     color: #ddd;
 }
 
-::deep .trmrk.table th, .trmrk.table td {
+::deep .trmrk-table thead th,
+::deep .trmrk-table tbody td {
     border-top: 2px solid #444;
     color: #bbb;
+}
+
+::deep .trmrk-error-block-small,
+::deep .trmrk-error-block-medium,
+::deep .trmrk-error-block-large {
+    color: #FFA080;
+    font-weight: normal;
+}
+
+::deep .trmrk-error-block-large {
+    padding: 50px;
+    font-size: 1rem;
 }

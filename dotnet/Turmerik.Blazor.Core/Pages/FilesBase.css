@@ -1,3 +1,8 @@
 ﻿::deep .trmrk-tab-view {
     margin-top: 10px;
 }
+
+::deep .trmrk-drive-folders-grid,
+::deep .trmrk-drive-items-grid {
+    cursor: pointer;
+}

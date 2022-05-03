@@ -10,18 +10,35 @@ using System.Threading.Tasks;
 using Turmerik.AspNetCore.Infrastructure;
 using Turmerik.AspNetCore.Services.LocalSessionStorage;
 using Turmerik.Blazor.Core.Pages.Components;
+using Turmerik.Blazor.Core.Services;
 using Turmerik.Core.Services.DriveItems;
 
 namespace Turmerik.Blazor.Core.Pages
 {
     public abstract class FilesBase : PageBase
     {
+        protected FilesBase()
+        {
+            TabPageViewModel = new DriveFolderTabPageViewModel();
+        }
+
         protected ILocalStorageWrapper LocalStorage { get; set; }
         protected ISessionStorageWrapper SessionStorage { get; set; }
         protected IDriveFolderService DriveFolderService { get; set; }
         protected string AddressStrValue { get; set; }
         protected List<ITabPageHead> TabPageHeadsList { get; set; }
-        protected CurrentDriveItemsTuple CurrentDriveItems { get; set; }
+        protected CurrentDriveFoldersTuple CurrentDriveFolders { get; set; }
+        protected DriveFolderTabPageViewModel TabPageViewModel { get; set; }
+
+        protected IEnumerable<IDriveFolder>? TabViewPageDriveFolders
+        {
+            get => CurrentDriveFolders?.CurrentlyOpenFolder?.DriveFoldersList?.Immtbl ?? Enumerable.Empty<IDriveFolder>();
+        }
+
+        protected IEnumerable<IDriveItem>? TabViewPageDriveItems
+        {
+            get => CurrentDriveFolders?.CurrentlyOpenFolder?.DriveItemsList?.Immtbl ?? Enumerable.Empty<IDriveItem>();
+        }
 
         protected async override Task OnInitializedAsync()
         {
@@ -29,8 +46,14 @@ namespace Turmerik.Blazor.Core.Pages
 
             await IfLocalSessionGuidHasValueAsync(async localSessionGuid =>
             {
-                CurrentDriveItems = await DriveFolderService.GetCurrentDriveItemsAsync(localSessionGuid, false);
-                // TabPageHeadsList = tabPageHeadsList.Cast<ITabPageHead>().ToList();
+                CurrentDriveFolders = await DriveFolderService.GetCurrentDriveFoldersAsync(localSessionGuid, false);
+
+                TabPageHeadsList = CurrentDriveFolders.CurrentFolders.Select(
+                    (item, idx) => (ITabPageHead)DriveItemToTabPageHead(
+                        item, idx == CurrentDriveFolders.CurrentlyOpenFolderIdx)).ToList();
+
+                AddressStrValue = CurrentDriveFolders.CurrentlyOpenFolder.Path;
+                TabPageViewModel.Data = CurrentDriveFolders.CurrentlyOpenFolder;
             });
         }
 

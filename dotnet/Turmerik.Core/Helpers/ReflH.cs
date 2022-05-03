@@ -21,7 +21,7 @@ namespace Turmerik.Core.Helpers
         public static string GetTypeFullDisplayName(this Type type)
         {
             string typeFullName = type.FullName.SubStr(
-                (str, len) => str.Find((c, i) => c == '`').Key).Item1;
+                (str, len) => str.FindVal((c, i) => c == '`').Key).Item1;
 
             return typeFullName;
         }

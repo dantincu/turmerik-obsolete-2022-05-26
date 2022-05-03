@@ -3,21 +3,27 @@
 
 @inherits ComponentCoreBase
 
+@typeparam PageComponentType
+
 <div class="@CssClassH.TabView">
     @if (PageHeadsList != null)
     {
-        <div class="@CssClassH.TabViewHeader">
+        <div class="btn-group @CssClassH.TabViewHeader" role="group">
             @foreach (var tabPageHead in PageHeadsList)
             {
-                <div class="@CssClassH.TabPageHead">
-                    <label class="@GetTabPageHeadLabelCssClass(tabPageHead)">
-                        @tabPageHead.Name
-                    </label>
-                </div>
+                <button type="button" class="@GetTabPageHeadCssClass(tabPageHead)">@tabPageHead.Name</button>
             }
         </div>
         
         <div class="@CssClassH.TabPage">
+            @if(PageTemplate != null && PageItem != null)
+            {
+                @PageTemplate(PageItem)
+            }
+            else
+            {
+                <label class="@CssClassH.ErrorBlockLarge">Oops... An error occurred</label>
+            }
         </div>
     }
     else
@@ -29,19 +35,31 @@
 
 @code {
     [Parameter]
+    public RenderFragment<PageComponentType> PageTemplate { get; set; }
+
+    [Parameter]
+    public PageComponentType PageItem { get; set; }
+
+    [Parameter]
     public List<ITabPageHead> PageHeadsList { get; set; }
 
-    protected string GetTabPageHeadLabelCssClass(
+    protected string GetTabPageHeadCssClass(
         ITabPageHead tabPageHead)
     {
         var cssClassList = new List<string>
         {
-            CssClassH.Name
+            "btn",
+            CssClassH.TabPageHead
         };
 
         if (tabPageHead.IsCurrent)
         {
+            cssClassList.Add("btn-dark");
             cssClassList.Add(CssClassH.Current);
+        }
+        else
+        {
+            cssClassList.Add("btn-outline-dark");
         }
 
         string cssClasses = string.Join(' ', cssClassList);
