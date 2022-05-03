@@ -24,6 +24,7 @@ namespace Turmerik.AspNetCore.Infrastructure
         public const string BAR = "bar";
         public const string BRAND = "brand";
         public const string NAME = "name";
+        public const string EXT = "ext";
         public const string ITEM = "item";
         public const string ITEMS = "items";
 
@@ -32,6 +33,7 @@ namespace Turmerik.AspNetCore.Infrastructure
         public const string SMALL = "small";
         public const string BTN = "btn";
         public const string ROW = "row";
+        public const string COL = "col";
         public const string CELL = "cell";
         public const string TABLE = "table";
         public const string CONTAINER = "container";
@@ -69,6 +71,8 @@ namespace Turmerik.AspNetCore.Infrastructure
         public static readonly string DataGridRow = Class(DATA, GRID, ROW);
         public static readonly string DataGridHeaderRow = Class(DATA, GRID, HEADER, ROW);
         public static readonly string TopRow = Class(TOP, ROW);
+        public static readonly string ColName = Class(COL, NAME);
+        public static readonly string ColExt = Class(COL, EXT);
         public static readonly string Container = Class(CONTAINER);
         public static readonly string Spacer = Class(SPACER);
 

@@ -102,16 +102,30 @@ main {
     }
 }
 
+::deep .btn.btn-outline-dark {
+    color: #d0d0d0;
+}
+
 ::deep .trmrk-hidden {
     display: none;
 }
 
-::deep .trmrk.table th {
-    border-bottom: 2px solid #444;
-    color: #ddd;
+::deep .trmrk-table thead th {
 }
 
-::deep .trmrk.table th, .trmrk.table td {
-    border-top: 2px solid #444;
-    color: #bbb;
+::deep .trmrk-table thead th,
+::deep .trmrk-table tbody td {
+    border-left: 1px solid #333;
+}
+
+::deep .trmrk-error-block-small,
+::deep .trmrk-error-block-medium,
+::deep .trmrk-error-block-large {
+    color: #FFA080;
+    font-weight: normal;
+}
+
+::deep .trmrk-error-block-large {
+    padding: 50px;
+    font-size: 1rem;
 }

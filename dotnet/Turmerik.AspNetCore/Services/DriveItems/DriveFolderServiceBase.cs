@@ -57,6 +57,14 @@ namespace Turmerik.AspNetCore.Services.DriveItems
 
                         currentlyOpenIdx = list.Count;
                         list.Add(mtbl);
+
+                        list.Add(new DriveFolderMtbl
+                        {
+                            Id = currentlyOpen.Id,
+                            Name = currentlyOpen.DisplayName ?? currentlyOpen.Name,
+                            Path = currentlyOpen.Path + "/asdf",
+                            Uri = currentlyOpen.Uri
+                        });
                     }
 
                     return list;

@@ -19,4 +19,13 @@
         ::deep .trmrk-drive-folders-grid tbody tr td,
         ::deep .trmrk-drive-items-grid tbody tr td {
             padding: 0.4rem;
+            padding-bottom: 4px;
         }
+
+::deep .trmrk-drive-folders-grid th[scope] .oi {
+    color: #FFC000;
+}
+
+::deep .trmrk-drive-items-grid th.trmrk-col-ext {
+    width: 40px;
+}
