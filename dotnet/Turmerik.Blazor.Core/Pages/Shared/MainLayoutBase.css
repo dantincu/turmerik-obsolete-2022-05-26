@@ -102,20 +102,24 @@ main {
     }
 }
 
+::deep .btn.btn-dark {
+    background-color: #403020;
+}
+
 ::deep .btn.btn-outline-dark {
     color: #d0d0d0;
+    background-color: #201810;
 }
 
 ::deep .trmrk-hidden {
     display: none;
 }
 
-::deep .trmrk-table thead th {
-}
-
 ::deep .trmrk-table thead th,
-::deep .trmrk-table tbody td {
-    border-left: 1px solid #333;
+::deep .trmrk-table tbody td,
+::deep .trmrk-table tbody th {
+    border: 1px solid #403020;
+    background-color: #201810;
 }
 
 ::deep .trmrk-error-block-small,
