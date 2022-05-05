@@ -1,4 +1,5 @@
-﻿using Turmerik.Core.Cloneable;
+﻿using System;
+using Turmerik.Core.Cloneable;
 using Turmerik.Core.Cloneable.Nested.Clnbl;
 
 namespace Turmerik.Core.Services.DriveItems
@@ -12,6 +13,9 @@ namespace Turmerik.Core.Services.DriveItems
         bool? IsFolder { get; }
         bool? IsPinned { get; }
         bool? IsStarred { get; }
+        DateTime CreationTime { get; }
+        DateTime LastAccessTime { get; }
+        DateTime LastWriteTime { get; }
         NestedDriveFolder ParentFolder { get; }
     }
 
@@ -32,6 +36,9 @@ namespace Turmerik.Core.Services.DriveItems
         public bool? IsFolder { get; protected set; }
         public bool? IsPinned { get; protected set; }
         public bool? IsStarred { get; protected set; }
+        public DateTime CreationTime { get; protected set; }
+        public DateTime LastAccessTime { get; protected set; }
+        public DateTime LastWriteTime { get; protected set; }
         public NestedDriveFolder ParentFolder { get; protected set; }
     }
 
@@ -56,6 +63,9 @@ namespace Turmerik.Core.Services.DriveItems
         public bool? IsFolder { get; set; }
         public bool? IsPinned { get; set; }
         public bool? IsStarred { get; set; }
+        public DateTime CreationTime { get; set; }
+        public DateTime LastAccessTime { get; set; }
+        public DateTime LastWriteTime { get; set; }
         public NestedDriveFolder ParentFolder { get; set; }
     }
 }

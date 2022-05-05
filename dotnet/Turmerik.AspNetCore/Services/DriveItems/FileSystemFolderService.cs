@@ -65,7 +65,7 @@ namespace Turmerik.AspNetCore.Services.DriveItems
                 retVal = retVal && TryNormalizeAddress(ref refPath, out refPath);
             }
 
-            retVal = retVal && trgPath.StrEquals(refPath, true);
+            retVal = retVal && trgPath.StrEquals(refPath);
             return retVal;
         }
 
@@ -77,13 +77,30 @@ namespace Turmerik.AspNetCore.Services.DriveItems
 
             if (TryNormalizeAddress(ref pathOrId, out pathOrId))
             {
-                string[] files = Directory.GetFiles(pathOrId);
-                string[] folders = Directory.GetDirectories(pathOrId);
+                DirectoryInfo info;
 
-                var mtblFiles = files.Select(GetDriveItemMtbl).ToList();
-                var mtblFolders = folders.Select(GetDriveFolderMtbl).ToList();
+                if (IsWinDriveRootPath(pathOrId))
+                {
+                    var rootDrives = DriveInfo.GetDrives().Where(d => d.IsReady).Select(
+                        drive => drive.RootDirectory).ToArray();
 
-                var driveFolder = GetDriveFolderMtbl(pathOrId);
+                    string refPath = $"{pathOrId}\\";
+
+                    info = rootDrives.SingleOrDefault(
+                        dv => dv.Name.StrEquals(refPath, true)) ?? throw new InvalidOperationException(
+                            $"Root path {pathOrId} was not found");
+                }
+                else
+                {
+                    info = new DirectoryInfo(pathOrId);
+                }
+
+                var fsInfos = info.GetFileSystemInfos();
+
+                var mtblFiles = fsInfos.OfType<FileInfo>().Select(GetDriveItemMtbl).ToList();
+                var mtblFolders = fsInfos.OfType<DirectoryInfo>().Select(GetDriveFolderMtbl).ToList();
+
+                var driveFolder = GetDriveFolderMtbl(info);
 
                 driveFolder.DriveFoldersList = new DriveFoldersList(null, mtblFolders);
                 driveFolder.DriveItemsList = new DriveItemsList(null, mtblFiles);
@@ -102,34 +119,43 @@ namespace Turmerik.AspNetCore.Services.DriveItems
             return immtbl;
         }
 
-        private DriveFolderMtbl GetDriveFolderMtbl(string fsEntryPath)
+        private bool IsWinDriveRootPath(string dirPath)
+        {
+            bool retVal = dirPath.EndsWith(":");
+            return retVal;
+        }
+
+        private DriveFolderMtbl GetDriveFolderMtbl(DirectoryInfo info)
         {
             var mtbl = new DriveFolderMtbl
             {
                 IsFolder = true,
             };
 
-            FillDriveItemCoreMtblProps(mtbl, fsEntryPath);
+            FillDriveItemCoreMtblProps(mtbl, info);
             return mtbl;
         }
 
-        private DriveItemMtbl GetDriveItemMtbl(string fsEntryPath)
+        private DriveItemMtbl GetDriveItemMtbl(FileSystemInfo info)
         {
             var mtbl = new DriveItemMtbl
             {
-                Extension = Path.GetExtension(fsEntryPath)?.TrimStart('.'),
-                NameWithoutExtension = Path.GetFileNameWithoutExtension(fsEntryPath),
+                Extension = info.Extension?.TrimStart('.'),
+                NameWithoutExtension = Path.GetFileNameWithoutExtension(info.Name),
                 IsFolder = false,
             };
 
-            FillDriveItemCoreMtblProps(mtbl, fsEntryPath);
+            FillDriveItemCoreMtblProps(mtbl, info);
             return mtbl;
         }
 
-        private void FillDriveItemCoreMtblProps(DriveItemCoreMtbl mtbl, string fsEntryPath)
+        private void FillDriveItemCoreMtblProps(DriveItemCoreMtbl mtbl, FileSystemInfo info)
         {
-            mtbl.Name = Path.GetFileName(fsEntryPath);
-            mtbl.Path = fsEntryPath;
+            mtbl.Name = info.Name;
+            mtbl.Path = info.FullName;
+            mtbl.CreationTime = info.CreationTime;
+            mtbl.LastAccessTime = info.LastAccessTime;
+            mtbl.LastWriteTime = info.LastWriteTime;
         }
 
         private List<DriveFolderMtbl> GetRootDriveFoldersList()

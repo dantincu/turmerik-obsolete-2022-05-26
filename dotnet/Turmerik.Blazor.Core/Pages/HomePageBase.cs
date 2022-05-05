@@ -14,14 +14,12 @@ namespace Turmerik.Blazor.Core.Pages
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            base.OnAfterRenderAsync(firstRender);
+            await base.OnAfterRenderAsync(firstRender);
 
             await JSRuntime.InvokeVoidAsync(
                 JsH.Get(JsH.AddCssClass),
-                null,
-                CssClassH.CssClsSel(
-                    CssClassH.DefaultLink),
-                "active");
+                null, CssClassH.CssClsSel(
+                    CssClassH.DefaultLink), "active");
         }
     }
 }
