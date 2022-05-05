@@ -19,7 +19,9 @@ namespace Turmerik.AspNetCore.Infrastructure
         public const string LOADING = "loading";
         public const string DATA = "data";
         public const string DETAILS = "details";
+        public const string DEFAULT = "default";
 
+        public const string LINK = "link";
         public const string BLOCK = "block";
         public const string TOP = "top";
         public const string BAR = "bar";
@@ -67,6 +69,7 @@ namespace Turmerik.AspNetCore.Infrastructure
         public static readonly string ErrorBlockLarge = Class(ERROR, BLOCK, LARGE);
         public static readonly string ErrorDetails = Class(ERROR, DETAILS);
 
+        public static readonly string DefaultLink = Class(DEFAULT, LINK);
         public static readonly string Btn = Class(BTN);
         public static readonly string Table = Class(TABLE);
         public static readonly string DataGrid = Class(DATA, GRID);

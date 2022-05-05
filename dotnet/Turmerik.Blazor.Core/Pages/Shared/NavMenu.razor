@@ -1,9 +1,11 @@
 ﻿@using Microsoft.AspNetCore.Components.Routing
 @using Microsoft.AspNetCore.Components.Web
+@using Microsoft.JSInterop
 @using Turmerik.AspNetCore.Infrastructure
 @using Turmerik.AspNetCore.Services
 
 @inject INavManager NavManager;
+@inject IJSRuntime JSRuntime;
 
 <div class="top-row ps-3 navbar navbar-dark @CssClassH.TopRow">
     <div class="container-fluid">
@@ -20,7 +22,7 @@
     </div>
     <nav class="flex-column">
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All"
+            <NavLink class="nav-link trmrk-default-link" href="" Match="NavLinkMatch.All"
                 @onmouseup="@OnAnchorClick("")"
                 @onclick:preventDefault="true">
                 <span class="oi oi-home" aria-hidden="true"></span> Home
@@ -62,7 +64,18 @@
 
     private Action<MouseEventArgs> OnAnchorClick(string url)
     {
-        Action<MouseEventArgs> action = arg => NavManager.NavigateTo(url, false);
+        Action<MouseEventArgs> action = arg =>
+        {
+            JSRuntime.InvokeVoidAsync(
+                JsH.Get(JsH.RemoveCssClass),
+                null,
+                CssClassH.CssClsSel(
+                    CssClassH.DefaultLink),
+                "active");
+
+            NavManager.NavigateTo(url, false);
+        };
+
         return action;
     }
 }
