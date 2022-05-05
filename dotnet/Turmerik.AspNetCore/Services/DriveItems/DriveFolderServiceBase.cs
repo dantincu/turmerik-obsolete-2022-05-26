@@ -25,68 +25,47 @@ namespace Turmerik.AspNetCore.Services.DriveItems
 
         public abstract bool TryNormalizeAddress(ref string address, out string pathOrId);
         public abstract bool DriveItemsHaveSameAddress(IDriveItemCore trgItem, IDriveItemCore refItem, bool normalizeFirst);
+        public abstract string GetDriveItemAddress(IDriveItemCore item);
 
-        public async Task<CurrentDriveFoldersTuple> GetCurrentDriveFoldersAsync(Guid cacheKeyGuid, bool refreshCache)
+        public async Task<IReadOnlyCollection<IDriveFolder>> GetCurrentDriveFoldersAsync(IDriveFolder currentlyOpen, Guid cacheKeyGuid)
         {
-            var mtbl = await Storage.GetOrCreateAsync(
-                LocalStorageKeys.CurrentlyOpenDriveFolderKey(cacheKeyGuid),
-                async () => FolderToMtbl(await GetRootDriveFolderAsync(cacheKeyGuid, refreshCache)));
-
-            var currentlyOpen = MtblToFolder(mtbl);
-            int currentlyOpenIdx = -1;
-
             var mtblList = await Storage.AddOrUpdateAsync(
                 LocalStorageKeys.CurrentDriveFoldersKey(cacheKeyGuid),
-                () => new List<DriveFolderMtbl>(),
-                list =>
+                async () => new List<DriveFolderMtbl>(),
+                async list =>
                 {
-                    list = list ?? new List<DriveFolderMtbl>();
-
-                    var match = list.FindVal(item => DriveItemsHaveSameAddress(item, currentlyOpen, false));
-                    currentlyOpenIdx = match.Key;
-
-                    if (currentlyOpenIdx < 0)
+                    if (list.None(
+                        item => DriveItemsHaveSameAddress(
+                            item,
+                            currentlyOpen,
+                            false)))
                     {
-                        var mtbl = new DriveFolderMtbl
+                        list.Add(new DriveFolderMtbl
                         {
                             Id = currentlyOpen.Id,
                             Name = currentlyOpen.DisplayName ?? currentlyOpen.Name,
                             Path = currentlyOpen.Path,
                             Uri = currentlyOpen.Uri
-                        };
-
-                        currentlyOpenIdx = list.Count;
-                        list.Add(mtbl);
-
-                        list.Add(new DriveFolderMtbl
-                        {
-                            Id = currentlyOpen.Id,
-                            Name = currentlyOpen.DisplayName ?? currentlyOpen.Name,
-                            Path = currentlyOpen.Path + "/asdf",
-                            Uri = currentlyOpen.Uri
                         });
                     }
 
                     return list;
-                });
+                },
+                true,
+                true);
 
-            var immtblList = mtblList.Select(MtblToFolder).RdnlC();
-
-            var tuple = new CurrentDriveFoldersTuple(
-                immtblList,
-                currentlyOpen,
-                currentlyOpenIdx);
-
-            return tuple;
+            var retList = mtblList.Select(MtblToFolder).RdnlC();
+            return retList;
         }
 
         public async Task<IDriveFolder> GetDriveFolderAsync(string pathOrId, Guid cacheKeyGuid, bool refreshCache)
         {
             IDriveFolder driveFolder = await GetCoreAsync(
-                LocalStorageKeys.DriveFolderKey(cacheKeyGuid, pathOrId),
+                LocalStorageKeys.DriveFoldersKey(cacheKeyGuid, pathOrId),
                 refreshCache,
                 async () => await GetDriveFolderCoreAsync(pathOrId),
-                FolderToMtbl);
+                FolderToMtbl,
+                MtblToFolder);
 
             return driveFolder;
         }
@@ -97,7 +76,8 @@ namespace Turmerik.AspNetCore.Services.DriveItems
                 LocalStorageKeys.RootDriveFolderKey(cacheKeyGuid),
                 refreshCache,
                 async () => await GetRootDriveFolderCoreAsync(),
-                FolderToMtbl);
+                FolderToMtbl,
+                MtblToFolder);
 
             return rootFolder;
         }
@@ -133,28 +113,36 @@ namespace Turmerik.AspNetCore.Services.DriveItems
             string key,
             bool refreshCache,
             Func<Task<TClnbl>> mainFactory,
-            Func<TClnbl, TMtbl> mtblFactory)
+            Func<TClnbl, TMtbl> mtblFactory,
+            Func<TMtbl, TClnbl> clnblFactory)
             where TClnbl : class
             where TMtbl : TClnbl
         {
             TClnbl retVal = null;
 
-            Func<Task<TMtbl>> factory = async () =>
+            if (refreshCache)
             {
                 retVal = await mainFactory();
                 TMtbl mtbl = mtblFactory(retVal);
 
-                return mtbl;
-            };
-
-            if (refreshCache)
-            {
-                TMtbl mtbl = await factory();
                 await Storage.Service.SetItemAsync(key, mtbl);
             }
             else
             {
-                await Storage.GetOrCreateAsync(key, factory);
+                TMtbl mtbl = await Storage.GetOrCreateAsync(key, async () =>
+                {
+                    retVal = await mainFactory();
+                    TMtbl mtbl = mtblFactory(retVal);
+
+                    return mtbl;
+                },
+                true,
+                true);
+
+                if (retVal == null)
+                {
+                    retVal = clnblFactory(mtbl);
+                }
             }
 
             return retVal;

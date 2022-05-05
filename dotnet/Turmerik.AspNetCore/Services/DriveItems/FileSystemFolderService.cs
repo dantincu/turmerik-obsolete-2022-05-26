@@ -27,7 +27,7 @@ namespace Turmerik.AspNetCore.Services.DriveItems
 
         protected override IWebStorageWrapper Storage { get; }
 
-        public override bool TryNormalizeAddress(ref string address, out string pathOrId)
+        public override bool TryNormalizeAddress(ref string address, out string id)
         {
             var normalizerResult = FsPathNormalizer.TryNormalizePath(address);
             bool retVal = normalizerResult.IsValid;
@@ -48,7 +48,7 @@ namespace Turmerik.AspNetCore.Services.DriveItems
                 address = null;
             }
 
-            pathOrId = address;
+            id = address;
             return retVal;
         }
 
@@ -68,6 +68,8 @@ namespace Turmerik.AspNetCore.Services.DriveItems
             retVal = retVal && trgPath.StrEquals(refPath, true);
             return retVal;
         }
+
+        public override string GetDriveItemAddress(IDriveItemCore item) => item.Path;
 
         protected override async Task<IDriveFolder> GetDriveFolderCoreAsync(string pathOrId)
         {

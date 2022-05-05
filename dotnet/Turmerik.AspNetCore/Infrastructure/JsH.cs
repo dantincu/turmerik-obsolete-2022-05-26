@@ -40,5 +40,31 @@ namespace Turmerik.AspNetCore.Infrastructure
             string key = string.Join('.', segments);
             return key;
         }
+
+        public static class WebStorage
+        {
+            public static readonly string BasePrefix = typeof(WebStorage).Name.DecapitalizeFirstLetter();
+
+            public static readonly string GetItem;
+            public static readonly string SetItem;
+            public static readonly string GetBigItemChunksCount;
+            public static readonly string GetBigItemChunk;
+            public static readonly string ClearBigItemChunks;
+
+            static WebStorage()
+            {
+                GetItem = GetMethodName(nameof(GetItem).DecapitalizeFirstLetter());
+                SetItem = GetMethodName(nameof(SetItem).DecapitalizeFirstLetter());
+                GetBigItemChunksCount = GetMethodName(nameof(GetBigItemChunksCount).DecapitalizeFirstLetter());
+                GetBigItemChunk = GetMethodName(nameof(GetBigItemChunk).DecapitalizeFirstLetter());
+                ClearBigItemChunks = GetMethodName(nameof(ClearBigItemChunks).DecapitalizeFirstLetter());
+            }
+
+            private static string GetMethodName(string methodName)
+            {
+                string jsMethodName = string.Join(".", BasePrefix, methodName);
+                return jsMethodName;
+            }
+        }
     }
 }

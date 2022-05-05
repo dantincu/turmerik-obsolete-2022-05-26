@@ -1,9 +1,12 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Primitives;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Turmerik.AspNetCore.Services;
+using Turmerik.AspNetCore.Settings;
 using Turmerik.Core.Cloneable;
 
 namespace Turmerik.Blazor.Core.Pages.Components
@@ -12,7 +15,10 @@ namespace Turmerik.Blazor.Core.Pages.Components
     {
         protected ICloneableMapper Mapper { get; set; }
         protected INavManager NavManager { get; set; }
+        protected ITrmrkAppSettings AppSettings { get; set; }
+
         protected Guid? LocalSessionGuid => NavManager?.LocalSessionGuid;
+        protected IDictionary<string, StringValues>? QueryStrings => NavManager?.QueryStrings;
 
         protected void IfLocalSessionGuidHasValue(Action<Guid> action)
         {

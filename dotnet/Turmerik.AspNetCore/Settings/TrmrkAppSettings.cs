@@ -7,6 +7,8 @@ namespace Turmerik.AspNetCore.Settings
         string AppBaseUrl { get; }
         string LoginRelUrl { get; }
         string LogoutRelUrl { get; }
+        int JsInteropTextChunkMaxCharsCount { get; }
+        bool IsDevMode { get; }
         bool UseMockData { get; }
     }
 
@@ -23,12 +25,16 @@ namespace Turmerik.AspNetCore.Settings
             AppBaseUrl = src.AppBaseUrl;
             LoginRelUrl = src.LoginRelUrl;
             LogoutRelUrl = src.LogoutRelUrl;
+            JsInteropTextChunkMaxCharsCount = src.JsInteropTextChunkMaxCharsCount;
+            IsDevMode = src.IsDevMode;
             UseMockData = src.UseMockData;
         }
 
         public string AppBaseUrl { get; }
         public string LoginRelUrl { get; }
         public string LogoutRelUrl { get; }
+        public int JsInteropTextChunkMaxCharsCount { get; }
+        public bool IsDevMode { get; }
         public bool UseMockData { get; }
     }
 
@@ -43,12 +49,16 @@ namespace Turmerik.AspNetCore.Settings
             AppBaseUrl = src.AppBaseUrl;
             LoginRelUrl = src.LoginRelUrl;
             LogoutRelUrl = src.LogoutRelUrl;
+            JsInteropTextChunkMaxCharsCount = src.JsInteropTextChunkMaxCharsCount;
+            IsDevMode = src.IsDevMode;
             UseMockData = src.UseMockData;
         }
 
         public string AppBaseUrl { get; set; }
         public string LoginRelUrl { get; set; }
         public string LogoutRelUrl { get; set; }
+        public int JsInteropTextChunkMaxCharsCount { get; set; }
+        public bool IsDevMode { get; set; }
         public bool UseMockData { get; set; }
     }
 

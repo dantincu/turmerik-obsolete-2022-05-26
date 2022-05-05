@@ -19,6 +19,7 @@ namespace Turmerik.AspNetCore.Services
         IDictionary<string, StringValues> QueryStrings { get; }
         Guid? LocalSessionGuid { get; }
         string Url(string relUrl);
+        void NavigateTo(string relUrl, bool forceRefresh);
     }
 
     public class NavManager : INavManager
@@ -54,6 +55,12 @@ namespace Turmerik.AspNetCore.Services
             }
 
             return relUrl;
+        }
+
+        public void NavigateTo(string relUrl, bool forceRefresh)
+        {
+            string url = Url(relUrl);
+            Manager.NavigateTo(url, forceRefresh);
         }
     }
 }

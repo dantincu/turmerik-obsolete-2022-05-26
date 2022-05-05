@@ -16,15 +16,29 @@
         </div>
         
         <div class="@CssClassH.TabPage">
-            @if(PageTemplate != null && PageItem != null)
+            @if(Error == null && PageTemplate != null && PageItem != null)
             {
                 @PageTemplate(PageItem)
             }
+            else if (Error != null)
+            {
+                <ErrorView
+                    ViewModel="@Error"
+                    ViewSize="@ErrorViewSize.Large" />
+            }
             else
             {
-                <label class="@CssClassH.ErrorBlockLarge">Oops... An error occurred</label>
+                <div class="@CssClassH.ErrorBlockLarge">
+                    <p>Oops... An error has occurred</p>
+                </div>
             }
         </div>
+    }
+    else if (Error != null)
+    {
+        <ErrorView
+            ViewModel="@Error"
+            ViewSize="@ErrorViewSize.Large" />
     }
     else
     {
@@ -42,6 +56,9 @@
 
     [Parameter]
     public List<ITabPageHead> PageHeadsList { get; set; }
+
+    [Parameter]
+    public ErrorViewModel Error { get; set; }
 
     protected string GetTabPageHeadCssClass(
         ITabPageHead tabPageHead)

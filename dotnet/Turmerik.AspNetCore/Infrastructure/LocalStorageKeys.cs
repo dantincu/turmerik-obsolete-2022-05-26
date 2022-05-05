@@ -30,7 +30,7 @@
             return key;
         }
 
-        public static string DriveFolderKey(Guid localSessionGuid, string pathOrId)
+        public static string DriveFoldersKey(Guid localSessionGuid, string pathOrId)
         {
             string key = GetLocalStorageKey(localSessionGuid, DRIVE, FOLDER);
             key = $"{key}|{pathOrId}|";
@@ -41,12 +41,6 @@
         public static string CurrentDriveFoldersKey(Guid localSessionGuid)
         {
             string key = GetLocalStorageKey(localSessionGuid, CURRENT, DRIVE, FOLDERS);
-            return key;
-        }
-
-        public static string CurrentlyOpenDriveFolderKey(Guid localSessionGuid)
-        {
-            string key = GetLocalStorageKey(localSessionGuid, CURRENTLY, OPEN, DRIVE, FOLDER);
             return key;
         }
 

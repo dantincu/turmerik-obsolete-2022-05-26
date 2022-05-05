@@ -20,12 +20,16 @@
     </div>
     <nav class="flex-column">
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="@NavManager.Url("")" Match="NavLinkMatch.All">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All"
+                @onmouseup="@OnAnchorClick("")"
+                @onclick:preventDefault="true">
                 <span class="oi oi-home" aria-hidden="true"></span> Home
             </NavLink>
         </div>
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="@NavManager.Url("files")">
+            <NavLink class="nav-link" href="files"
+                @onmouseup="@OnAnchorClick("files")"
+                @onclick:preventDefault="true">
                 <span class="oi oi-browser" aria-hidden="true"></span> Files
             </NavLink>
         </div>
@@ -54,5 +58,11 @@
     {
         SizeChangedCallback.InvokeAsync();
         sideBarLarge = !sideBarLarge;
+    }
+
+    private Action<MouseEventArgs> OnAnchorClick(string url)
+    {
+        Action<MouseEventArgs> action = arg => NavManager.NavigateTo(url, false);
+        return action;
     }
 }

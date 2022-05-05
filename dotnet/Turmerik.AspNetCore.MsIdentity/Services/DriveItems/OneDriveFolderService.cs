@@ -30,6 +30,8 @@ namespace Turmerik.AspNetCore.MsIdentity.Services.DriveItems
             throw new NotImplementedException();
         }
 
+        public override string GetDriveItemAddress(IDriveItemCore item) => item.Uri;
+
         protected override async Task<IDriveFolder> GetDriveFolderCoreAsync(string pathOrId)
         {
             throw new NotImplementedException();

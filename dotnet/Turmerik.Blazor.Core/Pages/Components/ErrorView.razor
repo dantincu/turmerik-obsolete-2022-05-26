@@ -1,0 +1,66 @@
+﻿@using Turmerik.AspNetCore.Infrastructure
+
+<div class="@GetErrorBlockCssClass()">
+    <h5>ERROR</h5>
+    <p>@GetErrorMessage(ViewModel.Message)</p>
+
+    @if (ViewModel.Exception != null)
+    {
+        <p><i>An unhandled exception has been thrown</i></p>
+
+        <h6>EXCEPTION TYPE</h6>
+        <p>@ViewModel.Exception.GetType().FullName</p>
+
+        <h6>EXCEPTION MESSAGE</h6>
+        <p>@ViewModel.Exception.Message</p>
+
+        @if (ViewModel.PrintExcStackTrace)
+        {
+            <h6>EXCEPTION STACKTRACE</h6>
+            <p class="@CssClassH.ErrorDetails">@ViewModel.Exception.StackTrace</p>
+        }
+    }
+</div>
+
+@code {
+    [Parameter]
+    public ErrorViewModel ViewModel { get; set; }
+
+    [Parameter]
+    public ErrorViewSize ViewSize { get; set; }
+
+    private string GetErrorMessage(string errorMessage)
+    {
+        if (string.IsNullOrWhiteSpace(errorMessage))
+        {
+            errorMessage = "An unhandled error has occurred";
+        }
+
+        return errorMessage;
+    }
+
+    private string GetErrorBlockCssClass()
+    {
+        var cssClassList = new List<string>
+        {
+            CssClassH.ErrorBlock
+        };
+
+        switch (ViewSize)
+        {
+            case ErrorViewSize.Large:
+                cssClassList.Add(CssClassH.ErrorBlockLarge);
+                break;
+            case ErrorViewSize.Medium:
+                cssClassList.Add(CssClassH.ErrorBlockMedium);
+                break;
+            case ErrorViewSize.Small:
+            default:
+                cssClassList.Add(CssClassH.ErrorBlockSmall);
+                break;
+        }
+
+        string cssClassAttrVal = string.Join(" ", cssClassList);
+        return cssClassAttrVal;
+    }
+}

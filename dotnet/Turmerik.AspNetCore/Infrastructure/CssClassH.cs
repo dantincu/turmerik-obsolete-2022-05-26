@@ -18,6 +18,7 @@ namespace Turmerik.AspNetCore.Infrastructure
         public const string SELECTED = "selected";
         public const string LOADING = "loading";
         public const string DATA = "data";
+        public const string DETAILS = "details";
 
         public const string BLOCK = "block";
         public const string TOP = "top";
@@ -60,9 +61,11 @@ namespace Turmerik.AspNetCore.Infrastructure
         public static readonly string Selected = Class(SELECTED);
         public static readonly string Name = Class(NAME);
         public static readonly string Loading = Class(LOADING);
+        public static readonly string ErrorBlock = Class(ERROR, BLOCK);
         public static readonly string ErrorBlockSmall = Class(ERROR, BLOCK, SMALL);
         public static readonly string ErrorBlockMedium = Class(ERROR, BLOCK, MEDIUM);
         public static readonly string ErrorBlockLarge = Class(ERROR, BLOCK, LARGE);
+        public static readonly string ErrorDetails = Class(ERROR, DETAILS);
 
         public static readonly string Btn = Class(BTN);
         public static readonly string Table = Class(TABLE);

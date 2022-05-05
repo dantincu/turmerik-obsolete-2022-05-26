@@ -1,0 +1,28 @@
+﻿.trmrk-error-block p {
+    color: #A03000;
+    font-weight: bold;
+}
+
+.trmrk-error-block h5,
+.trmrk-error-block h6 {
+    color: #A00000;
+    font-weight: bold;
+}
+
+.trmrk-error-block h5 {
+    font-size: 18px;
+}
+
+.trmrk-error-block h6 {
+    font-size: 16px;
+}
+
+.trmrk-error-block p {
+    font-size: 15px;
+}
+
+
+.trmrk-error-block .trmrk-error-details {
+    font-weight: normal;
+    font-family: Consolas;
+}
