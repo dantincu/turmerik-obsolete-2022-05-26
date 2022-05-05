@@ -52,6 +52,8 @@ namespace Turmerik.AspNetCore.Infrastructure
 
         public const string NAVBAR = "navbar";
         public const string GREET = "greet";
+        public const string DATE = "date";
+        public const string TIME = "time";
 
         public const string DRIVE = "drive";
         public const string FOLDER = "folder";
@@ -79,6 +81,7 @@ namespace Turmerik.AspNetCore.Infrastructure
         public static readonly string TopRow = Class(TOP, ROW);
         public static readonly string ColName = Class(COL, NAME);
         public static readonly string ColExt = Class(COL, EXT);
+        public static readonly string ColDateTime = Class(COL, DATE, TIME);
         public static readonly string Container = Class(CONTAINER);
         public static readonly string Spacer = Class(SPACER);
 

@@ -1,5 +1,6 @@
 ﻿@using Blazored.LocalStorage
 @using Blazored.SessionStorage
+@using Microsoft.JSInterop
 @using Turmerik.AspNetCore.Infrastructure
 @using Turmerik.AspNetCore.Services
 @using Turmerik.AspNetCore.Services.DriveItems
@@ -7,6 +8,7 @@
 @using Turmerik.AspNetCore.Settings
 @using Turmerik.Blazor.Core.Pages.Components
 @using Turmerik.Core.Cloneable
+@using Turmerik.Core.Components
 @using Turmerik.Core.Services.DriveItems
 
 @inherits FilesPageComponentBase
@@ -16,7 +18,9 @@
 @inject ILocalStorageWrapper localStorage;
 @inject ISessionStorageWrapper sessionStorage;
 @inject IDriveFolderService driveFolderService;
+@inject IJSRuntime jsRuntime;
 @inject ITrmrkAppSettings appSettings;
+@inject ITimeStampHelper timeStampH;
 
 <div class="@CssClassH.Container">
     <AddressBar
@@ -36,11 +40,15 @@
             <div class="@CssClassH.DriveTabViewPage">
                 <h6>Folders</h6>
 
-                <table class="table table-sm table-dark table-hover @CssClassH.Table @CssClassH.DriveFoldersGrid">
+                <table class="table table-sm table-dark table-hover @CssClassH.Table @CssClassH.DriveFoldersGrid"
+                    data-trmrk-ref-date-time="@FormatDateTimeExact(Now)">
                     <thead>
                         <tr>
                             <th scope="col"></th>
                             <th class="@CssClassH.ColName">Name</th>
+                            <th data-trmrk-date-time="" class=@CssClassH.ColDateTime>Accessed</th>
+                            <th data-trmrk-date-time="" class=@CssClassH.ColDateTime>Written</th>
+                            <th data-trmrk-date-time="" class=@CssClassH.ColDateTime>Created</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -49,6 +57,16 @@
                             <tr>
                                 <th scope="row"><span class="oi oi-folder" aria-hidden="true"></span></th>
                                 <td title="@subFolder.DisplayName">@subFolder.Name</td>
+                                @foreach (var dt in new DateTime[]
+                                 {
+                                     subFolder.LastAccessTime,
+                                     subFolder.LastWriteTime,
+                                     subFolder.CreationTime
+                                 })
+                                {
+                                    string ts = FormatDateTimeExact(dt);
+                                    <td title="@ts" data-trmrk-date-time="@ts">@ts</td>
+                                }
                             </tr>
                         }
                     </tbody>
@@ -56,12 +74,16 @@
 
                 <h6>Files</h6>
 
-                <table class="table table-sm table-dark table-hover @CssClassH.Table @CssClassH.DriveItemsGrid">
+                <table class="table table-sm table-dark table-hover @CssClassH.Table @CssClassH.DriveItemsGrid"
+                    data-trmrk-ref-date-time="@FormatDateTimeExact(Now)">
                     <thead>
                         <tr>
                             <th scope="col"></th>
                             <th class="@CssClassH.ColName">Name</th>
                             <th class="@CssClassH.ColExt">Ext</th>
+                            <th data-trmrk-date-time="" class=@CssClassH.ColDateTime>Accessed</th>
+                            <th data-trmrk-date-time="" class=@CssClassH.ColDateTime>Written</th>
+                            <th data-trmrk-date-time="" class=@CssClassH.ColDateTime>Created</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -71,6 +93,16 @@
                                 <th scope="row"><span class="oi oi-file" aria-hidden="true"></span></th>
                                 <td title="@subFolder.Name">@subFolder.Name</td>
                                 <td title="@subFolder.Extension">@subFolder.Extension</td>
+                                @foreach (var dt in new DateTime[]
+                                 {
+                                     subFolder.LastAccessTime,
+                                     subFolder.LastWriteTime,
+                                     subFolder.CreationTime
+                                 })
+                                {
+                                    string ts = FormatDateTimeExact(dt);
+                                    <td title="@ts" data-trmrk-date-time="@ts">@ts</td>
+                                }
                             </tr>
                         }
                     </tbody>
@@ -81,6 +113,7 @@
 </div>
 
 @code {
+    private DateTime Now { get; set; } = DateTime.Now;
 
     protected override async Task OnInitializedAsync()
     {
@@ -94,5 +127,30 @@
         AppSettings = appSettings;
 
         await base.OnInitializedAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        await jsRuntime.InvokeVoidAsync(
+            JsH.Get(JsH.InitDateTimeUserFriendlyLabels),
+            this.UuidStr);
+    }
+
+    private string FormatDateTimeExact(DateTime value)
+    {
+        string strVal;
+
+        if (value > DateTime.MinValue)
+        {
+            strVal = timeStampH.TmStmp(value, true, TimeStamp.Seconds);
+        }
+        else
+        {
+            strVal = string.Empty;
+        }
+
+        return strVal;
     }
 }

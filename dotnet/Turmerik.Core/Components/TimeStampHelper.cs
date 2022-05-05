@@ -219,7 +219,7 @@ namespace Turmerik.Core.Components
 
             foreach (bool hasDate in boolValues)
             {
-                foreach (TimeStamp tmStmp in tmStmpValues)
+                foreach (TimeStamp? tmStmp in tmStmpValues)
                 {
                     foreach (bool hasTimeZone in boolValues)
                     {

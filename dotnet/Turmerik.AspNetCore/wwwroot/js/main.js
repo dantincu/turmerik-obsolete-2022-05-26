@@ -129,4 +129,9 @@ trmrk.webStorage = {
     }
 }
 
+trmrk.initDateTimeUserFriendlyLabels = (domElId, selector) => {
+    let helper = new DomHelper(domElId, selector);
+
+}
+
 export const Trmrk = trmrk;

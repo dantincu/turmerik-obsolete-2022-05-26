@@ -29,3 +29,33 @@
 ::deep .trmrk-drive-items-grid th.trmrk-col-ext {
     width: 40px;
 }
+
+::deep th[data-trmrk-date-time] {
+    width: 10rem;
+}
+
+@media (max-width: 1300px) {
+    ::deep th[data-trmrk-date-time]:nth-last-child(1),
+    ::deep td[data-trmrk-date-time]:nth-last-child(1) {
+        display: none;
+    }
+}
+
+@media (max-width: 1150px) {
+    ::deep th[data-trmrk-date-time]:nth-last-child(1),
+    ::deep td[data-trmrk-date-time]:nth-last-child(1) {
+        display: none;
+    }
+
+    ::deep th[data-trmrk-date-time]:nth-last-child(2),
+    ::deep td[data-trmrk-date-time]:nth-last-child(2) {
+        display: none;
+    }
+}
+
+@media (max-width: 1000px) {
+    ::deep th[data-trmrk-date-time],
+    ::deep td[data-trmrk-date-time] {
+        display: none;
+    }
+}
