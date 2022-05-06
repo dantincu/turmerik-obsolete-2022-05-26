@@ -13,11 +13,11 @@
 @inject ILocalStorageWrapper localStorage;
 @inject ISessionStorageWrapper sessionStorage
 
-<PageTitle>Turmerik Local Disk Explorer</PageTitle>
+<PageTitle>Turmerik Musical Keyboard</PageTitle>
 
 <div class="page">
     <div class="sidebar trmrk-app-sidebar @SideBarSizeCssClass">
-        <NavMenu MenuItems=@MenuItems HasDefaultMenuItem="true" SizeChangedCallback="@SizeChangedCallback" Title="Turmerik Local Disk Explorer" />
+        <NavMenu MenuItems=@MenuItems HasDefaultMenuItem="true" SizeChangedCallback="@SizeChangedCallback" Title="Turmerik Musical Keyboard" />
     </div>
 
     <main>
@@ -30,7 +30,7 @@
 @code {
     private Dictionary<string, string> MenuItems { get; } = new Dictionary<string, string>
     {
-        { "files", "Files" }
+        { "play", "Play" }
     };
 
     protected override Task OnInitializedAsync()

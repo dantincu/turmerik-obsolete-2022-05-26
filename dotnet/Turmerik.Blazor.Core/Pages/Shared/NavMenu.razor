@@ -21,20 +21,27 @@
         <span class="oi @NavMenuEnlargerCssClass" title="expand" aria-hidden="true" @onclick="ToggleSideBarSize"></span>
     </div>
     <nav class="flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link trmrk-default-link" href="" Match="NavLinkMatch.All"
-                @onmouseup="@OnAnchorClick("")"
-                @onclick:preventDefault="true">
-                <span class="oi oi-home" aria-hidden="true"></span> Home
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="files"
-                @onmouseup="@OnAnchorClick("files")"
-                @onclick:preventDefault="true">
-                <span class="oi oi-browser" aria-hidden="true"></span> Files
-            </NavLink>
-        </div>
+        @if (HasDefaultMenuItem)
+        {
+            <div class="nav-item px-3">
+                <NavLink class="nav-link trmrk-default-link" href="" Match="NavLinkMatch.All"
+                    @onmouseup="@OnAnchorClick("")"
+                    @onclick:preventDefault="true">
+                    <span class="oi oi-home" aria-hidden="true"></span> Home
+                </NavLink>
+            </div>
+        }
+
+        @foreach (var kvp in MenuItems)
+        {
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="@kvp.Key"
+                    @onmouseup="@OnAnchorClick(kvp.Key)"
+                    @onclick:preventDefault="true">
+                    <span class="oi oi-browser" aria-hidden="true"></span> @kvp.Value
+                </NavLink>
+            </div>
+        }
     </nav>
 </div>
 
@@ -50,6 +57,12 @@
 
     [Parameter]
     public EventCallback<MouseEventArgs> SizeChangedCallback { get; set; }
+
+    [Parameter]
+    public Dictionary<string, string> MenuItems { get; set; }
+
+    [Parameter]
+    public bool HasDefaultMenuItem { get; set; }
 
     private void ToggleNavMenu()
     {

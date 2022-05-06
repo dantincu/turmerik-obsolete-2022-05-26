@@ -1,0 +1,21 @@
+﻿@page "/"
+@using Turmerik.AspNetCore.Infrastructure
+@using Turmerik.AspNetCore.Services
+@using Turmerik.Core.Cloneable
+
+@inherits Turmerik.Blazor.Core.Pages.HomePageBase
+
+@inject ICloneableMapper mapper;
+@inject INavManager navManager;
+@inject IJSRuntime jsRuntime;
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        this.Mapper = mapper;
+        this.NavManager = navManager;
+
+        this.JSRuntime = jsRuntime;
+        await base.OnInitializedAsync();
+    }
+}

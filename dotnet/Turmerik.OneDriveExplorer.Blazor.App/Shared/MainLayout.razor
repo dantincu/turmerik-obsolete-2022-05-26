@@ -42,7 +42,7 @@
         <LoginDisplay />
     </div>
     <div class="sidebar trmrk-app-sidebar @SideBarSizeCssClass">
-        <NavMenu SizeChangedCallback="@SizeChangedCallback" Title="Turmerik OneDrive Explorer" />
+        <NavMenu MenuItems=@MenuItems HasDefaultMenuItem="true" SizeChangedCallback="@SizeChangedCallback" Title="Turmerik OneDrive Explorer" />
     </div>
 
     <main>
@@ -53,6 +53,11 @@
 </div>
 
 @code {
+    private Dictionary<string, string> MenuItems { get; } = new Dictionary<string, string>
+    {
+        { "files", "Files" }
+    };
+
     protected override Task OnInitializedAsync()
     {
         this.LocalSessionsManager = localSessionsManager;

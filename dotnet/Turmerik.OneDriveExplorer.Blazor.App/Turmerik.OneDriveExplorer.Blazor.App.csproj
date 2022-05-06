@@ -17,6 +17,6 @@
     <ProjectReference Include="..\Turmerik.Blazor.OpenId\Turmerik.Blazor.OpenId.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Data\" />
+    <Folder Include="Alerts\" />
   </ItemGroup>
 </Project>
