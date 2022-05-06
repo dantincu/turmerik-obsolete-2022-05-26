@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Turmerik.Core.FileSystem;
+using Turmerik.Core.Helpers;
 using Turmerik.Testing.Core.Tests;
 using Xunit;
 
@@ -52,13 +53,13 @@ namespace Turmerik.UnitTests.Tests
         {
             foreach (var validStr in validUriSchemeLikeStrs)
             {
-                bool isValid = FsPathNormalizer.UriSchemeRegex.IsMatch(validStr);
+                bool isValid = UriH.UriSchemeRegex.IsMatch(validStr);
                 Assert.True(isValid);
             }
 
             foreach (var invalidStr in invalidUriSchemeLikeStrs)
             {
-                bool isValid = FsPathNormalizer.UriSchemeRegex.IsMatch(invalidStr);
+                bool isValid = UriH.UriSchemeRegex.IsMatch(invalidStr);
                 Assert.False(isValid);
             }
         }

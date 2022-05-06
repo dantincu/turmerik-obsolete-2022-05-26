@@ -18,5 +18,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Alerts\" />
+    <Folder Include="wwwroot\css\bootstrap\" />
+    <Folder Include="wwwroot\js\bootstrap\" />
   </ItemGroup>
 </Project>

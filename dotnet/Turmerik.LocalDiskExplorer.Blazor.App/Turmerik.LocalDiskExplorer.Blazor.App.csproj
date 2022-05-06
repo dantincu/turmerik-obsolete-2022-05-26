@@ -10,4 +10,9 @@
     <ProjectReference Include="..\Turmerik.Blazor.Core\Turmerik.Blazor.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\css\bootstrap\" />
+    <Folder Include="wwwroot\js\bootstrap\" />
+  </ItemGroup>
+
 </Project>

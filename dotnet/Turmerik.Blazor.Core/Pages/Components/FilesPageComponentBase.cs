@@ -135,7 +135,7 @@ namespace Turmerik.Blazor.Core.Pages.Components
                         pathOrId);
 
                 ClearError();
-                NavManager.Manager.NavigateTo(targetUrl, false);
+                NavManager.Manager.NavigateTo(targetUrl, true);
             }
             else
             {

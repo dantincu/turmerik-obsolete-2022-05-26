@@ -27,22 +27,17 @@ namespace Turmerik.AspNetCore.Services
         public NavManager(NavigationManager navManager)
         {
             this.Manager = navManager ?? throw new ArgumentNullException(nameof(navManager));
-            AbsUri = navManager.ToAbsoluteUri(navManager.Uri);
-
-            QueryStrings = QueryHelpers.ParseQuery(AbsUri.Query);
-
-            LocalSessionGuid = QueryStrings.GetNullableValue(
-                QsKeys.LOCAL_SESSION_ID,
-                (StringValues str,
-                out Guid val) => Guid.TryParse(
-                    str,
-                    out val));
         }
 
         public NavigationManager Manager { get; }
-        public Uri AbsUri { get; }
-        public IDictionary<string, StringValues> QueryStrings { get; }
-        public Guid? LocalSessionGuid { get; }
+        public Uri AbsUri => Manager.ToAbsoluteUri(Manager.Uri);
+        public IDictionary<string, StringValues> QueryStrings => QueryHelpers.ParseQuery(AbsUri.Query);
+        public Guid? LocalSessionGuid => QueryStrings.GetNullableValue(
+            QsKeys.LOCAL_SESSION_ID,
+            (StringValues str,
+            out Guid val) => Guid.TryParse(
+                str,
+                out val));
 
         public string Url(string relUrl)
         {

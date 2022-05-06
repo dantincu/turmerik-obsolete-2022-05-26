@@ -3,6 +3,8 @@
 export class DomHelper extends DomElWrapperBase {
     Selector;
 
+    __domElms;
+
     constructor(domElId, selector) {
         super(domElId);
 
@@ -13,6 +15,11 @@ export class DomHelper extends DomElWrapperBase {
         this.Selector = selector;
     }
 
+    get DomElms() {
+        this.__domElms = this.__domElms || this.GetDomElms();
+        return this.__domElms;
+    }
+
     GetDomEl() {
         let domEl = super.GetDomEl() || document;
 
@@ -21,5 +28,15 @@ export class DomHelper extends DomElWrapperBase {
         }
 
         return domEl;
+    }
+
+    GetDomElms() {
+        let domElms = super.GetDomEl() || document;
+
+        if (this.Selector) {
+            domElms = domElms.querySelectorAll(this.Selector);
+        }
+
+        return domElms;
     }
 }

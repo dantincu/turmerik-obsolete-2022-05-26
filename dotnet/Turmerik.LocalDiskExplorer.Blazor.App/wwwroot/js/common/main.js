@@ -28,14 +28,26 @@ trmrk.textToLines = (text, maxLineLen) => {
     return lines;
 }
 
-trmrk.addCssClass = (domElId, selector, cssClass) => {
+trmrk.addCssClass = (domElId, selector, cssClass, removalSelector) => {
+    if (typeof (removalSelector) === "string" && removalSelector.length > 0) {
+        trmrk.removeCssClass(domElId, removalSelector, cssClass);
+    }
+
     let helper = new DomHelper(domElId, selector);
-    helper.DomEl.classList.add(cssClass);
+
+    for (let i = 0; i < helper.DomElms.length; i++) {
+        let domEl = helper.DomElms[i];
+        domEl.classList.add(cssClass);
+    }
 };
 
 trmrk.removeCssClass = (domElId, selector, cssClass) => {
     let helper = new DomHelper(domElId, selector);
-    helper.DomEl.classList.remove(cssClass);
+
+    for (let i = 0; i < helper.DomElms.length; i++) {
+        let domEl = helper.DomElms[i];
+        domEl.classList.remove(cssClass);
+    }
 };
 
 trmrk.getDomElValue = (domElId, selector) => {

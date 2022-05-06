@@ -56,5 +56,41 @@ namespace Turmerik.Core.Helpers
             bool retVal = nmrbl.Any(predicate) == false;
             return retVal;
         }
+
+        public static int NthIdxOf<T>(
+            this IEnumerable<T> nmrbl,
+            T value,
+            int count,
+            bool orLast = false,
+            IEqualityComparer<T> eqCompr = null)
+        {
+            eqCompr = eqCompr ?? EqualityComparer<T>.Default;
+            int i = 0;
+
+            int matchCount = 0;
+            int nthIdx = -1;
+
+            foreach (var val in nmrbl)
+            {
+                if (eqCompr.Equals(value, val))
+                {
+                    if (matchCount == count)
+                    {
+                        nthIdx = i;
+                        break;
+                    }
+                    else if (orLast)
+                    {
+                        nthIdx = i;
+                    }
+
+                    matchCount++;
+                }
+
+                i++;
+            }
+
+            return nthIdx;
+        }
     }
 }

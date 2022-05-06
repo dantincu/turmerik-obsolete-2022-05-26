@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
     <link href="css/site.css" rel="stylesheet" />
     <link href="Turmerik.MusicalKeyboard.Blazor.App.styles.css" rel="stylesheet" />
-    <component type="typeof(HeadOutlet)" render-mode="ServerPrerendered" />
+    <component type="typeof(HeadOutlet)" render-mode="Server" />
 </head>
 <body>
     @RenderBody()
@@ -28,6 +28,7 @@
     </div>
 
     <script src="_framework/blazor.server.js"></script>
+    <script src="js/bootstrap/bootstrap.bundle.min.js"></script>
     <script src="js/main.js" type="module"></script>
 </body>
 </html>

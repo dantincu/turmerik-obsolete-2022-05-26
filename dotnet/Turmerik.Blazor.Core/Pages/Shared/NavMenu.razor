@@ -3,6 +3,7 @@
 @using Microsoft.JSInterop
 @using Turmerik.AspNetCore.Infrastructure
 @using Turmerik.AspNetCore.Services
+@using Turmerik.Core.Helpers;
 
 @inject INavManager NavManager;
 @inject IJSRuntime JSRuntime;
@@ -20,7 +21,7 @@
     <div class="@CssClassH.ShrinkEnlarge">
         <span class="oi @NavMenuEnlargerCssClass" title="expand" aria-hidden="true" @onclick="ToggleSideBarSize"></span>
     </div>
-    <nav class="flex-column">
+    <nav class="flex-column" id="nav-menu">
         @if (HasDefaultMenuItem)
         {
             <div class="nav-item px-3">
@@ -35,7 +36,7 @@
         @foreach (var kvp in MenuItems)
         {
             <div class="nav-item px-3">
-                <NavLink class="nav-link" href="@kvp.Key"
+                <NavLink class="@GetNavLinkCssClass(kvp)" href="@kvp.Key"
                     @onmouseup="@OnAnchorClick(kvp.Key)"
                     @onclick:preventDefault="true">
                     <span class="oi oi-browser" aria-hidden="true"></span> @kvp.Value
@@ -64,6 +65,27 @@
     [Parameter]
     public bool HasDefaultMenuItem { get; set; }
 
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+        string absoluteUri = NavManager.AbsUri.AbsoluteUri;
+
+        string relUriWithoutQueryString = absoluteUri.GetRelUriWithoutQueryString(true);
+        string activeTargetSelector = ".trmrk-default-link";
+
+        if (!string.IsNullOrWhiteSpace(relUriWithoutQueryString))
+        {
+            activeTargetSelector = $".trmrk-link-{relUriWithoutQueryString}";
+        }
+
+        await JSRuntime.InvokeVoidAsync(
+            JsH.Get(JsH.AddCssClass),
+            "nav-menu",
+            activeTargetSelector,
+            "active",
+            ".nav-link");
+    }
+
     private void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;
@@ -79,16 +101,15 @@
     {
         Action<MouseEventArgs> action = arg =>
         {
-            JSRuntime.InvokeVoidAsync(
-                JsH.Get(JsH.RemoveCssClass),
-                null,
-                CssClassH.CssClsSel(
-                    CssClassH.DefaultLink),
-                "active");
-
             NavManager.NavigateTo(url, false);
         };
 
         return action;
+    }
+
+    private string GetNavLinkCssClass(KeyValuePair<string, string> kvp)
+    {
+        string cssClass = $"nav-link trmrk-link-{kvp.Key}";
+        return cssClass;
     }
 }

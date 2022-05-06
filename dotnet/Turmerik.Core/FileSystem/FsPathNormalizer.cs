@@ -17,8 +17,6 @@ namespace Turmerik.Core.FileSystem
 
     public class FsPathNormalizer : ComponentBase, IFsPathNormalizer
     {
-        public static readonly Regex UriSchemeRegex = new Regex(@"^[a-zA-Z0-9\-_]*\:$");
-
         public FsPathNormalizer(ICloneableMapper mapper) : base(mapper)
         {
         }
@@ -223,26 +221,6 @@ namespace Turmerik.Core.FileSystem
             }
         }
 
-        /* private bool IsParentDir(string dirName)
-        {
-            int len = dirName.Length;
-            bool retVal = len >= 2;
-
-            if (retVal)
-            {
-                retVal = dirName.First() == '.';
-                retVal = retVal && dirName.Last() == '.';
-            }
-
-            if (retVal)
-            {
-                string str = dirName.Substring(1, len - 2);
-                retVal = string.IsNullOrWhiteSpace(str);
-            }
-
-            return retVal;
-        } */
-
         private bool IsWinDriveLetter(string part)
         {
             bool isWinDvLt = part.Length == 2;
@@ -254,7 +232,7 @@ namespace Turmerik.Core.FileSystem
 
         private bool IsUriSchemeLike(string part)
         {
-            bool isUriScheme = UriSchemeRegex.IsMatch(part);
+            bool isUriScheme = UriH.UriSchemeRegex.IsMatch(part);
             return isUriScheme;
         }
 
