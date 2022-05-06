@@ -1,0 +1,28 @@
+﻿
+@using Turmerik.AspNetCore.Infrastructure
+@using Turmerik.Blazor.Core.Pages.Components;
+@using Turmerik.Core.Cloneable
+@using Turmerik.MusicalKeyboard.Blazor.App.Data
+
+@inherits ComponentCoreBase;
+@inject ICloneableMapper mapper;
+
+<GridKeyboard Rows=@KeyboardRows></GridKeyboard>
+
+@code {
+    private IGridKeyboardKey[][] KeyboardRows { get; set; }
+
+    protected async override Task OnInitializedAsync()
+    {
+        KeyboardRows = Enumerable.Range(2, 6).Reverse().Select(
+            scale => MusicalNotesH.MusicalNotes.Select(
+                note => MusicalNotesH.GetMusicalNote(
+                    note, scale)).Select(
+                    note => new GridKeyboardKeyImmtbl(mapper, new GridKeyboardKeyMtbl
+                    {
+                        KeyCode = note,
+                        KeyLabel = note,
+                        BtnCssClass = note.Contains("#") ? CssClassH.Dark : string.Empty
+                    })).ToArray()).ToArray();
+    }
+}

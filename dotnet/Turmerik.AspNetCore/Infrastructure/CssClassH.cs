@@ -20,6 +20,7 @@ namespace Turmerik.AspNetCore.Infrastructure
         public const string DATA = "data";
         public const string DETAILS = "details";
         public const string DEFAULT = "default";
+        public const string DARK = "dark";
 
         public const string LINK = "link";
         public const string BLOCK = "block";
@@ -30,6 +31,7 @@ namespace Turmerik.AspNetCore.Infrastructure
         public const string EXT = "ext";
         public const string ITEM = "item";
         public const string ITEMS = "items";
+        public const string KEYBOARD = "keyboard";
 
         public const string LARGE = "large";
         public const string MEDIUM = "medium";
@@ -70,6 +72,7 @@ namespace Turmerik.AspNetCore.Infrastructure
         public static readonly string ErrorBlockMedium = Class(ERROR, BLOCK, MEDIUM);
         public static readonly string ErrorBlockLarge = Class(ERROR, BLOCK, LARGE);
         public static readonly string ErrorDetails = Class(ERROR, DETAILS);
+        public static readonly string Dark = Class(DARK);
 
         public static readonly string DefaultLink = Class(DEFAULT, LINK);
         public static readonly string Btn = Class(BTN);
@@ -101,6 +104,8 @@ namespace Turmerik.AspNetCore.Infrastructure
         public static readonly string DriveTabViewPage = Class(DRIVE, TAB, VIEW, PAGE);
         public static readonly string DriveFoldersGrid = Class(DRIVE, FOLDERS, GRID);
         public static readonly string DriveItemsGrid = Class(DRIVE, ITEMS, GRID);
+
+        public static readonly string GridKeyboardGrid = Class(GRID, KEYBOARD, GRID);
 
         public static readonly string Address = Class(ADDRESS);
         public static readonly string AddressBar = Class(ADDRESS, BAR);

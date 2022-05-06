@@ -1,0 +1,39 @@
+﻿@using Microsoft.AspNetCore.Components.Web
+@using Turmerik.AspNetCore.Infrastructure
+
+<table class="table table-sm table-dark @CssClassH.Table @CssClassH.GridKeyboardGrid">
+    <tbody>
+        @if (Rows != null)
+        {
+            @foreach (var line in Rows)
+            {
+                <tr>
+                    @foreach (var row in line)
+                    {
+                        <td @onclick=@OnKeyboardClickEventHandler(row.KeyCode)>
+                            <button class="@row.BtnCssClass">@row.KeyLabel</button>
+                        </td>
+                    }
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+@code {
+    [Parameter]
+    public IGridKeyboardKey[][] Rows { get; set; }
+
+    [Parameter]
+    public Action<MouseEventArgs, string> OnKeyboardClick { get; set; }
+
+    private Action<MouseEventArgs> OnKeyboardClickEventHandler(string keyCode)
+    {
+        Action<MouseEventArgs> action = args =>
+        {
+            OnKeyboardClick?.Invoke(args, keyCode);
+        };
+
+        return action;
+    }
+}
