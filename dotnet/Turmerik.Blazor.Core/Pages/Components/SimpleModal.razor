@@ -1,0 +1,77 @@
+﻿
+@inherits SimpleModalBase
+
+<div class="modal" id="@ModalId" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        @if (ContentElementTemplate != null)
+        {
+            @ContentElementTemplate(null)
+        }
+        else
+        {
+            <div class="modal-content">
+                @if (HeaderElementTemplate != null)
+                {
+                    @HeaderElementTemplate(null)
+                }
+                else
+                {
+                    <div class="modal-header">
+                        @if (HeaderTemplate != null)
+                        {
+                            @HeaderTemplate(null)
+                        }
+                        else if (ModalTitle != null)
+                        {
+                            <h5 class="modal-title">@ModalTitle</h5>
+                        }
+                
+                        @if (HasCloseButton)
+                        {
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        }
+                    </div>
+                }
+                
+                <div class="modal-body">
+                    @BodyTemplate(null)
+                </div>
+
+                @if (FooterTemplate != null)
+                {
+                    <div class="modal-footer">
+                        @FooterTemplate(null)
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string ModalId { get; set; }
+
+    [Parameter]
+    public string ModalTitle { get; set; }
+
+    [Parameter]
+    public bool HasCloseButton { get; set; } = true;
+
+    [Parameter]
+    public RenderFragment<object> ContentElementTemplate { get; set; }
+
+    [Parameter]
+    public RenderFragment<object> HeaderElementTemplate { get; set; }
+
+    [Parameter]
+    public RenderFragment<object> HeaderTemplate { get; set; }
+
+    [Parameter]
+    public RenderFragment<object> BodyTemplate { get; set; }
+
+    [Parameter]
+    public RenderFragment<object> FooterTemplate { get; set; }
+}

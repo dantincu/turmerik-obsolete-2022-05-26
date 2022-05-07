@@ -25,3 +25,8 @@
     cursor: grab;
     font-size: 1.1rem;
 }
+
+.trmrk-address-bar-container ::deep .trmrk-btn[disabled] {
+    cursor: not-allowed;
+    color: #A0A0A0;
+}

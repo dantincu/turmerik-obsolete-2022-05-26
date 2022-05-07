@@ -6,6 +6,7 @@ using Turmerik.Blazor.Core.Services;
 using Turmerik.Core.Services.DriveItems;
 using Turmerik.Core.Helpers;
 using Microsoft.AspNetCore.WebUtilities;
+using System.Collections.Concurrent;
 
 namespace Turmerik.Blazor.Core.Pages.Components
 {
@@ -16,20 +17,30 @@ namespace Turmerik.Blazor.Core.Pages.Components
 
         protected FilesPageComponentBase()
         {
+            AddressBackHistoryStack = new Stack<string>();
+            AddressForwardHistoryStack = new Stack<string>();
             TabPageViewModel = new DriveFolderTabPageViewModel();
         }
 
+        protected readonly object SyncRoot = new object();
+        protected Stack<string> AddressBackHistoryStack { get; }
+        protected Stack<string> AddressForwardHistoryStack { get; }
+        protected DriveFolderTabPageViewModel TabPageViewModel { get; }
+        
         protected ILocalStorageWrapper LocalStorage { get; set; }
         protected ISessionStorageWrapper SessionStorage { get; set; }
         protected IDriveFolderService DriveFolderService { get; set; }
+        protected string InputAddress { get; set; }
         protected string AddressStrValue { get; set; }
         protected string DriveItemId { get; set; }
         protected List<ITabPageHead> TabPageHeadsList { get; set; }
         protected IReadOnlyCollection<IDriveFolder> CurrentDriveFolders { get; set; }
         protected IDriveFolder CurrentlyOpenDriveFolder { get; set; }
-        protected DriveFolderTabPageViewModel TabPageViewModel { get; set; }
         protected bool InvalidAddress { get; set; }
         protected ErrorViewModel ErrorViewModel { get; set; }
+        protected bool AddressGoBackBtnDisabled { get; set; } = true;
+        protected bool AddressGoParentBtnDisabled { get; set; } = true;
+        protected bool AddressGoForwardBtnDisabled { get; set; } = true;
 
         protected IEnumerable<IDriveFolder>? TabViewPageDriveFolders
         {
@@ -41,121 +52,145 @@ namespace Turmerik.Blazor.Core.Pages.Components
             get => CurrentlyOpenDriveFolder?.DriveItemsList?.Immtbl ?? Enumerable.Empty<IDriveItem>();
         }
 
-        protected async override Task OnInitializedAsync()
+        protected async override Task OnAfterRenderAsync(bool firstRender)
         {
-            await base.OnInitializedAsync();
+            await base.OnAfterRenderAsync(firstRender);
 
-            await IfLocalSessionGuidHasValueAsync(async localSessionGuid =>
+            if (firstRender)
             {
-                string initialAddress = QueryStrings.GetStringOrNull(QsKeys.DRIVE_ITEM_ID);
-
-                string normAddress = initialAddress;
-                string driveItemId = null;
-
-                if (!string.IsNullOrWhiteSpace(
-                    normAddress))
+                await IfLocalSessionGuidHasValueAsync(async localSessionGuid =>
                 {
-                    if (DriveFolderService.TryNormalizeAddress(
-                        ref normAddress,
-                        out driveItemId))
-                    {
-                        AddressStrValue = normAddress;
-                    }
-                    else
-                    {
-                        driveItemId = null;
-                        SetError(INVALID_ADDRESS_ERR_MSG);
-                    }
-                }
-
-                if (ErrorViewModel == null)
-                {
-                    try
-                    {
-                        if (string.IsNullOrWhiteSpace(driveItemId))
-                        {
-                            CurrentlyOpenDriveFolder = await DriveFolderService.GetRootDriveFolderAsync(
-                                localSessionGuid, false);
-                        }
-                        else
-                        {
-                            CurrentlyOpenDriveFolder = await DriveFolderService.GetDriveFolderAsync(
-                                driveItemId, localSessionGuid, false);
-                        }
-
-                        CurrentDriveFolders = await DriveFolderService.GetCurrentDriveFoldersAsync(
-                            CurrentlyOpenDriveFolder,
-                            localSessionGuid);
-
-                        TabPageHeadsList = CurrentDriveFolders.Select(
-                            (item) => (ITabPageHead)DriveItemToTabPageHead(
-                                item, DriveFolderService.DriveItemsHaveSameAddress(
-                                    item, CurrentlyOpenDriveFolder, false))).ToList();
-
-                        TabPageViewModel.Data = CurrentlyOpenDriveFolder;
-                    }
-                    catch (Exception exc)
-                    {
-                        SetError(DEFAULT_ERR_MSG, exc);
-                    }
-                }
-            });
+                    TryPushAddressToHistory(InputAddress);
+                    await LoadCurrentlyOpenFolderAsync(localSessionGuid, false);
+                });
+            }
         }
 
         protected async Task OnAddressBarGoBackClick(MouseEventArgs args)
         {
-
+            await TryPopAddressFromHistoryAsync(true);
         }
 
         protected async Task OnAddressBarGoUpClick(MouseEventArgs args)
         {
+            var parentFolder = CurrentlyOpenDriveFolder?.ParentFolder.Immtbl;
 
+            if (parentFolder != null)
+            {
+                string address = DriveFolderService.GetDriveItemAddress(parentFolder);
+                await SubmitAddressAsync(address);
+            }
         }
 
         protected async Task OnAddressBarGoForwardClick(MouseEventArgs args)
         {
-
+            await TryPopAddressFromHistoryAsync(false);
         }
 
         protected async Task OnCurrentlyOpenFolderOptionsClick(MouseEventArgs args)
         {
-
         }
 
         protected async Task OnAddressBarReloadClick(MouseEventArgs args)
         {
-
+            await IfLocalSessionGuidHasValueAsync(async localSessionGuid =>
+            {
+                await LoadCurrentlyOpenFolderAsync(localSessionGuid, true);
+            });
         }
 
         protected async Task OnSubmitAddress(TextEventArgsWrapper args)
         {
             string address = args.Value;
-            string pathOrId;
+            await SubmitAddressAsync(address);
+        }
 
-            if (DriveFolderService.TryNormalizeAddress(ref address, out pathOrId))
+        protected async Task SubmitAddressAsync(string address)
+        {
+            await IfLocalSessionGuidHasValueAsync(async localSessionGuid =>
             {
+                string absUri = NavManager.AbsUri.AbsoluteUri;
+                string uriWithoutQueryString = absUri.GetUriWithoutQueryString(true);
+
+                var queryString = NavManager.QueryStrings;
+                queryString[QsKeys.DRIVE_ITEM_ID] = address;
+
                 string targetUrl = QueryHelpers.AddQueryString(
-                        NavManager.AbsUri.AbsoluteUri,
-                        QsKeys.DRIVE_ITEM_ID,
-                        pathOrId);
+                    uriWithoutQueryString, queryString);
 
-                ClearError();
-                NavManager.Manager.NavigateTo(targetUrl, true);
-            }
-            else
+                await LoadCurrentlyOpenFolderAsync(localSessionGuid, address, false);
+                NavManager.Manager.NavigateTo(targetUrl, false);
+            });
+        }
+
+        protected async Task OnDriveFolderClickAsync(IDriveItemCore driveFolder)
+        {
+            string address = DriveFolderService.GetDriveItemAddress(driveFolder);
+            await SubmitAddressAsync(address);
+        }
+
+        protected async Task OnDriveItemClickAsync(IDriveItemCore driveItem)
+        {
+        }
+
+        protected async Task LoadCurrentlyOpenFolderAsync(
+            Guid localSessionGuid,
+            bool refreshCache)
+        {
+            ClearError();
+            TryNormalizeAddress();
+
+            await LoadCurrentlyOpenFolderAsync(localSessionGuid, DriveItemId, refreshCache);
+        }
+
+        protected async Task LoadCurrentlyOpenFolderAsync(
+            Guid localSessionGuid,
+            string driveItemId,
+            bool refreshCache)
+        {
+            if (ErrorViewModel == null)
             {
-                SetError(INVALID_ADDRESS_ERR_MSG);
+                await LoadCurrentlyOpenFolderCoreAsync(localSessionGuid, driveItemId, refreshCache);
             }
+
+            StateHasChanged();
         }
 
-        protected void OnDriveFolderClick(IDriveItemCore driveFolder)
+        protected async Task LoadCurrentlyOpenFolderCoreAsync(
+            Guid localSessionGuid,
+            string driveItemId,
+            bool refreshCache)
         {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(driveItemId))
+                {
+                    CurrentlyOpenDriveFolder = await DriveFolderService.GetRootDriveFolderAsync(
+                        localSessionGuid, refreshCache);
+                }
+                else
+                {
+                    CurrentlyOpenDriveFolder = await DriveFolderService.GetDriveFolderAsync(
+                        driveItemId, localSessionGuid, refreshCache);
+                }
 
-        }
+                AddressGoParentBtnDisabled = CurrentlyOpenDriveFolder.IsRootFolder ?? false;
 
-        protected void OnDriveItemClick(IDriveItemCore driveItem)
-        {
+                CurrentDriveFolders = await DriveFolderService.GetCurrentDriveFoldersAsync(
+                    CurrentlyOpenDriveFolder,
+                    localSessionGuid);
 
+                TabPageHeadsList = CurrentDriveFolders.Select(
+                    (item) => (ITabPageHead)DriveItemToTabPageHead(
+                        item, DriveFolderService.DriveItemsHaveSameAddress(
+                            item, CurrentlyOpenDriveFolder, false))).ToList();
+
+                TabPageViewModel.Data = CurrentlyOpenDriveFolder;
+            }
+            catch (Exception exc)
+            {
+                SetError(DEFAULT_ERR_MSG, exc);
+            }
         }
 
         protected TabPageHeadMtbl DriveItemToTabPageHead(IDriveItemCore driveItem, bool isCurrent)
@@ -181,6 +216,100 @@ namespace Turmerik.Blazor.Core.Pages.Components
             ErrorViewModel = new ErrorViewModel(
                 errorMessage, exc,
                 AppSettings.IsDevMode);
+        }
+
+        protected void TryNormalizeAddress()
+        {
+            InputAddress = QueryStrings.GetStringOrNull(QsKeys.DRIVE_ITEM_ID);
+
+            string normAddress = InputAddress;
+            string driveItemId;
+
+            if (!string.IsNullOrWhiteSpace(
+                normAddress))
+            {
+                if (DriveFolderService.TryNormalizeAddress(
+                    ref normAddress,
+                    out driveItemId))
+                {
+                    AddressStrValue = normAddress;
+                    DriveItemId = driveItemId;
+                }
+                else
+                {
+                    SetError(INVALID_ADDRESS_ERR_MSG);
+                }
+            }
+        }
+
+        protected void TryPushAddressToHistory(string address)
+        {
+            lock (SyncRoot)
+            {
+                AddressBackHistoryStack.Push(address);
+                AddressForwardHistoryStack.Clear();
+            }
+        }
+
+        protected async Task TryPopAddressFromHistoryAsync(bool isBackHistory)
+        {
+            string address;
+
+            if (TryPopAddressFromHistory(false, out address))
+            {
+                await SubmitAddressAsync(address);
+            }
+        }
+
+        protected bool TryPopAddressFromHistory(
+            bool isBackHistory,
+            out string address)
+        {
+            bool hasAny;
+            bool hasMore;
+
+            lock (SyncRoot)
+            {
+                if (isBackHistory)
+                {
+                    hasAny = TryPopAddressFromHistory(
+                        AddressBackHistoryStack,
+                        AddressForwardHistoryStack,
+                        out address,
+                        out hasMore);
+
+                    AddressGoForwardBtnDisabled = !hasMore;
+                }
+                else
+                {
+                    hasAny = TryPopAddressFromHistory(
+                        AddressForwardHistoryStack,
+                        AddressBackHistoryStack,
+                        out address,
+                        out hasMore);
+
+                    AddressGoBackBtnDisabled = !hasMore;
+                }
+            }
+
+            return hasAny;
+        }
+
+        private bool TryPopAddressFromHistory(
+            Stack<string> srcAddressHistoryStack,
+            Stack<string> destAddressHistoryStack,
+            out string address,
+            out bool hasMore)
+        {
+            bool hasAny = srcAddressHistoryStack.TryPop(out address);
+            hasMore = srcAddressHistoryStack.Any();
+
+            if (hasAny)
+            {
+                destAddressHistoryStack.Push(address);
+            }
+
+            return hasAny;
         }
     }
 }

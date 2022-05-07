@@ -8,10 +8,10 @@
 @inject IJSRuntime JSRuntime;
 
 <div id="@UuidStr" class="@CssClassH.AddressBarContainer">
-    <IconButton CssClass="oi oi-arrow-circle-left" Title="Go Back" OnMouseUp=@OnGoBackMouseUpAsyncEventHandler></IconButton>
-    <IconButton CssClass="oi oi-arrow-circle-top" Title="Go Up" OnMouseUp=@OnGoUpMouseUpAsyncEventHandler></IconButton>
+    <IconButton IsDisabled=@AddressGoBackBtnDisabled CssClass="oi oi-arrow-circle-left" Title="Go Back" OnMouseUp=@OnGoBackMouseUpAsyncEventHandler></IconButton>
+    <IconButton IsDisabled=@AddressGoParentBtnDisabled CssClass="oi oi-arrow-circle-top" Title="Go Up" OnMouseUp=@OnGoUpMouseUpAsyncEventHandler></IconButton>
 
-    <IconButton CssClass="oi oi-arrow-circle-right" Title="Go Forward" OnMouseUp=@OnGoForwardMouseUpAsyncEventHandler></IconButton>
+    <IconButton IsDisabled=@AddressGoForwardBtnDisabled CssClass="oi oi-arrow-circle-right" Title="Go Forward" OnMouseUp=@OnGoForwardMouseUpAsyncEventHandler></IconButton>
 
     <input type="text" value="@InitialAddressStrValue" class="@CssClassH.AddressBar @CssClassH.Hidden" @onfocus=@OnAddressBarFocusAsync @onkeydown=@OnAddressBarKeyDownAsyncEventHandler />
     <input type="text" readonly value="@InitialAddressStrValue" class="@CssClassH.AddressBarReadonly" @onclick=@OnAddressBarReadonlyClickAsyncEventHandler></input>
@@ -46,6 +46,15 @@
 
     [Parameter]
     public Func<MouseEventArgs, Task> OnReloadClick { get; set; }
+
+    [Parameter]
+    public bool AddressGoBackBtnDisabled { get; set; }
+
+    [Parameter]
+    public bool AddressGoParentBtnDisabled { get; set; }
+
+    [Parameter]
+    public bool AddressGoForwardBtnDisabled { get; set; }
 
     protected string AddressStrValue { get; set; }
 

@@ -19,7 +19,8 @@ namespace Turmerik.Blazor.Core.Pages.Components
         protected ITimeStampHelper TimeStampH;
         protected DateTime Now { get; set; } = DateTime.Now;
 
-        protected Action<IDriveItemCore> OnDriveItemClickCore { get; set; }
+        protected Func<IDriveItemCore, Task> OnDriveItemClickAsync { get; set; }
+        protected Func<IDriveItemCore, Task> OnDriveItemOptionsClickAsync { get; set; }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
@@ -46,9 +47,29 @@ namespace Turmerik.Blazor.Core.Pages.Components
             return strVal;
         }
 
-        protected Action<MouseEventArgs> OnDriveItemClickEventHandler(IDriveItemCore driveItem)
+        protected Func<MouseEventArgs, Task> OnDriveItemClickEventHandler(IDriveItemCore driveItem)
         {
-            Action<MouseEventArgs> handler = args => OnDriveItemClickCore?.Invoke(driveItem);
+            Func<MouseEventArgs, Task> handler = async args =>
+            {
+                if (OnDriveItemClickAsync != null)
+                {
+                    await OnDriveItemClickAsync(driveItem);
+                }
+            };
+
+            return handler;
+        }
+
+        protected Func<MouseEventArgs, Task> OnDriveItemOptionsClickEventHandler(IDriveItemCore driveItem)
+        {
+            Func<MouseEventArgs, Task> handler = async args =>
+            {
+                if (OnDriveItemOptionsClickAsync != null)
+                {
+                    await OnDriveItemOptionsClickAsync(driveItem);
+                }
+            };
+
             return handler;
         }
     }

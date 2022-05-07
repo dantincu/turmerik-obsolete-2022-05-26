@@ -30,7 +30,10 @@
         OnGoForwardClick=@OnAddressBarGoForwardClick
         OnOptionsClick=@OnCurrentlyOpenFolderOptionsClick
         OnReloadClick=@OnAddressBarReloadClick
-        OnSubmitAddress=@OnSubmitAddress></AddressBar>
+        OnSubmitAddress=@OnSubmitAddress
+        AddressGoBackBtnDisabled=@AddressGoBackBtnDisabled
+        AddressGoForwardBtnDisabled=@AddressGoForwardBtnDisabled
+        AddressGoParentBtnDisabled=@AddressGoParentBtnDisabled></AddressBar>
 
     <div class="@CssClassH.Spacer"></div>
 
@@ -47,7 +50,8 @@
                     DriveItems=@TabViewPageDriveFolders
                     TableCssClass="@CssClassH.DriveFoldersGrid"
                     IconCssClass="oi-folder"
-                    OnDriveItemClick="@OnDriveFolderClick">
+                    OnDriveItemClick="@OnDriveFolderClickAsync"
+                    OnDriveItemOptionsClick=@OnDriveFolderOptionsClick>
                         <SpecificRowColumns Context="ctx">
 
                         </SpecificRowColumns>
@@ -63,7 +67,8 @@
                     DriveItems=@TabViewPageDriveItems
                     TableCssClass="@CssClassH.DriveItemsGrid"
                     IconCssClass="oi-file"
-                    OnDriveItemClick="@OnDriveItemClick">
+                    OnDriveItemClick="@OnDriveItemClickAsync"
+                    OnDriveItemOptionsClick=@OnDriveItemOptionsClick>
                         <SpecificRowColumns Context="ctx">
                             <th class="@CssClassH.ColExt">Ext</th>
                         </SpecificRowColumns>
@@ -77,9 +82,90 @@
             </div>
         </PageTemplate>
     </TabView>
+
+    <SimpleModal
+        ModalId="currently-open-folder-options-modal">
+        <HeaderTemplate>
+            <h5 class="modal-title">@CurrentlyOpenDriveFolder?.DisplayName</h5>
+            <pre>@CurrentlyOpenDriveFolder?.Path</pre>
+        </HeaderTemplate>
+        <BodyTemplate>
+            @if (IsLocalDiskExplorer)
+            {
+                <button type="button" class="btn btn-dark">
+                  Open folder in Windows Explorer
+                </button>
+            }
+        </BodyTemplate>
+    </SimpleModal>
+
+    <SimpleModal
+        ModalId="drive-folder-options-modal">
+        <HeaderTemplate>
+            <h5 class="modal-title">@SelectedDriveFolderName</h5>
+            <pre>@SelectedDriveFolderPath</pre>
+        </HeaderTemplate>
+        <BodyTemplate>
+            @if (IsLocalDiskExplorer)
+            {
+                <button type="button" class="btn btn-dark">
+                  Open folder in Windows Explorer
+                </button>
+            }
+        </BodyTemplate>
+    </SimpleModal>
+
+    <SimpleModal
+        ModalId="drive-item-options-modal">
+        <HeaderTemplate>
+            <h5 class="modal-title">@SelectedDriveItemName</h5>
+            <pre>@SelectedDriveItemPath</pre>
+        </HeaderTemplate>
+        <BodyTemplate>
+            @if (IsLocalDiskExplorer)
+            {
+                <button type="button" class="btn btn-dark">
+                  Open folder in Windows Explorer
+                </button>
+            }
+        </BodyTemplate>
+    </SimpleModal>
 </div>
 
 @code {
+    [Parameter]
+    public bool IsLocalDiskExplorer { get; set; }
+
+    private string SelectedDriveFolderName { get; set; }
+    private string SelectedDriveFolderPath { get; set; }
+
+    private string SelectedDriveItemName { get; set; }
+    private string SelectedDriveItemPath { get; set; }
+
+    protected async Task OnDriveFolderOptionsClick(IDriveItemCore driveFolder)
+    {
+        SelectedDriveFolderName = driveFolder.DisplayName;
+        SelectedDriveFolderPath = driveFolder.Path;
+
+        await OnDriveFolderOptionsClickAsync((IDriveFolder)driveFolder);
+    }
+
+    protected async Task OnDriveItemOptionsClick(IDriveItemCore driveItem)
+    {
+        SelectedDriveItemName = driveItem.DisplayName;
+        SelectedDriveItemPath = driveItem.Path;
+
+        await OnDriveItemOptionsClickAsync((IDriveItem)driveItem);
+    }
+
+    protected async Task OnDriveFolderOptionsClickAsync(IDriveFolder driveFolder)
+    {
+    }
+
+    protected async Task OnDriveItemOptionsClickAsync(IDriveItem driveItem)
+    {
+    }
+
     protected override async Task OnInitializedAsync()
     {
         Mapper = mapper;

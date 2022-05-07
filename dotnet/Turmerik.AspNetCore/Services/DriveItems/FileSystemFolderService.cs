@@ -105,6 +105,12 @@ namespace Turmerik.AspNetCore.Services.DriveItems
                 driveFolder.DriveFoldersList = new DriveFoldersList(null, mtblFolders);
                 driveFolder.DriveItemsList = new DriveItemsList(null, mtblFiles);
 
+                driveFolder.ParentFolder = new NestedDriveFolder(
+                    null, new DriveFolderMtbl
+                    {
+                        Path = Path.GetDirectoryName(driveFolder.Path)
+                    });
+
                 driveFolderImmtbl = new DriveFolderImmtbl(Mapper, driveFolder);
             }
 

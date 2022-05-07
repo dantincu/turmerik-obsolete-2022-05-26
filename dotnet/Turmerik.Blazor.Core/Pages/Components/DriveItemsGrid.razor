@@ -47,7 +47,7 @@
                     @dvItem.Name
                  </td>
                 <td title="Options">
-                    <i class="oi oi-ellipses trmrk-rotate90deg"></i>
+                    <i class="oi oi-ellipses trmrk-rotate90deg" @onclick=@OnDriveItemOptionsClickEventHandler(dvItem)></i>
                 </td>
                 @if (SpecificRowCells != null)
                 {
@@ -85,10 +85,17 @@
     public string IconCssClass { get; set; }
 
     [Parameter]
-    public Action<IDriveItemCore> OnDriveItemClick
+    public Func<IDriveItemCore, Task> OnDriveItemClick
     {
-        get => OnDriveItemClickCore;
-        set => OnDriveItemClickCore = value;
+        get => OnDriveItemClickAsync;
+        set => OnDriveItemClickAsync = value;
+    }
+
+    [Parameter]
+    public Func<IDriveItemCore, Task> OnDriveItemOptionsClick
+    {
+        get => OnDriveItemOptionsClickAsync;
+        set => OnDriveItemOptionsClickAsync = value;
     }
 
     protected override async Task OnInitializedAsync()

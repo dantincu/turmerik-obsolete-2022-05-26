@@ -20,9 +20,18 @@
         public const string FOLDERS = "folders";
         public const string OPEN = "open";
         public const string TABS = "tabs";
+        public const string ADDRESS = "address";
+        public const string HISTORY = "history";
+        public const string STACK = "stack";
 
         public static readonly string LocalSessionId = GetKey(LOCAL, SESSION, ID);
         public static readonly string UserSessionId = GetKey(USER, SESSION, ID);
+
+        public static string AddressHistoryStackKey(Guid localSessionGuid)
+        {
+            string key = GetLocalStorageKey(localSessionGuid, ADDRESS, HISTORY, STACK);
+            return key;
+        }
 
         public static string RootDriveFolderKey(Guid localSessionGuid)
         {
