@@ -8,11 +8,15 @@
 <div class="@CssClassH.TabView">
     @if (PageHeadsList != null)
     {
-        <div class="btn-group @CssClassH.TabViewHeader" role="group">
+        <div class="@CssClassH.TabViewHeader" role="group">
             @foreach (var tabPageHead in PageHeadsList)
             {
-                <button type="button" class="@GetTabPageHeadCssClass(tabPageHead)">@tabPageHead.Name</button>
+                <div class="@GetTabPageHeadCssClass(tabPageHead)">
+                    <span class="@CssClassH.Name">@tabPageHead.Name</span>
+                    <span class="oi oi-x" aria-hidden="true"></span>
+                </div>
             }
+            <span class="oi oi-plus" aria-hidden="true"></span>
         </div>
         
         <div class="@CssClassH.TabPage">
@@ -65,18 +69,12 @@
     {
         var cssClassList = new List<string>
         {
-            "btn",
             CssClassH.TabPageHead
         };
 
         if (tabPageHead.IsCurrent)
         {
-            cssClassList.Add("btn-dark");
             cssClassList.Add(CssClassH.Current);
-        }
-        else
-        {
-            cssClassList.Add("btn-outline-dark");
         }
 
         string cssClasses = string.Join(' ', cssClassList);

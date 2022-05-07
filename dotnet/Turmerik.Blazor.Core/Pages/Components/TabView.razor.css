@@ -1,45 +1,96 @@
-﻿.trmrk-tab-view,
-.trmrk-tab-view-header,
-.trmrk-tab-page-head {
+﻿.trmrk-tab-view-header,
+.trmrk-tab-page {
+    display: flex;
     margin: 0;
+    padding: 0;
     border: 1px solid #404040;
     border-radius: 2px;
+    color: #d7d7d7;
     font-size: 0.8rem;
 }
-
-    .trmrk-tab-page-head.trmrk-current {
-        border: 1px solid #606060;
-        border-width: 1px 1px 1px 1px;
+.trmrk-tab-page-head {
+    display: flex;
+    margin: 0;
+    padding: 0;
+}
+    .trmrk-tab-view-header > .oi,
+    .trmrk-tab-page-head > .oi,
+    .trmrk-tab-page-head > .trmrk-name,
+    .trmrk-tab-page-head.trmrk-current > .trmrk-name,
+    .trmrk-tab-page-head.trmrk-current > .oi {
+        cursor: pointer;
+        display: inline-flex;
+        border: 1px solid #404040;
+        border-radius: 2px;
+        height: 1.4rem;
     }
 
-.trmrk-name {
-    padding: 4px 3px 0px 3px;
+    .trmrk-tab-view-header > .oi,
+    .trmrk-tab-page-head > .oi,
+    .trmrk-tab-page-head.trmrk-current > .oi {
+        position: relative;
+        top: 0px;
+        padding: 4px 4px 4px 4px;
+        margin: 0;
+        font-weight: normal;
+    }
+
+        .trmrk-tab-view-header > .oi{
+            padding-top: 5px;
+        }
+
+
+            .trmrk-tab-view-header > .oi:hover,
+            .trmrk-tab-page-head > .oi:hover,
+            .trmrk-tab-page-head.trmrk-current > .oi:hover {
+                color: lightgoldenrodyellow;
+            }
+
+.trmrk-tab-page-head > .trmrk-name,
+.trmrk-tab-page-head.trmrk-current > .trmrk-name {
+    padding: 2px 4px 4px 4px;
     margin: 0;
-    line-height: 0.8rem;
 }
 
-.trmrk-tab-view {
-    padding: 0px;
-    display: flex;
-    flex-flow: column nowrap;
+.trmrk-tab-page-head.trmrk-current > .trmrk-name,
+.trmrk-tab-page-head.trmrk-current > .oi {
+    background-color: #302818;
+    border: 1px solid #606060;
+    margin: 0;
 }
+
+.trmrk-tab-page-head.trmrk-current > .trmrk-name {
+    border-right: none;
+    border-right-width: 0px;
+    margin-right: 0px;
+}
+
+.trmrk-tab-page-head.trmrk-current > .oi {
+    border-left: none;
+    border-left-width: 0px;
+    margin-left: 0px;
+}
+
+    .trmrk-tab-view {
+        padding: 0px;
+        display: flex;
+        flex-flow: column nowrap;
+    }
 
 .trmrk-tab-view-header {
     display: flex;
     flex-flow: row wrap;
 }
 
-.trmrk-tab-page-head {
-    line-height: 1rem;
-    padding: 6px 4px 3px 4px;
-    flex: none;
+.trmrk-tab-page-head .btn,
+.trmrk-tab-page-header .btn > .oi {
 }
 
-.trmrk-tab-page {
-    display: block;
-    min-height: 100px;
-    padding: 5px;
-}
+    .trmrk-tab-page {
+        display: block;
+        min-height: 100px;
+        padding: 5px;
+    }
 
 ::deep th[scope] {
     width: 25px;
