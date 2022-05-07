@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Turmerik.Core.Data;
 
 namespace Turmerik.Core.Services.DriveItems
 {
@@ -28,7 +29,11 @@ namespace Turmerik.Core.Services.DriveItems
         /// <returns>Information associated with the requested drive folder</returns>
         Task<IDriveFolder> GetRootDriveFolderAsync(Guid cacheKeyGuid, bool refreshCache);
 
-        Task<IReadOnlyCollection<IDriveFolder>> GetCurrentDriveFoldersAsync(IDriveFolder currentlyOpen, Guid cacheKeyGuid);
+        Task<IReadOnlyCollection<IDriveFolder>> GetCurrentDriveFoldersAsync(
+            IDriveFolder currentlyOpen,
+            MutableValueWrapper<int> currentlyOpenIdx,
+            Guid cacheKeyGuid);
+
         bool TryNormalizeAddress(ref string address, out string id);
         bool DriveItemsHaveSameAddress(IDriveItemCore trgItem, IDriveItemCore refItem, bool normalizeFirst);
         string GetDriveItemAddress(IDriveItemCore item);

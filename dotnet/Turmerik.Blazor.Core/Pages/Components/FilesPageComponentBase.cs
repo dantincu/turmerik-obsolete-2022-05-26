@@ -7,6 +7,7 @@ using Turmerik.Core.Services.DriveItems;
 using Turmerik.Core.Helpers;
 using Microsoft.AspNetCore.WebUtilities;
 using System.Collections.Concurrent;
+using Turmerik.Core.Data;
 
 namespace Turmerik.Blazor.Core.Pages.Components
 {
@@ -20,13 +21,15 @@ namespace Turmerik.Blazor.Core.Pages.Components
             AddressBackHistoryStack = new Stack<string>();
             AddressForwardHistoryStack = new Stack<string>();
             TabPageViewModel = new DriveFolderTabPageViewModel();
+            CurrentlyOpenIdx = new MutableValueWrapper<int> { Value = -1 };
         }
 
         protected readonly object SyncRoot = new object();
         protected Stack<string> AddressBackHistoryStack { get; }
         protected Stack<string> AddressForwardHistoryStack { get; }
         protected DriveFolderTabPageViewModel TabPageViewModel { get; }
-        
+        protected MutableValueWrapper<int> CurrentlyOpenIdx { get; }
+
         protected ILocalStorageWrapper LocalStorage { get; set; }
         protected ISessionStorageWrapper SessionStorage { get; set; }
         protected IDriveFolderService DriveFolderService { get; set; }
@@ -178,6 +181,7 @@ namespace Turmerik.Blazor.Core.Pages.Components
 
                 CurrentDriveFolders = await DriveFolderService.GetCurrentDriveFoldersAsync(
                     CurrentlyOpenDriveFolder,
+                    CurrentlyOpenIdx,
                     localSessionGuid);
 
                 TabPageHeadsList = CurrentDriveFolders.Select(

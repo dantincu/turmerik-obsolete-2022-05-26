@@ -8,6 +8,7 @@ using Turmerik.Core.Infrastucture;
 using Turmerik.Core.Services.DriveItems;
 using Turmerik.Core.Helpers;
 using Turmerik.Core.FileSystem;
+using Turmerik.Core.Data;
 
 namespace Turmerik.AspNetCore.Services.DriveItems
 {
@@ -27,26 +28,48 @@ namespace Turmerik.AspNetCore.Services.DriveItems
         public abstract bool DriveItemsHaveSameAddress(IDriveItemCore trgItem, IDriveItemCore refItem, bool normalizeFirst);
         public abstract string GetDriveItemAddress(IDriveItemCore item);
 
-        public async Task<IReadOnlyCollection<IDriveFolder>> GetCurrentDriveFoldersAsync(IDriveFolder currentlyOpen, Guid cacheKeyGuid)
+        public async Task<IReadOnlyCollection<IDriveFolder>> GetCurrentDriveFoldersAsync(
+            IDriveFolder currentlyOpen,
+            MutableValueWrapper<int> currentlyOpenIdx,
+            Guid cacheKeyGuid)
         {
             var mtblList = await Storage.AddOrUpdateAsync(
                 LocalStorageKeys.CurrentDriveFoldersKey(cacheKeyGuid),
                 async () => new List<DriveFolderMtbl>(),
-                async list =>
+                async (List<DriveFolderMtbl> list) =>
                 {
-                    if (list.None(
-                        item => DriveItemsHaveSameAddress(
-                            item,
-                            currentlyOpen,
-                            false)))
+                    if (currentlyOpenIdx.Value >= 0)
                     {
-                        list.Add(new DriveFolderMtbl
+                        list[currentlyOpenIdx.Value] = new DriveFolderMtbl
                         {
                             Id = currentlyOpen.Id,
                             Name = currentlyOpen.DisplayName ?? currentlyOpen.Name,
                             Path = currentlyOpen.Path,
                             Uri = currentlyOpen.Uri
-                        });
+                        };
+                    }
+                    else
+                    {
+                        var kvp = list.FindVal(
+                            (item, idx) => DriveItemsHaveSameAddress(
+                                item, currentlyOpen, false));
+
+                        if (kvp.Key < 0)
+                        {
+                            currentlyOpenIdx.Value = list.Count;
+
+                            list.Add(new DriveFolderMtbl
+                            {
+                                Id = currentlyOpen.Id,
+                                Name = currentlyOpen.DisplayName ?? currentlyOpen.Name,
+                                Path = currentlyOpen.Path,
+                                Uri = currentlyOpen.Uri
+                            });
+                        }
+                        else
+                        {
+                            currentlyOpenIdx.Value = kvp.Key;
+                        }
                     }
 
                     return list;
