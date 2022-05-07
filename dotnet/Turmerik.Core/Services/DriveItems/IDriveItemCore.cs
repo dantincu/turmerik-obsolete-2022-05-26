@@ -8,6 +8,7 @@ namespace Turmerik.Core.Services.DriveItems
     {
         string Id { get; }
         string Name { get; }
+        string DisplayName { get; }
         string Path { get; }
         string Uri { get; }
         bool? IsFolder { get; }
@@ -31,6 +32,7 @@ namespace Turmerik.Core.Services.DriveItems
 
         public string Id { get; protected set; }
         public string Name { get; protected set; }
+        public string DisplayName { get; protected set; }
         public string Path { get; protected set; }
         public string Uri { get; protected set; }
         public bool? IsFolder { get; protected set; }
@@ -58,6 +60,7 @@ namespace Turmerik.Core.Services.DriveItems
 
         public string Id { get; set; }
         public string Name { get; set; }
+        public string DisplayName { get; set; }
         public string Path { get; set; }
         public string Uri { get; set; }
         public bool? IsFolder { get; set; }

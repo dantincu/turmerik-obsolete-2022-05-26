@@ -12,8 +12,11 @@
     <IconButton CssClass="oi oi-arrow-circle-top" Title="Go Up" OnMouseUp=@OnGoUpMouseUpAsyncEventHandler></IconButton>
 
     <IconButton CssClass="oi oi-arrow-circle-right" Title="Go Forward" OnMouseUp=@OnGoForwardMouseUpAsyncEventHandler></IconButton>
+
     <input type="text" value="@InitialAddressStrValue" class="@CssClassH.AddressBar @CssClassH.Hidden" @onfocus=@OnAddressBarFocusAsync @onkeydown=@OnAddressBarKeyDownAsyncEventHandler />
     <input type="text" readonly value="@InitialAddressStrValue" class="@CssClassH.AddressBarReadonly" @onclick=@OnAddressBarReadonlyClickAsyncEventHandler></input>
+
+    <IconButton CssClass="oi oi-ellipses trmrk-rotate90deg" Title="Options" OnMouseUp=@OnOptionsMouseUpAsyncEventHandler></IconButton>
     
     <IconButton CssClass="oi oi-arrow-circle-right" Title="Go to address" OnMouseUp=@OnGoToAddressMouseUpAsyncEventHandler></IconButton>
     <IconButton CssClass="oi oi-reload" Title="Reload" OnMouseUp=@OnReloadMouseUpAsyncEventHandler></IconButton>
@@ -37,6 +40,9 @@
 
     [Parameter]
     public Func<TextEventArgsWrapper, Task> OnCancelAddress { get; set; }
+
+    [Parameter]
+    public Func<MouseEventArgs, Task> OnOptionsClick { get; set; }
 
     [Parameter]
     public Func<MouseEventArgs, Task> OnReloadClick { get; set; }
@@ -77,6 +83,11 @@
     protected async Task OnGoForwardMouseUpAsyncEventHandler(MouseEventArgs args)
     {
         await OnGoForwardClick.InvokeMouseClickAsyncIfLeftBtn(args);
+    }
+
+    protected async Task OnOptionsMouseUpAsyncEventHandler(MouseEventArgs args)
+    {
+        await OnOptionsClick.InvokeMouseClickAsyncIfLeftBtn(args);
     }
 
     protected async Task OnGoToAddressMouseUpAsyncEventHandler(MouseEventArgs args)

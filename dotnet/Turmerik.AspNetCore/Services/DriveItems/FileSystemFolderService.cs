@@ -152,6 +152,7 @@ namespace Turmerik.AspNetCore.Services.DriveItems
         private void FillDriveItemCoreMtblProps(DriveItemCoreMtbl mtbl, FileSystemInfo info)
         {
             mtbl.Name = info.Name;
+            mtbl.DisplayName = info.Name;
             mtbl.Path = info.FullName;
             mtbl.CreationTime = info.CreationTime;
             mtbl.LastAccessTime = info.LastAccessTime;

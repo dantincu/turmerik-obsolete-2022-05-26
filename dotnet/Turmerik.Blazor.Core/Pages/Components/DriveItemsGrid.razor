@@ -1,0 +1,99 @@
+﻿@using Blazored.LocalStorage
+@using Blazored.SessionStorage
+@using Microsoft.JSInterop
+@using System.Collections
+@using Turmerik.AspNetCore.Infrastructure
+@using Turmerik.AspNetCore.Services
+@using Turmerik.AspNetCore.Services.DriveItems
+@using Turmerik.AspNetCore.Services.LocalSessionStorage
+@using Turmerik.AspNetCore.Settings
+@using Turmerik.Blazor.Core.Pages.Components
+@using Turmerik.Core.Cloneable
+@using Turmerik.Core.Components
+@using Turmerik.Core.Services.DriveItems
+@using Microsoft.AspNetCore.Components.Web;
+
+@inherits DriveItemsGridBase
+
+@typeparam DriveItemType
+
+@inject IJSRuntime jsRuntime;
+@inject ITimeStampHelper timeStampH;
+
+<table class="table table-sm table-dark table-hover @CssClassH.Table @TableCssClass"
+    data-trmrk-ref-date-time="@FormatDateTimeExact(Now)">
+    <thead>
+        <tr>
+            <th scope="col"></th>
+            <th class="@CssClassH.ColName">Name</th>
+            <th class="@CssClassH.Options" title="Options"></th>
+            @if (SpecificRowColumns != null)
+            {
+                @SpecificRowColumns(null)
+            }   
+            <th data-trmrk-date-time="" class=@CssClassH.ColDateTime>Accessed</th>
+            <th data-trmrk-date-time="" class=@CssClassH.ColDateTime>Written</th>
+            <th data-trmrk-date-time="" class=@CssClassH.ColDateTime>Created</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var driveItem in DriveItems)
+        {
+            var dvItem = driveItem as IDriveItemCore;
+
+            <tr>
+                <th scope="row"><span class="oi @IconCssClass" aria-hidden="true"></span></th>
+                <td title="@dvItem.DisplayName" @onclick=@OnDriveItemClickEventHandler(dvItem)>
+                    @dvItem.Name
+                 </td>
+                <td title="Options">
+                    <i class="oi oi-ellipses trmrk-rotate90deg"></i>
+                </td>
+                @if (SpecificRowCells != null)
+                {
+                    @SpecificRowCells(dvItem)
+                }
+                @foreach (var dt in new DateTime[]
+                    {
+                        dvItem.LastAccessTime,
+                        dvItem.LastWriteTime,
+                        dvItem.CreationTime
+                    })
+                {
+                    string ts = FormatDateTimeExact(dt);
+                    <td title="@ts" data-trmrk-date-time="@ts">@ts</td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    [Parameter]
+    public IEnumerable DriveItems { get; set; }
+
+    [Parameter]
+    public RenderFragment<object> SpecificRowColumns { get; set; }
+
+    [Parameter]
+    public RenderFragment<IDriveItemCore> SpecificRowCells { get; set; }
+
+    [Parameter]
+    public string TableCssClass { get; set; }
+
+    [Parameter]
+    public string IconCssClass { get; set; }
+
+    [Parameter]
+    public Action<IDriveItemCore> OnDriveItemClick
+    {
+        get => OnDriveItemClickCore;
+        set => OnDriveItemClickCore = value;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        this.JSRuntime = jsRuntime;
+        this.TimeStampH = timeStampH;
+    }
+}

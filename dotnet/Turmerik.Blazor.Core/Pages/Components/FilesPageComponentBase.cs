@@ -117,6 +117,11 @@ namespace Turmerik.Blazor.Core.Pages.Components
 
         }
 
+        protected async Task OnCurrentlyOpenFolderOptionsClick(MouseEventArgs args)
+        {
+
+        }
+
         protected async Task OnAddressBarReloadClick(MouseEventArgs args)
         {
 
@@ -141,6 +146,16 @@ namespace Turmerik.Blazor.Core.Pages.Components
             {
                 SetError(INVALID_ADDRESS_ERR_MSG);
             }
+        }
+
+        protected void OnDriveFolderClick(IDriveItemCore driveFolder)
+        {
+
+        }
+
+        protected void OnDriveItemClick(IDriveItemCore driveItem)
+        {
+
         }
 
         protected TabPageHeadMtbl DriveItemToTabPageHead(IDriveItemCore driveItem, bool isCurrent)

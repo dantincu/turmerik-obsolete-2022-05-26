@@ -5,7 +5,6 @@ namespace Turmerik.Core.Services.DriveItems
 {
     public interface IDriveFolder : IDriveItemCore
     {
-        string DisplayName { get; }
         bool? IsRootFolder { get; }
         FileSystemFolderType? FileSystemFolderType { get; }
         DriveFoldersList DriveFoldersList { get; }
@@ -22,7 +21,6 @@ namespace Turmerik.Core.Services.DriveItems
         {
         }
 
-        public string DisplayName { get; protected set; }
         public bool? IsRootFolder { get; protected set; }
         public FileSystemFolderType? FileSystemFolderType { get; protected set; }
         public DriveFoldersList DriveFoldersList { get; protected set; }
@@ -43,7 +41,6 @@ namespace Turmerik.Core.Services.DriveItems
         {
         }
 
-        public string DisplayName { get; set; }
         public bool? IsRootFolder { get; set; }
         public FileSystemFolderType? FileSystemFolderType { get; set; }
         public DriveFoldersList DriveFoldersList { get; set; }
