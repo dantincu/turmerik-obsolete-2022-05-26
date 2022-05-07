@@ -64,7 +64,12 @@ namespace Turmerik.Blazor.Core.Pages.Components
                 await IfLocalSessionGuidHasValueAsync(async localSessionGuid =>
                 {
                     TryPushAddressToHistory(InputAddress);
-                    await LoadCurrentlyOpenFolderAsync(localSessionGuid, false);
+
+                    await LoadCurrentlyOpenFolderAsync(
+                        localSessionGuid,
+                        InputAddress,
+                        false,
+                        false);
                 });
             }
         }
@@ -98,7 +103,7 @@ namespace Turmerik.Blazor.Core.Pages.Components
         {
             await IfLocalSessionGuidHasValueAsync(async localSessionGuid =>
             {
-                await LoadCurrentlyOpenFolderAsync(localSessionGuid, true);
+                await LoadCurrentlyOpenFolderAsync(localSessionGuid, DriveItemId, true, false);
             });
         }
 
@@ -121,7 +126,7 @@ namespace Turmerik.Blazor.Core.Pages.Components
                 string targetUrl = QueryHelpers.AddQueryString(
                     uriWithoutQueryString, queryString);
 
-                await LoadCurrentlyOpenFolderAsync(localSessionGuid, address, false);
+                await LoadCurrentlyOpenFolderAsync(localSessionGuid, address, false, false);
                 NavManager.Manager.NavigateTo(targetUrl, false);
             });
         }
@@ -138,19 +143,17 @@ namespace Turmerik.Blazor.Core.Pages.Components
 
         protected async Task LoadCurrentlyOpenFolderAsync(
             Guid localSessionGuid,
-            bool refreshCache)
-        {
-            ClearError();
-            TryNormalizeAddress();
-
-            await LoadCurrentlyOpenFolderAsync(localSessionGuid, DriveItemId, refreshCache);
-        }
-
-        protected async Task LoadCurrentlyOpenFolderAsync(
-            Guid localSessionGuid,
             string driveItemId,
-            bool refreshCache)
+            bool refreshCache,
+            bool clearErrors)
         {
+            if (clearErrors)
+            {
+                ClearError();
+            }
+
+            TryNormalizeAddress(driveItemId);
+
             if (ErrorViewModel == null)
             {
                 await LoadCurrentlyOpenFolderCoreAsync(localSessionGuid, driveItemId, refreshCache);
@@ -222,11 +225,11 @@ namespace Turmerik.Blazor.Core.Pages.Components
                 AppSettings.IsDevMode);
         }
 
-        protected void TryNormalizeAddress()
+        protected void TryNormalizeAddress(string inputAddress)
         {
-            InputAddress = QueryStrings.GetStringOrNull(QsKeys.DRIVE_ITEM_ID);
+            InputAddress = inputAddress;
 
-            string normAddress = InputAddress;
+            string normAddress = inputAddress;
             string driveItemId;
 
             if (!string.IsNullOrWhiteSpace(
@@ -243,6 +246,11 @@ namespace Turmerik.Blazor.Core.Pages.Components
                 {
                     SetError(INVALID_ADDRESS_ERR_MSG);
                 }
+            }
+            else
+            {
+                AddressStrValue = null;
+                DriveItemId = null;
             }
         }
 
