@@ -46,6 +46,7 @@
                         <tr>
                             <th scope="col"></th>
                             <th class="@CssClassH.ColName">Name</th>
+                            <th class="@CssClassH.Options" title="Options"></th>
                             <th data-trmrk-date-time="" class=@CssClassH.ColDateTime>Accessed</th>
                             <th data-trmrk-date-time="" class=@CssClassH.ColDateTime>Written</th>
                             <th data-trmrk-date-time="" class=@CssClassH.ColDateTime>Created</th>
@@ -57,6 +58,9 @@
                             <tr>
                                 <th scope="row"><span class="oi oi-folder" aria-hidden="true"></span></th>
                                 <td title="@subFolder.DisplayName">@subFolder.Name</td>
+                                <td title="Options">
+                                    <i class="oi oi-ellipses trmrk-rotate90deg"></i>
+                                </td>
                                 @foreach (var dt in new DateTime[]
                                  {
                                      subFolder.LastAccessTime,

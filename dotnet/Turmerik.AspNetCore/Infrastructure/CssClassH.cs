@@ -21,6 +21,7 @@ namespace Turmerik.AspNetCore.Infrastructure
         public const string DETAILS = "details";
         public const string DEFAULT = "default";
         public const string DARK = "dark";
+        public const string OPTIONS = "options";
 
         public const string LINK = "link";
         public const string BLOCK = "block";
@@ -62,6 +63,8 @@ namespace Turmerik.AspNetCore.Infrastructure
         public const string FOLDERS = "folders";
         public const string ADDRESS = "address";
 
+        public const string ROTATE90DEG = "rotate90deg";
+
         public static readonly string Hidden = Class(HIDDEN);
         public static readonly string Current = Class(CURRENT);
         public static readonly string Selected = Class(SELECTED);
@@ -73,6 +76,7 @@ namespace Turmerik.AspNetCore.Infrastructure
         public static readonly string ErrorBlockLarge = Class(ERROR, BLOCK, LARGE);
         public static readonly string ErrorDetails = Class(ERROR, DETAILS);
         public static readonly string Dark = Class(DARK);
+        public static readonly string Options = Class(OPTIONS);
 
         public static readonly string DefaultLink = Class(DEFAULT, LINK);
         public static readonly string Btn = Class(BTN);
@@ -111,6 +115,8 @@ namespace Turmerik.AspNetCore.Infrastructure
         public static readonly string AddressBar = Class(ADDRESS, BAR);
         public static readonly string AddressBarContainer = Class(ADDRESS, BAR, CONTAINER);
         public static readonly string AddressBarReadonly = Class(ADDRESS, BAR, READONLY);
+
+        public static readonly string Rotate90Deg = Class(ROTATE90DEG);
 
         public static string CssClsSel(this string cssClass)
         {
