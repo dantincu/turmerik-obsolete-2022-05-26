@@ -18,6 +18,7 @@ namespace Turmerik.AspNetCore.MsIdentity.Services.DriveItems
             Storage = sessionStorageWrapper;
         }
 
+        public override DriveItemIdentifierType PreferredIdentifierType => DriveItemIdentifierType.Id | DriveItemIdentifierType.Uri;
         protected override IWebStorageWrapper Storage { get; }
 
         public override bool TryNormalizeAddress(ref string path, out string id)
@@ -25,19 +26,24 @@ namespace Turmerik.AspNetCore.MsIdentity.Services.DriveItems
             throw new NotImplementedException();
         }
 
-        public override bool DriveItemsHaveSameAddress(IDriveItemCore trgItem, IDriveItemCore refItem, bool normalizeFirst)
+        public override bool DriveItemsHaveSameIdentifiers(IDriveItemCore trgItem, IDriveItemCore refItem, bool normalizeFirst)
         {
             throw new NotImplementedException();
         }
 
-        public override string GetDriveItemAddress(IDriveItemCore item) => item.Uri;
+        public override string GetDriveItemIdentifier(IDriveItemCore item) => item.Uri;
 
-        protected override async Task<IDriveFolder> GetDriveFolderCoreAsync(string pathOrId)
+        protected override async Task<IDriveFolder> GetDriveFolderCoreAsync(string idnf)
         {
             throw new NotImplementedException();
         }
 
         protected override async Task<IDriveFolder> GetRootDriveFolderCoreAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool IdentifiersAreEquivalent(string trgIdnf, string refIdnf, bool normalizeFirst)
         {
             throw new NotImplementedException();
         }

@@ -21,12 +21,14 @@ namespace Turmerik.AspNetCore.Services.DriveItems
             this.FsPathNormalizer = fsPathNormalizer ?? throw new ArgumentNullException(nameof(fsPathNormalizer));
         }
 
+        public abstract DriveItemIdentifierType PreferredIdentifierType { get; }
         protected abstract IWebStorageWrapper Storage { get; }
         protected IFsPathNormalizer FsPathNormalizer { get; }
 
         public abstract bool TryNormalizeAddress(ref string address, out string pathOrId);
-        public abstract bool DriveItemsHaveSameAddress(IDriveItemCore trgItem, IDriveItemCore refItem, bool normalizeFirst);
-        public abstract string GetDriveItemAddress(IDriveItemCore item);
+        public abstract bool DriveItemsHaveSameIdentifiers(IDriveItemCore trgItem, IDriveItemCore refItem, bool normalizeFirst);
+        public abstract bool IdentifiersAreEquivalent(string trgPath, string refPath, bool normalizeFirst);
+        public abstract string GetDriveItemIdentifier(IDriveItemCore item);
 
         public async Task<IReadOnlyCollection<IDriveFolder>> GetCurrentDriveFoldersAsync(
             IDriveFolder currentlyOpen,
@@ -51,7 +53,7 @@ namespace Turmerik.AspNetCore.Services.DriveItems
                     else
                     {
                         var kvp = list.FindVal(
-                            (item, idx) => DriveItemsHaveSameAddress(
+                            (item, idx) => DriveItemsHaveSameIdentifiers(
                                 item, currentlyOpen, false));
 
                         if (kvp.Key < 0)
@@ -86,6 +88,7 @@ namespace Turmerik.AspNetCore.Services.DriveItems
             IDriveFolder driveFolder = await GetCoreAsync(
                 LocalStorageKeys.DriveFoldersKey(cacheKeyGuid, pathOrId),
                 refreshCache,
+                pathOrId,
                 async () => await GetDriveFolderCoreAsync(pathOrId),
                 FolderToMtbl,
                 MtblToFolder);
@@ -98,6 +101,7 @@ namespace Turmerik.AspNetCore.Services.DriveItems
             IDriveFolder rootFolder = await GetCoreAsync(
                 LocalStorageKeys.RootDriveFolderKey(cacheKeyGuid),
                 refreshCache,
+                null,
                 async () => await GetRootDriveFolderCoreAsync(),
                 FolderToMtbl,
                 MtblToFolder);
@@ -135,11 +139,12 @@ namespace Turmerik.AspNetCore.Services.DriveItems
         private async Task<TClnbl> GetCoreAsync<TClnbl, TMtbl>(
             string key,
             bool refreshCache,
+            string idnf,
             Func<Task<TClnbl>> mainFactory,
             Func<TClnbl, TMtbl> mtblFactory,
             Func<TMtbl, TClnbl> clnblFactory)
             where TClnbl : class
-            where TMtbl : TClnbl
+            where TMtbl : IDriveItemCore
         {
             TClnbl retVal = null;
 
@@ -152,15 +157,29 @@ namespace Turmerik.AspNetCore.Services.DriveItems
             }
             else
             {
-                TMtbl mtbl = await Storage.GetOrCreateAsync(key, async () =>
-                {
-                    retVal = await mainFactory();
-                    TMtbl mtbl = mtblFactory(retVal);
+                TMtbl mtbl = await Storage.AddOrUpdateAsync(
+                    key,
+                    async () =>
+                    {
+                        retVal = await mainFactory();
+                        TMtbl mtbl = mtblFactory(retVal);
 
-                    return mtbl;
-                },
-                true,
-                true);
+                        return mtbl;
+                    },
+                    async mtbl =>
+                    {
+                        if (!string.IsNullOrWhiteSpace(
+                            idnf) && !IdentifiersAreEquivalent(
+                            idnf, GetDriveItemIdentifier(mtbl), true))
+                        {
+                            retVal = await mainFactory();
+                            mtbl = mtblFactory(retVal);
+                        }
+
+                        return mtbl;
+                    },
+                    true,
+                    true);
 
                 if (retVal == null)
                 {

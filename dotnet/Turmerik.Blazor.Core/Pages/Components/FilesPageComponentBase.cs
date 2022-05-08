@@ -63,6 +63,9 @@ namespace Turmerik.Blazor.Core.Pages.Components
             {
                 await IfLocalSessionGuidHasValueAsync(async localSessionGuid =>
                 {
+                    InputAddress = NavManager.QueryStrings.GetStringOrNull(
+                        QsKeys.DRIVE_ITEM_ID);
+
                     TryPushAddressToHistory(InputAddress);
 
                     await LoadCurrentlyOpenFolderAsync(
@@ -85,8 +88,8 @@ namespace Turmerik.Blazor.Core.Pages.Components
 
             if (parentFolder != null)
             {
-                string address = DriveFolderService.GetDriveItemAddress(parentFolder);
-                await SubmitAddressAsync(address);
+                InputAddress = DriveFolderService.GetDriveItemIdentifier(parentFolder);
+                await TryPushAddressToHistoryAsync(InputAddress);
             }
         }
 
@@ -109,8 +112,8 @@ namespace Turmerik.Blazor.Core.Pages.Components
 
         protected async Task OnSubmitAddress(TextEventArgsWrapper args)
         {
-            string address = args.Value;
-            await SubmitAddressAsync(address);
+            InputAddress = args.Value;
+            await SubmitAddressAsync(InputAddress);
         }
 
         protected async Task SubmitAddressAsync(string address)
@@ -133,8 +136,8 @@ namespace Turmerik.Blazor.Core.Pages.Components
 
         protected async Task OnDriveFolderClickAsync(IDriveItemCore driveFolder)
         {
-            string address = DriveFolderService.GetDriveItemAddress(driveFolder);
-            await SubmitAddressAsync(address);
+            InputAddress = DriveFolderService.GetDriveItemIdentifier(driveFolder);
+            await TryPushAddressToHistoryAsync(InputAddress);
         }
 
         protected async Task OnDriveItemClickAsync(IDriveItemCore driveItem)
@@ -156,7 +159,7 @@ namespace Turmerik.Blazor.Core.Pages.Components
 
             if (ErrorViewModel == null)
             {
-                await LoadCurrentlyOpenFolderCoreAsync(localSessionGuid, driveItemId, refreshCache);
+                await LoadCurrentlyOpenFolderCoreAsync(localSessionGuid, DriveItemId, refreshCache);
             }
 
             StateHasChanged();
@@ -189,7 +192,7 @@ namespace Turmerik.Blazor.Core.Pages.Components
 
                 TabPageHeadsList = CurrentDriveFolders.Select(
                     (item) => (ITabPageHead)DriveItemToTabPageHead(
-                        item, DriveFolderService.DriveItemsHaveSameAddress(
+                        item, DriveFolderService.DriveItemsHaveSameIdentifiers(
                             item, CurrentlyOpenDriveFolder, false))).ToList();
 
                 TabPageViewModel.Data = CurrentlyOpenDriveFolder;
@@ -256,19 +259,35 @@ namespace Turmerik.Blazor.Core.Pages.Components
 
         protected void TryPushAddressToHistory(string address)
         {
+            bool addressGoBackBtnDisabled;
+
             lock (SyncRoot)
             {
+                addressGoBackBtnDisabled = AddressBackHistoryStack.None();
+
                 AddressBackHistoryStack.Push(address);
                 AddressForwardHistoryStack.Clear();
             }
+
+            AddressGoBackBtnDisabled = addressGoBackBtnDisabled;
+            AddressGoForwardBtnDisabled = true;
+        }
+
+        protected async Task TryPushAddressToHistoryAsync(string address)
+        {
+            TryPushAddressToHistory(address);
+
+            InputAddress = address;
+            await SubmitAddressAsync(address);
         }
 
         protected async Task TryPopAddressFromHistoryAsync(bool isBackHistory)
         {
             string address;
 
-            if (TryPopAddressFromHistory(false, out address))
+            if (TryPopAddressFromHistory(isBackHistory, out address))
             {
+                InputAddress = address;
                 await SubmitAddressAsync(address);
             }
         }
@@ -284,23 +303,51 @@ namespace Turmerik.Blazor.Core.Pages.Components
             {
                 if (isBackHistory)
                 {
-                    hasAny = TryPopAddressFromHistory(
-                        AddressBackHistoryStack,
-                        AddressForwardHistoryStack,
-                        out address,
-                        out hasMore);
+                    string currentAddress;
+                    hasAny = AddressBackHistoryStack.TryPop(out currentAddress);
 
-                    AddressGoForwardBtnDisabled = !hasMore;
+                    if (hasAny)
+                    {
+                        AddressForwardHistoryStack.Push(currentAddress);
+                        AddressGoForwardBtnDisabled = false;
+
+                        hasMore = AddressBackHistoryStack.TryPeek(out address);
+
+                        if (hasMore)
+                        {
+                            hasMore = AddressBackHistoryStack.Count > 1;
+                        }
+                        else
+                        {
+                            address = currentAddress;
+                        }
+                    }
+                    else
+                    {
+                        address = null;
+                        hasMore = false;
+
+                        AddressGoForwardBtnDisabled = true;
+                    }
+
+                    AddressGoBackBtnDisabled = !hasMore;
                 }
                 else
                 {
-                    hasAny = TryPopAddressFromHistory(
-                        AddressForwardHistoryStack,
-                        AddressBackHistoryStack,
-                        out address,
-                        out hasMore);
+                    hasAny = AddressForwardHistoryStack.TryPop(out address);
 
-                    AddressGoBackBtnDisabled = !hasMore;
+                    if (hasAny)
+                    {
+                        AddressBackHistoryStack.Push(address);
+                        hasMore = AddressForwardHistoryStack.Any();
+                    }
+                    else
+                    {
+                        hasMore = false;
+                    }
+
+                    AddressGoForwardBtnDisabled = !hasMore;
+                    AddressGoBackBtnDisabled = false;
                 }
             }
 
@@ -314,12 +361,14 @@ namespace Turmerik.Blazor.Core.Pages.Components
             out bool hasMore)
         {
             bool hasAny = srcAddressHistoryStack.TryPop(out address);
-            hasMore = srcAddressHistoryStack.Any();
 
             if (hasAny)
             {
                 destAddressHistoryStack.Push(address);
             }
+
+            hasMore = srcAddressHistoryStack.TryPeek(out address);
+            hasMore = hasMore && srcAddressHistoryStack.Count > 1;
 
             return hasAny;
         }

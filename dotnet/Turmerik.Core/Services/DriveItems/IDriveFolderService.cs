@@ -35,8 +35,10 @@ namespace Turmerik.Core.Services.DriveItems
             Guid cacheKeyGuid);
 
         bool TryNormalizeAddress(ref string address, out string id);
-        bool DriveItemsHaveSameAddress(IDriveItemCore trgItem, IDriveItemCore refItem, bool normalizeFirst);
-        string GetDriveItemAddress(IDriveItemCore item);
+        bool DriveItemsHaveSameIdentifiers(IDriveItemCore trgItem, IDriveItemCore refItem, bool normalizeFirst);
+        bool IdentifiersAreEquivalent(string trgIdnf, string refIdnf, bool normalizeFirst);
+        string GetDriveItemIdentifier(IDriveItemCore item);
+        DriveItemIdentifierType PreferredIdentifierType { get; }
     }
 
 }
