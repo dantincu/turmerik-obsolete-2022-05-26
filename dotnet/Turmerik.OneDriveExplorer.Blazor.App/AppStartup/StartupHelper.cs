@@ -18,7 +18,7 @@ namespace Turmerik.OneDriveExplorer.Blazor.App.AppStartup
         {
             base.RegisterServices(services, useMockData);
             // services.AddScoped<IDriveFolderService, OneDriveFolderService>();
-            services.AddScoped<IDriveFolderService, FileSystemFolderService>();
+            services.AddScoped<IDriveExplorerService, LocalDiskExplorerService>();
         }
     }
 }

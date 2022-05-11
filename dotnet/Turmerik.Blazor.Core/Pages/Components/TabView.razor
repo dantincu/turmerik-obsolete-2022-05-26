@@ -1,22 +1,31 @@
 ﻿@using Turmerik.Blazor.Core.Pages.Components
 @using Turmerik.AspNetCore.Infrastructure;
+@using Microsoft.AspNetCore.Components.Web
+@using Turmerik.Core.Helpers;
+@using Turmerik.Core.Services
+@using Turmerik.Core.Services.DriveItems;
 
 @inherits ComponentCoreBase
 
 @typeparam PageComponentType
 
 <div class="@CssClassH.TabView">
-    @if (PageHeadsList != null)
+    @if (TabHeaderViewState?.TabPageHeads != null)
     {
+        int count = TabHeaderViewState.TabPageHeads.Count;
+
         <div class="@CssClassH.TabViewHeader" role="group">
-            @foreach (var tabPageHead in PageHeadsList)
+            @for (int i = 0; i < count; i++)
             {
-                <div class="@GetTabPageHeadCssClass(tabPageHead)">
+                var tabPageHead = TabHeaderViewState.TabPageHeads[i];
+
+                <div class="@GetTabPageHeadCssClass(tabPageHead)" data-trmrk-idx="">
                     <span class="@CssClassH.Name">@tabPageHead.Name</span>
-                    <span class="oi oi-x" aria-hidden="true"></span>
+                    <span class="oi oi-x" aria-hidden="true" @onmouseup=@OnCloseTabPageClickEventHandler(i)></span>
                 </div>
             }
-            <span class="oi oi-plus" aria-hidden="true"></span>
+
+            <span class="oi oi-plus" aria-hidden="true" @onmouseup=@OnNewTabPageClick></span>
         </div>
         
         <div class="@CssClassH.TabPage">
@@ -59,25 +68,42 @@
     public PageComponentType PageItem { get; set; }
 
     [Parameter]
-    public List<ITabPageHead> PageHeadsList { get; set; }
+    public TabHeaderViewState TabHeaderViewState { get; set; }
 
     [Parameter]
     public ErrorViewModel Error { get; set; }
 
+    [Parameter]
+    public Func<MouseEventArgs, Task> OnNewTabPageClick { get; set; }
+
+    [Parameter]
+    public Func<IntEventArgsWrapper, Task> OnCloseTabPageClick { get; set; }
+
     protected string GetTabPageHeadCssClass(
-        ITabPageHead tabPageHead)
+        TabPageHead tabPageHead)
     {
         var cssClassList = new List<string>
         {
             CssClassH.TabPageHead
         };
 
-        if (tabPageHead.IsCurrent)
+        if (tabPageHead.IsCurrent == true)
         {
             cssClassList.Add(CssClassH.Current);
         }
 
         string cssClasses = string.Join(' ', cssClassList);
         return cssClasses;
+    }
+
+    protected Func<MouseEventArgs, Task> OnCloseTabPageClickEventHandler(int idx)
+    {
+        Func<MouseEventArgs, Task> eventHandler = async args =>
+        {
+            var eventArgs = new IntEventArgsWrapper(args, idx);
+            await OnCloseTabPageClick.InvokeAsyncIfReq(eventArgs);
+        };
+
+        return eventHandler;
     }
 }

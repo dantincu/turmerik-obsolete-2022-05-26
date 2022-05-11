@@ -19,7 +19,7 @@ namespace Turmerik.Core.Services.DriveItems
         /// <param name="cacheKeyGuid">Value used to create the local data cache key to retrieve data from cache
         /// instead of querying from the source every time</param>
         /// <returns>Information associated with the requested drive folder</returns>
-        Task<IDriveFolder> GetDriveFolderAsync(string pathOrId, Guid cacheKeyGuid, bool refreshCache);
+        Task<IDriveFolder> GetDriveFolderAsync(IDriveItemIdentifier identifier, Guid cacheKeyGuid, bool refreshCache);
 
         /// <summary>
         /// Retrieves the information associated with the requested drive folder
@@ -29,15 +29,16 @@ namespace Turmerik.Core.Services.DriveItems
         /// <returns>Information associated with the requested drive folder</returns>
         Task<IDriveFolder> GetRootDriveFolderAsync(Guid cacheKeyGuid, bool refreshCache);
 
-        Task<IReadOnlyCollection<IDriveFolder>> GetCurrentDriveFoldersAsync(
-            IDriveFolder currentlyOpen,
-            MutableValueWrapper<int> currentlyOpenIdx,
+        Task<ITabViewState> GetCurrentTabViewStateAsync(
+            MutableValueWrapper<Guid?> currentlyOpenUuid,
+            MutableValueWrapper<IDriveItemIdentifier> currentlyOpenIdnf,
+            MutableValueWrapper<string> address,
             Guid cacheKeyGuid);
 
-        bool TryNormalizeAddress(ref string address, out string id);
-        bool DriveItemsHaveSameIdentifiers(IDriveItemCore trgItem, IDriveItemCore refItem, bool normalizeFirst);
-        bool IdentifiersAreEquivalent(string trgIdnf, string refIdnf, bool normalizeFirst);
-        string GetDriveItemIdentifier(IDriveItemCore item);
+        bool IdentifiersAreEquivalent(IDriveItemIdentifier trgIdnf, IDriveItemIdentifier refIdnf);
+        IDriveItemIdentifier GetDriveItemIdentifier(string address);
+        string GetDriveItemAddress(IDriveItemIdentifier idnf);
+        string GetDriveItemStrIndf(IDriveItemIdentifier idnf);
         DriveItemIdentifierType PreferredIdentifierType { get; }
     }
 

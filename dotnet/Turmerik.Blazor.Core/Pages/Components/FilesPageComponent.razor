@@ -18,37 +18,39 @@
 @inject INavManager navManager;
 @inject ILocalStorageWrapper localStorage;
 @inject ISessionStorageWrapper sessionStorage;
-@inject IDriveFolderService driveFolderService;
+@inject IDriveExplorerService driveFolderService;
 @inject IJSRuntime jsRuntime;
 @inject ITrmrkAppSettings appSettings;
 @inject ITimeStampHelper timeStampH;
 
 <div class="@CssClassH.Container">
     <AddressBar
-        InitialAddressStrValue=@AddressStrValue
+        InitialAddressStrValue=@ServiceArgs?.FolderIdentifier?.Address
         OnGoBackClick=@OnAddressBarGoBackClick
         OnGoUpClick=@OnAddressBarGoUpClick
         OnGoForwardClick=@OnAddressBarGoForwardClick
         OnOptionsClick=@OnCurrentlyOpenFolderOptionsClick
         OnReloadClick=@OnAddressBarReloadClick
         OnSubmitAddress=@OnSubmitAddress
-        AddressGoBackBtnDisabled=@AddressGoBackBtnDisabled
-        AddressGoForwardBtnDisabled=@AddressGoForwardBtnDisabled
-        AddressGoParentBtnDisabled=@AddressGoParentBtnDisabled></AddressBar>
+        AddressGoBackBtnDisabled=@(!(ServiceArgs?.Data?.TabPageItems?.GoBackButtonEnabled ?? false))
+        AddressGoForwardBtnDisabled=@(!(ServiceArgs?.Data?.TabPageItems?.GoForwardButtonEnabled ?? false))
+        AddressGoParentBtnDisabled=@(!(ServiceArgs?.Data?.TabPageItems?.GoUpButtonEnabled ?? false))></AddressBar>
 
     <div class="@CssClassH.Spacer"></div>
 
     <TabView
-        PageItem=TabPageViewModel
-        PageHeadsList=@TabPageHeadsList
-        Error=ErrorViewModel>
+        PageItem=ServiceArgs?.Data?.TabPageItems?.CurrentlyOpenFolder
+        PageHeadsList=@ServiceArgs?.Data?.TabPageItems?.Header?.TabPageHeads
+        Error=ErrorViewModel
+        OnNewTabPageClick=@OnNewTabPageClickAsync
+        OnCloseTabPageClick=@OnCloseTabPageClickAsync>
         <PageTemplate>
             <div class="@CssClassH.DriveTabViewPage">
                 <h6>Folders</h6>
 
                 <DriveItemsGrid
-                    DriveItemType=IDriveFolder
-                    DriveItems=@TabViewPageDriveFolders
+                    DriveItemType=DriveItem
+                    DriveItems=ServiceArgs?.Data?.TabPageItems?.CurrentlyOpenFolder?.FolderItems
                     TableCssClass="@CssClassH.DriveFoldersGrid"
                     IconCssClass="oi-folder"
                     OnDriveItemClick="@OnDriveFolderClickAsync"
@@ -64,8 +66,8 @@
                 <h6>Files</h6>
 
                 <DriveItemsGrid
-                    DriveItemType=IDriveItem
-                    DriveItems=@TabViewPageDriveItems
+                    DriveItemType=DriveItem
+                    DriveItems=@ServiceArgs?.Data?.TabPageItems?.CurrentlyOpenFolder?.FileItems
                     TableCssClass="@CssClassH.DriveItemsGrid"
                     IconCssClass="oi-file"
                     OnDriveItemClick="@OnDriveItemClickAsync"
@@ -75,9 +77,9 @@
                         </SpecificRowColumns>
                         <SpecificRowCells Context="dvFile">
                         @{
-                            var driveFile = (IDriveItem)dvFile;
+                            string extension = Path.GetExtension(dvFile.Name);
                         }
-                            <td title="@driveFile.Extension">@driveFile.Extension</td>
+                            <td>@extension</td>
                         </SpecificRowCells>
                 </DriveItemsGrid>
             </div>
@@ -87,8 +89,8 @@
     <SimpleModal
         ModalId="currently-open-folder-options-modal">
         <HeaderTemplate>
-            <h5 class="modal-title">@CurrentlyOpenDriveFolder?.DisplayName</h5>
-            <pre>@CurrentlyOpenDriveFolder?.Path</pre>
+            <h5 class="modal-title">@ServiceArgs?.Data?.TabPageItems?.CurrentlyOpenFolder?.Name</h5>
+            <pre>@ServiceArgs?.Data?.TabPageItems?.CurrentlyOpenFolder?.Id</pre>
         </HeaderTemplate>
         <BodyTemplate>
             @if (IsLocalDiskExplorer)
@@ -104,7 +106,7 @@
         ModalId="drive-folder-options-modal">
         <HeaderTemplate>
             <h5 class="modal-title">@SelectedDriveFolderName</h5>
-            <pre>@SelectedDriveFolderPath</pre>
+            <pre>@SelectedDriveFolderId</pre>
         </HeaderTemplate>
         <BodyTemplate>
             @if (IsLocalDiskExplorer)
@@ -120,7 +122,7 @@
         ModalId="drive-item-options-modal">
         <HeaderTemplate>
             <h5 class="modal-title">@SelectedDriveItemName</h5>
-            <pre>@SelectedDriveItemPath</pre>
+            <pre>@SelectedDriveItemId</pre>
         </HeaderTemplate>
         <BodyTemplate>
             @if (IsLocalDiskExplorer)
@@ -138,33 +140,25 @@
     public bool IsLocalDiskExplorer { get; set; }
 
     private string SelectedDriveFolderName { get; set; }
-    private string SelectedDriveFolderPath { get; set; }
+    private string SelectedDriveFolderId { get; set; }
 
     private string SelectedDriveItemName { get; set; }
-    private string SelectedDriveItemPath { get; set; }
+    private string SelectedDriveItemId { get; set; }
 
-    protected async Task OnDriveFolderOptionsClick(IDriveItemCore driveFolder)
+    protected async Task OnDriveFolderOptionsClick(DriveItem driveFolder)
     {
-        SelectedDriveFolderName = driveFolder.DisplayName;
-        SelectedDriveFolderPath = driveFolder.Path;
+        SelectedDriveFolderName = driveFolder.Name;
+        SelectedDriveFolderId = driveFolder.Id;
 
-        await OnDriveFolderOptionsClickAsync((IDriveFolder)driveFolder);
+        await OnDriveFolderOptionsClickAsync(driveFolder);
     }
 
-    protected async Task OnDriveItemOptionsClick(IDriveItemCore driveItem)
+    protected async Task OnDriveItemOptionsClick(DriveItem driveItem)
     {
-        SelectedDriveItemName = driveItem.DisplayName;
-        SelectedDriveItemPath = driveItem.Path;
+        SelectedDriveItemName = driveItem.Name;
+        SelectedDriveItemId = driveItem.Id;
 
-        await OnDriveItemOptionsClickAsync((IDriveItem)driveItem);
-    }
-
-    protected async Task OnDriveFolderOptionsClickAsync(IDriveFolder driveFolder)
-    {
-    }
-
-    protected async Task OnDriveItemOptionsClickAsync(IDriveItem driveItem)
-    {
+        await OnDriveItemOptionsClickAsync(driveItem);
     }
 
     protected override async Task OnInitializedAsync()

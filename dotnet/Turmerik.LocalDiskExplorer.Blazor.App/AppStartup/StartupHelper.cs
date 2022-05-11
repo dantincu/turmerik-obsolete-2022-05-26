@@ -11,7 +11,7 @@ namespace Turmerik.LocalDiskExplorer.Blazor.App.AppStartup
             bool useMockData)
         {
             base.RegisterServices(services, useMockData);
-            services.AddScoped<IDriveFolderService, FileSystemFolderService>();
+            services.AddScoped<IDriveExplorerService, LocalDiskExplorerService>();
         }
     }
 }

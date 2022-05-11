@@ -20,4 +20,22 @@ namespace Turmerik.AspNetCore.Infrastructure
         public TEventArgs EventArgs { get; }
         public TValue Value { get; }
     }
+
+    public class TextEventArgsWrapper : EventArgsWrapperBase<EventArgs, string>
+    {
+        public TextEventArgsWrapper(
+            EventArgs args,
+            string text) : base(args, text)
+        {
+        }
+    }
+
+    public class IntEventArgsWrapper : EventArgsWrapperBase<EventArgs, int>
+    {
+        public IntEventArgsWrapper(
+            EventArgs eventArgs,
+            int value) : base(eventArgs, value)
+        {
+        }
+    }
 }

@@ -18,8 +18,8 @@ namespace Turmerik.AspNetCore.Services
         Uri AbsUri { get; }
         IDictionary<string, StringValues> QueryStrings { get; }
         Guid? LocalSessionGuid { get; }
-        string Url(string relUrl);
-        void NavigateTo(string relUrl, bool forceRefresh);
+        string Url(string relUrl, Dictionary<string, string> queryString = null);
+        void NavigateTo(string relUrl, bool forceRefresh = false, Dictionary<string, string> queryString = null);
     }
 
     public class NavManager : INavManager
@@ -33,28 +33,33 @@ namespace Turmerik.AspNetCore.Services
         public Uri AbsUri => Manager.ToAbsoluteUri(Manager.Uri);
         public IDictionary<string, StringValues> QueryStrings => QueryHelpers.ParseQuery(AbsUri.Query);
         public Guid? LocalSessionGuid => QueryStrings.GetNullableValue(
-            QsKeys.LOCAL_SESSION_ID,
+            QsKeys.LOCAL_SESSION_UUID,
             (StringValues str,
             out Guid val) => Guid.TryParse(
                 str,
                 out val));
 
-        public string Url(string relUrl)
+        public string Url(string relUrl, Dictionary<string, string> queryString = null)
         {
             if (LocalSessionGuid.HasValue)
             {
                 relUrl = QueryHelpers.AddQueryString(
                     relUrl,
-                    QsKeys.LOCAL_SESSION_ID,
+                    QsKeys.LOCAL_SESSION_UUID,
                     LocalSessionGuid.Value.ToString("N"));
+            }
+
+            if (queryString != null)
+            {
+                QueryHelpers.AddQueryString(relUrl, queryString);
             }
 
             return relUrl;
         }
 
-        public void NavigateTo(string relUrl, bool forceRefresh)
+        public void NavigateTo(string relUrl, bool forceRefresh = false, Dictionary<string, string> queryString = null)
         {
-            string url = Url(relUrl);
+            string url = Url(relUrl, queryString);
             Manager.NavigateTo(url, forceRefresh);
         }
     }

@@ -19,17 +19,22 @@
         public const string FOLDER = "folder";
         public const string FOLDERS = "folders";
         public const string OPEN = "open";
+        public const string TAB = "tab";
         public const string TABS = "tabs";
+        public const string PAGE = "page";
+        public const string HEADS = "heads";
         public const string ADDRESS = "address";
         public const string HISTORY = "history";
         public const string STACK = "stack";
+        public const string VIEW = "view";
+        public const string STATE = "state";
 
         public static readonly string LocalSessionId = GetKey(LOCAL, SESSION, ID);
         public static readonly string UserSessionId = GetKey(USER, SESSION, ID);
 
-        public static string AddressHistoryStackKey(Guid localSessionGuid)
+        public static string AddressHistoryStackKey(Guid localSessionGuid, Guid tabPageGuid)
         {
-            string key = GetLocalStorageKey(localSessionGuid, ADDRESS, HISTORY, STACK);
+            string key = GetLocalStorageKey(localSessionGuid, tabPageGuid, ADDRESS, HISTORY, STACK);
             return key;
         }
 
@@ -39,17 +44,17 @@
             return key;
         }
 
-        public static string DriveFoldersKey(Guid localSessionGuid, string pathOrId)
+        public static string DriveFolderKey(Guid localSessionGuid, string driveItemId)
         {
             string key = GetLocalStorageKey(localSessionGuid, DRIVE, FOLDER);
-            key = $"{key}|{pathOrId}|";
+            key = $"{key}|{driveItemId}|";
 
             return key;
         }
 
-        public static string CurrentDriveFoldersKey(Guid localSessionGuid)
+        public static string DriveItemsViewStateKey(Guid localSessionGuid)
         {
-            string key = GetLocalStorageKey(localSessionGuid, CURRENT, DRIVE, FOLDERS);
+            string key = GetLocalStorageKey(localSessionGuid, DRIVE, ITEMS, VIEW, STATE);
             return key;
         }
 
@@ -62,6 +67,27 @@
 
             string key = string.Join('-', segments);
             key = string.Concat(baseKey, key);
+
+            return key;
+        }
+
+        public static string GetLocalStorageKey(
+           Guid localSessionGuid,
+           Guid tabPageGuid,
+           params string[] segments)
+        {
+            string baseKey = GetKey(localSessionGuid, tabPageGuid);
+
+            string key = string.Join('-', segments);
+            key = string.Concat(baseKey, key);
+
+            return key;
+        }
+
+        private static string GetKey(params Guid[] guids)
+        {
+            string[] segments = guids.Select(x => x.ToString("N")).ToArray();
+            string key = GetKey(segments);
 
             return key;
         }

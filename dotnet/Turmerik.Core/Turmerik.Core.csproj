@@ -12,6 +12,28 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Services\DriveItems%24not-compiled%24\FileSystemFolderType.cs" />
+    <Compile Remove="Services\DriveItems%24not-compiled%24\IDriveFolder.cs" />
+    <Compile Remove="Services\DriveItems%24not-compiled%24\IDriveFolderService.cs" />
+    <Compile Remove="Services\DriveItems%24not-compiled%24\IDriveItem.cs" />
+    <Compile Remove="Services\DriveItems%24not-compiled%24\IDriveItemCore.cs" />
+    <Compile Remove="Services\DriveItems%24not-compiled%24\IDriveItemIdentifier.cs" />
+    <Compile Remove="Services\DriveItems%24not-compiled%24\ITabPageHead.cs" />
+    <Compile Remove="Services\DriveItems%24not-compiled%24\ITabViewState.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Services\DriveItems%24not-compiled%24\FileSystemFolderType.cs" />
+    <None Include="Services\DriveItems%24not-compiled%24\IDriveFolder.cs" />
+    <None Include="Services\DriveItems%24not-compiled%24\IDriveFolderService.cs" />
+    <None Include="Services\DriveItems%24not-compiled%24\IDriveItem.cs" />
+    <None Include="Services\DriveItems%24not-compiled%24\IDriveItemCore.cs" />
+    <None Include="Services\DriveItems%24not-compiled%24\IDriveItemIdentifier.cs" />
+    <None Include="Services\DriveItems%24not-compiled%24\ITabPageHead.cs" />
+    <None Include="Services\DriveItems%24not-compiled%24\ITabViewState.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />

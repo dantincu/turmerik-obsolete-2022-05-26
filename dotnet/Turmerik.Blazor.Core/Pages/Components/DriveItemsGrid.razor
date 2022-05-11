@@ -39,11 +39,11 @@
     <tbody>
         @foreach (var driveItem in DriveItems)
         {
-            var dvItem = driveItem as IDriveItemCore;
+            var dvItem = driveItem as DriveItem;
 
             <tr>
                 <th scope="row"><span class="oi @IconCssClass" aria-hidden="true"></span></th>
-                <td title="@dvItem.DisplayName" @onclick=@OnDriveItemClickEventHandler(dvItem)>
+                <td @onclick=@OnDriveItemClickEventHandler(dvItem)>
                     @dvItem.Name
                  </td>
                 <td title="Options">
@@ -53,7 +53,7 @@
                 {
                     @SpecificRowCells(dvItem)
                 }
-                @foreach (var dt in new DateTime[]
+                @foreach (var dt in new DateTime?[]
                     {
                         dvItem.LastAccessTime,
                         dvItem.LastWriteTime,
@@ -76,7 +76,7 @@
     public RenderFragment<object> SpecificRowColumns { get; set; }
 
     [Parameter]
-    public RenderFragment<IDriveItemCore> SpecificRowCells { get; set; }
+    public RenderFragment<DriveItem> SpecificRowCells { get; set; }
 
     [Parameter]
     public string TableCssClass { get; set; }
@@ -85,14 +85,14 @@
     public string IconCssClass { get; set; }
 
     [Parameter]
-    public Func<IDriveItemCore, Task> OnDriveItemClick
+    public Func<DriveItem, Task> OnDriveItemClick
     {
         get => OnDriveItemClickAsync;
         set => OnDriveItemClickAsync = value;
     }
 
     [Parameter]
-    public Func<IDriveItemCore, Task> OnDriveItemOptionsClick
+    public Func<DriveItem, Task> OnDriveItemOptionsClick
     {
         get => OnDriveItemOptionsClickAsync;
         set => OnDriveItemOptionsClickAsync = value;

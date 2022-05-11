@@ -11,7 +11,6 @@ namespace Turmerik.MusicalKeyboard.Blazor.App.AppStartup
             bool useMockData)
         {
             base.RegisterServices(services, useMockData);
-            services.AddScoped<IDriveFolderService, FileSystemFolderService>();
         }
     }
 }

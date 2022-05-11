@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Turmerik.AspNetCore.Services.LocalSessionStorage;
 using Turmerik.Core.Cloneable;
+using Turmerik.Core.Data;
 using Turmerik.Core.FileSystem;
 using Turmerik.Core.Helpers;
 using Turmerik.Core.Services.DriveItems;
@@ -13,7 +14,7 @@ using static System.Environment;
 
 namespace Turmerik.AspNetCore.Services.DriveItems
 {
-    public class FileSystemFolderService : DriveFolderServiceBase, IDriveFolderService
+    public class FileSystemFolderService : DriveFolderServiceBase, IDriveExplorerService
     {
         public FileSystemFolderService(
             ICloneableMapper clblMapper,
@@ -28,9 +29,9 @@ namespace Turmerik.AspNetCore.Services.DriveItems
         public override DriveItemIdentifierType PreferredIdentifierType => DriveItemIdentifierType.Path;
         protected override IWebStorageWrapper Storage { get; }
 
-        public override bool TryNormalizeAddress(ref string address, out string id)
+        public override IDriveItemIdentifier GetDriveItemIdentifier(string address)
         {
-            var normalizerResult = FsPathNormalizer.TryNormalizePath(address);
+            var normalizerResult = FsPathNormalizer.TryNormalizePath(identifierWrapper.Value.Address);
             bool retVal = normalizerResult.IsValid;
 
             if (retVal)
@@ -53,7 +54,7 @@ namespace Turmerik.AspNetCore.Services.DriveItems
             return retVal;
         }
 
-        public override bool DriveItemsHaveSameIdentifiers(IDriveItemCore trgItem, IDriveItemCore refItem, bool normalizeFirst)
+        public override bool IdentifiersAreEquivalent(IDriveItemIdentifier trgIdnf, IDriveItemIdentifier refIdnf)
         {
             string trgPath = trgItem.Path;
             string refPath = refItem.Path;
@@ -62,9 +63,9 @@ namespace Turmerik.AspNetCore.Services.DriveItems
             return retVal;
         }
 
-        public override string GetDriveItemIdentifier(IDriveItemCore item) => item.Path;
+        public override string GetDriveItemAddress(IDriveItemIdentifier idnf) => idnf.Path;
 
-        public override bool IdentifiersAreEquivalent(string trgPath, string refPath, bool normalizeFirst)
+        protected bool IdentifiersAreEquivalent(string trgPath, string refPath, bool normalizeFirst)
         {
             bool retVal = true;
 
@@ -78,7 +79,7 @@ namespace Turmerik.AspNetCore.Services.DriveItems
             return retVal;
         }
 
-        protected override async Task<IDriveFolder> GetDriveFolderCoreAsync(string pathOrId)
+        protected override async Task<DriveFolderMtbl> GetDriveFolderCoreAsync(IDriveItemIdentifier identifier)
         {
             IDriveFolder driveFolderImmtbl = null;
 
@@ -112,7 +113,7 @@ namespace Turmerik.AspNetCore.Services.DriveItems
                 driveFolder.DriveFoldersList = new DriveFoldersList(null, mtblFolders);
                 driveFolder.DriveItemsList = new DriveItemsList(null, mtblFiles);
 
-                driveFolder.ParentFolder = new NestedDriveFolder(
+                driveFolder.ParentFolder = new DriveFolder(
                     null, new DriveFolderMtbl
                     {
                         Path = Path.GetDirectoryName(driveFolder.Path)
@@ -124,7 +125,7 @@ namespace Turmerik.AspNetCore.Services.DriveItems
             return driveFolderImmtbl;
         }
 
-        protected override async Task<IDriveFolder> GetRootDriveFolderCoreAsync()
+        protected override async Task<DriveFolderMtbl> GetRootDriveFolderCoreAsync()
         {
             var mtbl = GetRootDriveFolder();
             var immtbl = new DriveFolderImmtbl(Mapper, mtbl);

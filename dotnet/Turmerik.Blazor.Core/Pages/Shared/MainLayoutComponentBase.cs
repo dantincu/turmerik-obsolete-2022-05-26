@@ -43,7 +43,7 @@ namespace Turmerik.Blazor.Core.Pages.Shared
         protected void NavigateToLocalSessionId(Guid localSessionGuid, bool forceLoad)
         {
             string targetUrl = NavManager.Manager.GetUriWithQueryParameter(
-                QsKeys.LOCAL_SESSION_ID,
+                QsKeys.LOCAL_SESSION_UUID,
                 localSessionGuid.ToString("N"));
 
             NavManager.Manager.NavigateTo(targetUrl, forceLoad);

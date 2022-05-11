@@ -19,8 +19,8 @@ namespace Turmerik.Blazor.Core.Pages.Components
         protected ITimeStampHelper TimeStampH;
         protected DateTime Now { get; set; } = DateTime.Now;
 
-        protected Func<IDriveItemCore, Task> OnDriveItemClickAsync { get; set; }
-        protected Func<IDriveItemCore, Task> OnDriveItemOptionsClickAsync { get; set; }
+        protected Func<DriveItem, Task> OnDriveItemClickAsync { get; set; }
+        protected Func<DriveItem, Task> OnDriveItemOptionsClickAsync { get; set; }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
@@ -31,23 +31,24 @@ namespace Turmerik.Blazor.Core.Pages.Components
                 this.UuidStr);
         }
 
-        protected string FormatDateTimeExact(DateTime value)
+        protected string FormatDateTimeExact(DateTime? nlblValue)
         {
-            string strVal;
+            string strVal = string.Empty;
 
-            if (value > DateTime.MinValue)
+            if (nlblValue.HasValue)
             {
-                strVal = TimeStampH.TmStmp(value, true, TimeStamp.Seconds);
-            }
-            else
-            {
-                strVal = string.Empty;
+                var value = nlblValue.Value;
+
+                if (value > DateTime.MinValue)
+                {
+                    strVal = TimeStampH.TmStmp(value, true, TimeStamp.Seconds);
+                }
             }
 
             return strVal;
         }
 
-        protected Func<MouseEventArgs, Task> OnDriveItemClickEventHandler(IDriveItemCore driveItem)
+        protected Func<MouseEventArgs, Task> OnDriveItemClickEventHandler(DriveItem driveItem)
         {
             Func<MouseEventArgs, Task> handler = async args =>
             {
@@ -60,7 +61,7 @@ namespace Turmerik.Blazor.Core.Pages.Components
             return handler;
         }
 
-        protected Func<MouseEventArgs, Task> OnDriveItemOptionsClickEventHandler(IDriveItemCore driveItem)
+        protected Func<MouseEventArgs, Task> OnDriveItemOptionsClickEventHandler(DriveItem driveItem)
         {
             Func<MouseEventArgs, Task> handler = async args =>
             {
