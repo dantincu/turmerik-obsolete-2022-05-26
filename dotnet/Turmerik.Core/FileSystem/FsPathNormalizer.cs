@@ -12,7 +12,9 @@ namespace Turmerik.Core.FileSystem
 {
     public interface IFsPathNormalizer
     {
-        IFsPathNormalizerResult TryNormalizePath(string path, bool? isUnixStyle = null);
+        IFsPathNormalizerResult TryNormalizePath(string path,
+            bool? isUnixStyle = null,
+            bool allowStartWithLinkToParent = false);
     }
 
     public class FsPathNormalizer : ComponentBase, IFsPathNormalizer
@@ -21,7 +23,10 @@ namespace Turmerik.Core.FileSystem
         {
         }
 
-        public IFsPathNormalizerResult TryNormalizePath(string path, bool? isUnixStyle = null)
+        public IFsPathNormalizerResult TryNormalizePath(
+            string path,
+            bool? isUnixStyle = null,
+            bool allowStartWithLinkToParent = false)
         {
             var mtbl = new FsPathNormalizerResultMtbl
             {
@@ -32,7 +37,7 @@ namespace Turmerik.Core.FileSystem
             var rootParts = new List<SplitStrTuple>();
             var partsList = GetPathPartsList(path, mtbl, rootParts);
 
-            TryNormalizePathPartsList(mtbl, rootParts, partsList);
+            TryNormalizePathPartsList(mtbl, rootParts, partsList, allowStartWithLinkToParent);
             TryNormalizePathCore(mtbl, rootParts, partsList);
 
             var immtbl = new FsPathNormalizerResultImmtbl(Mapper, mtbl);
@@ -124,7 +129,8 @@ namespace Turmerik.Core.FileSystem
         private void TryNormalizePathPartsList(
             FsPathNormalizerResultMtbl mtbl,
             List<SplitStrTuple> rootParts,
-            List<SplitStrTuple> partsList)
+            List<SplitStrTuple> partsList,
+            bool allowStartWithLinkToParent)
         {
             bool pathIsValid = mtbl.IsValid;
             int idx = 0;
@@ -153,16 +159,17 @@ namespace Turmerik.Core.FileSystem
                 }
                 else if (part.Str == "..")
                 {
-                    pathIsValid = (idx > 0 && !startsWithDirSep) || (idx > 1);
+                    pathIsValid = allowStartWithLinkToParent || (idx > 1) || (idx == 1 && !startsWithDirSep);
 
                     if (pathIsValid)
                     {
-                        int index = idx - 1;
-                        partsList.RemoveAt(index);
-
-                        if (partsList.Any())
+                        if (idx > 0)
                         {
-                            partsList.RemoveAt(index);
+                            partsList.RemoveRange(idx - 1, 2);
+                        }
+                        else
+                        {
+                            idx++;
                         }
                     }
                 }
@@ -187,10 +194,31 @@ namespace Turmerik.Core.FileSystem
         {
             if (mtbl.IsValid)
             {
-                var allParts = rootParts.Concat(partsList).ToArray();
+                var allParts = rootParts.Concat(partsList).ToList();
 
                 if (allParts.Any())
                 {
+                    int idx = 0;
+                    bool rm = false;
+
+                    while (idx < allParts.Count)
+                    {
+                        if (allParts[idx].Str == "..")
+                        {
+                            if (idx > 0)
+                            {
+                                allParts.RemoveRange(idx - 1, 2);
+                                rm = true;
+                            }
+                        }
+
+                        if (!rm)
+                        {
+                            idx++;
+                            rm = false;
+                        }
+                    }
+
                     char dirSep = Path.DirectorySeparatorChar;
 
                     if (mtbl.IsUnixStyle == true)
@@ -204,11 +232,6 @@ namespace Turmerik.Core.FileSystem
                         p => p.Str).ToArray();
 
                     mtbl.NormalizedPath = string.Join(dirSepStr, partsArr);
-
-                    if (string.IsNullOrEmpty(mtbl.NormalizedPath))
-                    {
-                        mtbl.NormalizedPath = dirSepStr;
-                    }
                 }
                 else
                 {

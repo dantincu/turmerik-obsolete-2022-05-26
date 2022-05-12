@@ -17,6 +17,7 @@ namespace Turmerik.Core.Services.DriveItems
             ForwardHistory = src.ForwardHistory;
         }
 
+        public string InitialId { get; set; }
         public List<DriveFolderNavigation> BackHistory { get; set; }
         public List<DriveFolderNavigation> ForwardHistory { get; set; }
     }

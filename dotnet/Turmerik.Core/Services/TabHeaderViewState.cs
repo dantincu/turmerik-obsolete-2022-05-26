@@ -11,7 +11,6 @@ namespace Turmerik.Core.Services
 
     public class TabPageHead
     {
-        public int Idx { get; set; }
         public Guid Uuid { get; set; }
         public string Id { get; set; }
         public string Name { get; set; }

@@ -17,6 +17,7 @@ namespace Turmerik.UnitTests.Tests
 
         private readonly string[] invalidPaths = new string[]
         {
+            "C:\\..",
             "C:\\..\\",
             "C:\\..\\asdf",
             "/../",
@@ -78,6 +79,8 @@ namespace Turmerik.UnitTests.Tests
                 Assert.False(result.IsValid);
             }
 
+            i = 0;
+
             foreach (var kvp in testDataDictnr)
             {
                 var result = component.TryNormalizePath(kvp.Key);
@@ -88,6 +91,11 @@ namespace Turmerik.UnitTests.Tests
 
                 i++;
             }
+
+            var rslt = component.TryNormalizePath("C:\\..", null, true);
+            Assert.True(rslt.IsValid);
+
+            Assert.Equal(string.Empty, rslt.NormalizedPath);
         }
 
         private Dictionary<string, Tuple<string, bool>> GetTestDataDictnr()
@@ -100,8 +108,8 @@ namespace Turmerik.UnitTests.Tests
             AddTestData(dictnr, "./", "", false);
             AddTestData(dictnr, ".\\", "", false);
 
-            AddTestData(dictnr, "/./", "\\", false);
-            AddTestData(dictnr, "\\.\\", "\\", false);
+            AddTestData(dictnr, "/./", "", false);
+            AddTestData(dictnr, "\\.\\", "", false);
 
             AddTestData(dictnr, "C:", "C:", true);
             AddTestData(dictnr, "C:\\", "C:", true);
@@ -132,9 +140,9 @@ namespace Turmerik.UnitTests.Tests
             AddTestData(dictnr, "\\asdf\\qwer\\", "\\asdf\\qwer", false);
             AddTestData(dictnr, "\\asdf/qwer/", "\\asdf\\qwer", false);
 
-            AddTestData(dictnr, "\\asdf\\..", "\\", false);
-            AddTestData(dictnr, "\\asdf\\..\\", "\\", false);
-            AddTestData(dictnr, "\\asdf\\../", "\\", false);
+            AddTestData(dictnr, "\\asdf\\..", "", false);
+            AddTestData(dictnr, "\\asdf\\..\\", "", false);
+            AddTestData(dictnr, "\\asdf\\../", "", false);
 
             AddTestData(dictnr, "\\asdf\\.\\qwer", "\\asdf\\qwer", false);
             AddTestData(dictnr, "\\asdf\\.\\qwer\\", "\\asdf\\qwer", false);

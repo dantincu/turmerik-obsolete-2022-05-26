@@ -40,7 +40,7 @@ namespace Turmerik.AspNetCore.Services.DriveItems
                         if (tabPageHeads.None(
                             head => head.Uuid == pageHead.Uuid))
                         {
-                            tabPageHeads.Insert(pageHead.Idx, pageHead);
+                            tabPageHeads.Add(pageHead);
                         }
                     }
 
@@ -137,7 +137,7 @@ namespace Turmerik.AspNetCore.Services.DriveItems
         private async Task InitializeAsync(
             DriveExplorerServiceArgs args)
         {
-            var folderIdentifier = GetDriveFolderIdentifier(
+            var folderIdentifier = args.FolderIdentifier ?? GetDriveFolderIdentifier(
                 args.TabPageUuid, args.Data.TabPageItems,
                 (ref TabPageHead tabPage, ref DriveFolderIdentifier idnf) => tabPage.IsCurrent = true,
                 tabPage => tabPage.IsCurrent = null,
@@ -158,6 +158,24 @@ namespace Turmerik.AspNetCore.Services.DriveItems
 
             var tabPageHeads = args.Data.TabPageItems.Header.TabPageHeads;
 
+            if (args.FolderIdentifier != null && !args.TabPageUuid.HasValue)
+            {
+                foreach (var head in tabPageHeads)
+                {
+                    head.IsCurrent = false;
+                }
+
+                var pageHead = new TabPageHead
+                {
+                    IsCurrent = true,
+                    Name = args.Data.TabPageItems.CurrentlyOpenFolder.Name,
+                    Uuid = Guid.NewGuid(),
+                    Id = args.Data.TabPageItems.CurrentlyOpenFolder.Id
+                };
+
+                tabPageHeads.Add(pageHead);
+            }
+
             if (tabPageHeads.None())
             {
                 var pageHead = new TabPageHead
@@ -165,8 +183,7 @@ namespace Turmerik.AspNetCore.Services.DriveItems
                     IsCurrent = true,
                     Name = args.Data.TabPageItems.CurrentlyOpenFolder.Name,
                     Uuid = Guid.NewGuid(),
-                    Id = args.Data.TabPageItems.CurrentlyOpenFolder.Id,
-                    Idx = 0
+                    Id = args.Data.TabPageItems.CurrentlyOpenFolder.Id
                 };
 
                 tabPageHeads.Add(pageHead);
@@ -177,6 +194,9 @@ namespace Turmerik.AspNetCore.Services.DriveItems
                 args.TabPageUuid = args.Data.TabPageItems.Header.TabPageHeads.Single(
                     head => head.IsCurrent == true).Uuid;
             }
+
+            await AddOrUpdateTabPageHistoryAsync(
+                args, async history => history);
         }
 
         private async Task RefreshCurrentTabAsync(
@@ -261,11 +281,10 @@ namespace Turmerik.AspNetCore.Services.DriveItems
             DriveExplorerServiceArgs args)
         {
             var tabPageHeads = args.Data.TabPageItems.Header.TabPageHeads;
-            int idx = args.TabPageIdx ?? tabPageHeads.Count;
+            int idx = tabPageHeads.Count;
 
             var newHead = new TabPageHead
             {
-                Idx = idx,
                 Uuid = Guid.NewGuid()
             };
 
@@ -354,6 +373,7 @@ namespace Turmerik.AspNetCore.Services.DriveItems
             var history = await WebStorage.AddOrUpdateAsync(key,
                 async () => new TabPageHistory
                 {
+                    InitialId = args.FolderIdentifier.Id,
                     BackHistory = new List<DriveFolderNavigation>(),
                     ForwardHistory = new List<DriveFolderNavigation>()
                 },
@@ -438,7 +458,7 @@ namespace Turmerik.AspNetCore.Services.DriveItems
         {
             DriveFolder driveFolder;
 
-            if (identifier.IsRootFolder)
+            if (identifier.IsRootFolder || string.IsNullOrWhiteSpace(identifier.Id))
             {
                 driveFolder = await GetRootDriveFolderAsync(localSessionGuid, refreshCache);
             }
@@ -527,7 +547,7 @@ namespace Turmerik.AspNetCore.Services.DriveItems
             DriveExplorerServiceArgs args,
             TabPageHistory history)
         {
-            string path = string.Empty;
+            string path = history.InitialId;
 
             if (history.BackHistory.Any())
             {
@@ -540,7 +560,7 @@ namespace Turmerik.AspNetCore.Services.DriveItems
                     @break = !string.IsNullOrWhiteSpace(h.Id);
 
                     return retVal;
-                }).Reverse().ToArray();
+                }).Reverse().ToList();
 
                 var pathParts = historyParts.Select(
                     (h, i) =>
@@ -563,7 +583,7 @@ namespace Turmerik.AspNetCore.Services.DriveItems
                         return part;
                     }).ToList();
 
-                int idx = 0;
+                /* int idx = 0;
 
                 while (idx < pathParts.Count)
                 {
@@ -571,13 +591,21 @@ namespace Turmerik.AspNetCore.Services.DriveItems
 
                     if (part == "..")
                     {
-                        idx--;
-                        pathParts.RemoveRange(idx, 2);
+                        if (idx > 0)
+                        {
+                            idx--;
+                            pathParts.RemoveRange(idx, 2);
+                        }
                     }
                     else
                     {
                         idx++;
                     }
+                } */
+
+                if (!@break && !string.IsNullOrWhiteSpace(history.InitialId))
+                {
+                    pathParts.Insert(0, history.InitialId);
                 }
 
                 path = Path.Combine(pathParts.ToArray());

@@ -121,8 +121,8 @@ namespace Turmerik.AspNetCore.Services.DriveItems
 
             if (!string.IsNullOrWhiteSpace(path))
             {
-                var normResult = fsPathNormalizer.TryNormalizePath(path, null);
-                isValid = normResult.IsValid && normResult.IsRooted;
+                var normResult = fsPathNormalizer.TryNormalizePath(path, null, true);
+                isValid = normResult.IsValid && normResult.NormalizedPath.FirstOrDefault() != '.';
 
                 if (isValid)
                 {
