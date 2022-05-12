@@ -51,7 +51,7 @@ namespace Turmerik.AspNetCore.Services
 
             if (queryString != null)
             {
-                QueryHelpers.AddQueryString(relUrl, queryString);
+                relUrl = QueryHelpers.AddQueryString(relUrl, queryString);
             }
 
             return relUrl;

@@ -24,115 +24,124 @@
 @inject ITimeStampHelper timeStampH;
 
 <div class="@CssClassH.Container">
-    <AddressBar
-        InitialAddressStrValue=@ServiceArgs?.FolderIdentifier?.Address
-        OnGoBackClick=@OnAddressBarGoBackClick
-        OnGoUpClick=@OnAddressBarGoUpClick
-        OnGoForwardClick=@OnAddressBarGoForwardClick
-        OnOptionsClick=@OnCurrentlyOpenFolderOptionsClick
-        OnReloadClick=@OnAddressBarReloadClick
-        OnSubmitAddress=@OnSubmitAddress
-        AddressGoBackBtnDisabled=@(!(ServiceArgs?.Data?.TabPageItems?.GoBackButtonEnabled ?? false))
-        AddressGoForwardBtnDisabled=@(!(ServiceArgs?.Data?.TabPageItems?.GoForwardButtonEnabled ?? false))
-        AddressGoParentBtnDisabled=@(!(ServiceArgs?.Data?.TabPageItems?.GoUpButtonEnabled ?? false))></AddressBar>
+    @if (ServiceArgs != null)
+    {
+        var tabPageItems = ServiceArgs.Data.TabPageItems;
 
-    <div class="@CssClassH.Spacer"></div>
+        <AddressBar
+            InitialAddressStrValue=@ServiceArgs.FolderIdentifier.Address
+            OnGoBackClick=@OnAddressBarGoBackClick
+            OnGoUpClick=@OnAddressBarGoUpClick
+            OnGoForwardClick=@OnAddressBarGoForwardClick
+            OnOptionsClick=@OnCurrentlyOpenFolderOptionsClick
+            OnReloadClick=@OnAddressBarReloadClick
+            OnSubmitAddress=@OnSubmitAddress
+            AddressGoBackBtnDisabled=@(!tabPageItems.GoBackButtonEnabled)
+            AddressGoForwardBtnDisabled=@(!tabPageItems.GoForwardButtonEnabled)
+            AddressGoParentBtnDisabled=@(!tabPageItems.GoUpButtonEnabled)></AddressBar>
 
-    <TabView
-        PageItem=ServiceArgs?.Data?.TabPageItems?.CurrentlyOpenFolder
-        PageHeadsList=@ServiceArgs?.Data?.TabPageItems?.Header?.TabPageHeads
-        Error=ErrorViewModel
-        OnNewTabPageClick=@OnNewTabPageClickAsync
-        OnCloseTabPageClick=@OnCloseTabPageClickAsync>
-        <PageTemplate>
-            <div class="@CssClassH.DriveTabViewPage">
-                <h6>Folders</h6>
+        <div class="@CssClassH.Spacer"></div>
 
-                <DriveItemsGrid
-                    DriveItemType=DriveItem
-                    DriveItems=ServiceArgs?.Data?.TabPageItems?.CurrentlyOpenFolder?.FolderItems
-                    TableCssClass="@CssClassH.DriveFoldersGrid"
-                    IconCssClass="oi-folder"
-                    OnDriveItemClick="@OnDriveFolderClickAsync"
-                    OnDriveItemOptionsClick=@OnDriveFolderOptionsClick>
-                        <SpecificRowColumns Context="ctx">
+        <TabView
+            PageItem=tabPageItems.CurrentlyOpenFolder
+            TabHeaderViewState=@tabPageItems.Header
+            Error=ErrorViewModel
+            OnNewTabPageClick=@OnNewTabPageClickAsync
+            OnCloseTabPageClick=@OnCloseTabPageClickAsync>
+            <PageTemplate>
+                <div class="@CssClassH.DriveTabViewPage">
+                    <h6>Folders</h6>
 
-                        </SpecificRowColumns>
-                        <SpecificRowCells Context="dvFolder">
+                    <DriveItemsGrid
+                        DriveItemType=DriveItem
+                        DriveItems=tabPageItems.CurrentlyOpenFolder.FolderItems
+                        TableCssClass="@CssClassH.DriveFoldersGrid"
+                        IconCssClass="oi-folder"
+                        OnDriveItemClick="@OnDriveFolderClickAsync"
+                        OnDriveItemOptionsClick=@OnDriveFolderOptionsClick>
+                            <SpecificRowColumns Context="ctx">
 
-                        </SpecificRowCells>
-                </DriveItemsGrid>
+                            </SpecificRowColumns>
+                            <SpecificRowCells Context="dvFolder">
 
-                <h6>Files</h6>
+                            </SpecificRowCells>
+                    </DriveItemsGrid>
 
-                <DriveItemsGrid
-                    DriveItemType=DriveItem
-                    DriveItems=@ServiceArgs?.Data?.TabPageItems?.CurrentlyOpenFolder?.FileItems
-                    TableCssClass="@CssClassH.DriveItemsGrid"
-                    IconCssClass="oi-file"
-                    OnDriveItemClick="@OnDriveItemClickAsync"
-                    OnDriveItemOptionsClick=@OnDriveItemOptionsClick>
-                        <SpecificRowColumns Context="ctx">
-                            <th class="@CssClassH.ColExt">Ext</th>
-                        </SpecificRowColumns>
-                        <SpecificRowCells Context="dvFile">
-                        @{
-                            string extension = Path.GetExtension(dvFile.Name);
-                        }
-                            <td>@extension</td>
-                        </SpecificRowCells>
-                </DriveItemsGrid>
-            </div>
-        </PageTemplate>
-    </TabView>
+                    <h6>Files</h6>
 
-    <SimpleModal
-        ModalId="currently-open-folder-options-modal">
-        <HeaderTemplate>
-            <h5 class="modal-title">@ServiceArgs?.Data?.TabPageItems?.CurrentlyOpenFolder?.Name</h5>
-            <pre>@ServiceArgs?.Data?.TabPageItems?.CurrentlyOpenFolder?.Id</pre>
-        </HeaderTemplate>
-        <BodyTemplate>
-            @if (IsLocalDiskExplorer)
-            {
-                <button type="button" class="btn btn-dark">
-                  Open folder in Windows Explorer
-                </button>
-            }
-        </BodyTemplate>
-    </SimpleModal>
+                    <DriveItemsGrid
+                            DriveItemType=DriveItem
+                            DriveItems=@tabPageItems.CurrentlyOpenFolder.FileItems
+                            TableCssClass="@CssClassH.DriveItemsGrid"
+                            IconCssClass="oi-file"
+                            OnDriveItemClick="@OnDriveItemClickAsync"
+                            OnDriveItemOptionsClick=@OnDriveItemOptionsClick>
+                                <SpecificRowColumns Context="ctx">
+                                    <th class="@CssClassH.ColExt">Ext</th>
+                                </SpecificRowColumns>
+                                <SpecificRowCells Context="dvFile">
+                                @{
+                                    string extension = Path.GetExtension(dvFile.Name);
+                                }
+                                    <td>@extension</td>
+                                </SpecificRowCells>
+                        </DriveItemsGrid>
+                </div>
+            </PageTemplate>
+        </TabView>
 
-    <SimpleModal
-        ModalId="drive-folder-options-modal">
-        <HeaderTemplate>
-            <h5 class="modal-title">@SelectedDriveFolderName</h5>
-            <pre>@SelectedDriveFolderId</pre>
-        </HeaderTemplate>
-        <BodyTemplate>
-            @if (IsLocalDiskExplorer)
-            {
-                <button type="button" class="btn btn-dark">
-                  Open folder in Windows Explorer
-                </button>
-            }
-        </BodyTemplate>
-    </SimpleModal>
+        <SimpleModal
+            ModalId="currently-open-folder-options-modal">
+            <HeaderTemplate>
+                <h5 class="modal-title">@tabPageItems?.CurrentlyOpenFolder?.Name</h5>
+                <pre>@tabPageItems?.CurrentlyOpenFolder?.Id</pre>
+            </HeaderTemplate>
+            <BodyTemplate>
+                @if (IsLocalDiskExplorer)
+                {
+                    <button type="button" class="btn btn-dark">
+                      Open folder in Windows Explorer
+                    </button>
+                }
+            </BodyTemplate>
+        </SimpleModal>
 
-    <SimpleModal
-        ModalId="drive-item-options-modal">
-        <HeaderTemplate>
-            <h5 class="modal-title">@SelectedDriveItemName</h5>
-            <pre>@SelectedDriveItemId</pre>
-        </HeaderTemplate>
-        <BodyTemplate>
-            @if (IsLocalDiskExplorer)
-            {
-                <button type="button" class="btn btn-dark">
-                  Open folder in Windows Explorer
-                </button>
-            }
-        </BodyTemplate>
-    </SimpleModal>
+        <SimpleModal
+            ModalId="drive-folder-options-modal">
+            <HeaderTemplate>
+                <h5 class="modal-title">@SelectedDriveFolderName</h5>
+                <pre>@SelectedDriveFolderId</pre>
+            </HeaderTemplate>
+            <BodyTemplate>
+                @if (IsLocalDiskExplorer)
+                {
+                    <button type="button" class="btn btn-dark">
+                      Open folder in Windows Explorer
+                    </button>
+                }
+            </BodyTemplate>
+        </SimpleModal>
+
+        <SimpleModal
+            ModalId="drive-item-options-modal">
+            <HeaderTemplate>
+                <h5 class="modal-title">@SelectedDriveItemName</h5>
+                <pre>@SelectedDriveItemId</pre>
+            </HeaderTemplate>
+            <BodyTemplate>
+                @if (IsLocalDiskExplorer)
+                {
+                    <button type="button" class="btn btn-dark">
+                      Open folder in Windows Explorer
+                    </button>
+                }
+            </BodyTemplate>
+        </SimpleModal>
+    }
+    else
+    {
+        <h6>LOADING...</h6>
+    }
 </div>
 
 @code {

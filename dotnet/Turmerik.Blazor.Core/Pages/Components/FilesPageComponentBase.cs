@@ -36,7 +36,7 @@ namespace Turmerik.Blazor.Core.Pages.Components
             if (firstRender)
             {
                 DriveFolderIdentifier identifier = null;
-                bool needsRedirectUrl = false;
+                bool needsRedirectUrl = !TabPageUuid.HasValue;
 
                 string id = NavManager.QueryStrings.GetStringOrNull(QsKeys.DRIVE_ITEM_ID);
                 string path = NavManager.QueryStrings.GetStringOrNull(QsKeys.DRIVE_ITEM_PATH);
@@ -62,7 +62,7 @@ namespace Turmerik.Blazor.Core.Pages.Components
                     serviceArgs.ActionType = DriveExplorerActionType.Initialize;
                     serviceArgs.FolderIdentifier = identifier;
                 },
-                async () =>
+                () =>
                 {
                     if (needsRedirectUrl)
                     {
@@ -80,11 +80,7 @@ namespace Turmerik.Blazor.Core.Pages.Components
             await NavigateCore(serviceArgs =>
             {
                 serviceArgs.ActionType = DriveExplorerActionType.NavigateBack;
-
-                serviceArgs.FolderIdentifier = new DriveFolderIdentifier
-                {
-                    Id = ServiceArgs.Data.TabPageItems.CurrentlyOpenFolder.Id
-                };
+                AssignFolderIdentifier(serviceArgs);
             });
         }
 
@@ -93,11 +89,7 @@ namespace Turmerik.Blazor.Core.Pages.Components
             await NavigateCore(serviceArgs =>
             {
                 serviceArgs.ActionType = DriveExplorerActionType.NavigateForward;
-
-                serviceArgs.FolderIdentifier = new DriveFolderIdentifier
-                {
-                    Id = ServiceArgs.Data.TabPageItems.CurrentlyOpenFolder.Id
-                };
+                AssignFolderIdentifier(serviceArgs);
             });
         }
 
@@ -106,16 +98,13 @@ namespace Turmerik.Blazor.Core.Pages.Components
             await NavigateCore(serviceArgs =>
             {
                 serviceArgs.ActionType = DriveExplorerActionType.Navigate;
+                AssignFolderIdentifier(serviceArgs);
 
-                serviceArgs.FolderIdentifier = new DriveFolderIdentifier
-                {
-                    Id = ServiceArgs.Data.TabPageItems.CurrentlyOpenFolder.Id
-                };
-
-                serviceArgs.FolderNavigation = new DriveFolderNavigation
-                {
-                    NavigateToParent = true
-                };
+                AssignFolderNavigation(
+                    serviceArgs,
+                    null,
+                    null,
+                    true);
             });
         }
 
@@ -140,12 +129,20 @@ namespace Turmerik.Blazor.Core.Pages.Components
         {
             await NavigateCore(serviceArgs =>
             {
-                serviceArgs.ActionType = DriveExplorerActionType.ReloadCurrentTab;
+                serviceArgs.ActionType = DriveExplorerActionType.Navigate;
 
-                serviceArgs.FolderIdentifier = new DriveFolderIdentifier
+                AssignFolderNavigation(
+                    serviceArgs,
+                    null,
+                    address);
+
+                if (string.IsNullOrWhiteSpace(address))
                 {
-                    Address = address
-                };
+                    serviceArgs.FolderIdentifier = new DriveFolderIdentifier
+                    {
+                        IsRootFolder = true,
+                    };
+                }
             });
         }
 
@@ -153,17 +150,14 @@ namespace Turmerik.Blazor.Core.Pages.Components
         {
             await NavigateCore(serviceArgs =>
             {
-                serviceArgs.ActionType = DriveExplorerActionType.ReloadCurrentTab;
+                serviceArgs.ActionType = DriveExplorerActionType.Navigate;
 
-                serviceArgs.FolderIdentifier = new DriveFolderIdentifier
+                if (string.IsNullOrWhiteSpace(driveFolder.Id))
                 {
-                    Id = ServiceArgs.Data.TabPageItems.CurrentlyOpenFolder.Id
-                };
-
-                serviceArgs.FolderNavigation = new DriveFolderNavigation
-                {
-                    SubFolderName = driveFolder.Name,
-                };
+                    AssignFolderIdentifier(serviceArgs);
+                }
+                
+                AssignFolderNavigation(serviceArgs, driveFolder.Name, driveFolder.Id);
             });
         }
 
@@ -199,13 +193,32 @@ namespace Turmerik.Blazor.Core.Pages.Components
                     TabPageUuid = TabPageUuid,
                 };
 
-                argsCallback(serviceArgs);
-                await DriveFolderService.NavigateAsync(serviceArgs);
+                try
+                {
+                    argsCallback(serviceArgs);
+                    await DriveFolderService.NavigateAsync(serviceArgs);
 
-                ServiceArgs = serviceArgs;
+                    ServiceArgs = serviceArgs;
+                    ClearError();
+                }
+                catch (Exception ex)
+                {
+                    SetError("An unhandled error ocurred", ex);
+                }
+
                 StateHasChanged();
 
-                callback?.Invoke();
+                if (ErrorViewModel == null && callback != null)
+                {
+                    try
+                    {
+                        callback.Invoke();
+                    }
+                    catch (Exception ex)
+                    {
+                        SetError("An unhandled error ocurred", ex);
+                    }
+                }
             });
         }
 
@@ -221,6 +234,35 @@ namespace Turmerik.Blazor.Core.Pages.Components
             ErrorViewModel = new ErrorViewModel(
                 errorMessage, exc,
                 AppSettings.IsDevMode);
+        }
+
+        protected DriveFolder AssignFolderIdentifier(DriveExplorerServiceArgs serviceArgs)
+        {
+            var currentlyOpenFolder = ServiceArgs.Data.TabPageItems.CurrentlyOpenFolder;
+
+            serviceArgs.FolderIdentifier = new DriveFolderIdentifier
+            {
+                Id = currentlyOpenFolder.Id,
+                IsRootFolder = currentlyOpenFolder.IsRootFolder ?? false
+            };
+
+            return currentlyOpenFolder;
+        }
+
+        protected DriveFolderNavigation AssignFolderNavigation(
+            DriveExplorerServiceArgs serviceArgs,
+            string folderName,
+            string folderId = null,
+            bool? navigateToParent = null)
+        {
+            serviceArgs.FolderNavigation = new DriveFolderNavigation
+            {
+                FolderId = folderId,
+                SubFolderName = folderName,
+                NavigateToParent = navigateToParent
+            };
+
+            return serviceArgs.FolderNavigation;
         }
     }
 }

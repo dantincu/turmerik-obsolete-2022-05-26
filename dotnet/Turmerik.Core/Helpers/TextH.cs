@@ -171,7 +171,7 @@ namespace Turmerik.Core.Helpers
             return retVal;
         }
 
-        public static bool StartsWith(
+        public static bool StartsWithStr(
             this string str,
             string prefix,
             bool ignoreCase,
@@ -193,7 +193,7 @@ namespace Turmerik.Core.Helpers
             return retVal;
         }
 
-        public static bool StartsWith(
+        public static bool StartsWithChr(
             this string str,
             string prefix,
             bool ignoreCase,

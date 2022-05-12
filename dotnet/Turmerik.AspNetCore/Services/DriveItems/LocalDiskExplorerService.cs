@@ -16,7 +16,7 @@ namespace Turmerik.AspNetCore.Services.DriveItems
         private readonly IFsPathNormalizer fsPathNormalizer;
 
         public LocalDiskExplorerService(
-            IWebStorageWrapper webStorage,
+            ISessionStorageWrapper webStorage,
             IFsPathNormalizer fsPathNormalizer) : base(webStorage)
         {
             this.fsPathNormalizer = fsPathNormalizer ?? throw new ArgumentNullException(nameof(fsPathNormalizer));
@@ -43,7 +43,7 @@ namespace Turmerik.AspNetCore.Services.DriveItems
                     f => new DriveItem
                     {
                         Name = f.Name,
-                    }).ToList()
+                    }).ToList(),
             };
 
             return driveFolder;
@@ -86,7 +86,8 @@ namespace Turmerik.AspNetCore.Services.DriveItems
             {
                 Name = "This PC",
                 IsRootFolder = true,
-                FolderItems = foldersList
+                FolderItems = foldersList,
+                FileItems = new List<DriveItem>()
             };
 
             return rootFolder;
@@ -100,10 +101,10 @@ namespace Turmerik.AspNetCore.Services.DriveItems
 
             if (identifier.IsRootFolder)
             {
-                identifier.Id = null;
-                identifier.Uri = null;
-                identifier.Path = null;
-                identifier.Address = null;
+                identifier.Id = string.Empty;
+                identifier.Uri = string.Empty;
+                identifier.Path = string.Empty;
+                identifier.Address = string.Empty;
 
                 isValid = true;
                 errorMessage = null;
@@ -136,10 +137,30 @@ namespace Turmerik.AspNetCore.Services.DriveItems
 
                     if (isValid)
                     {
-                        identifier.Path = normResult.NormalizedPath;
-                        identifier.Id = normResult.NormalizedPath;
-                        identifier.Address = normResult.NormalizedPath;
-                        identifier.Uri = $"{FsH.FILE_URI_SCHEME}{normResult.NormalizedPath}";
+                        path = normResult.NormalizedPath;
+
+                        if (normResult.IsAbsUri == true)
+                        {
+                            isValid = path.StartsWithStr(FsH.FILE_URI_SCHEME, true);
+
+                            if (isValid)
+                            {
+                                path = path.Substring(FsH.FILE_URI_SCHEME.Length);
+                            }
+                        }
+                    }
+
+                    if (isValid)
+                    {
+                        if (IsWinDrivePath(path))
+                        {
+                            path = $"{path}\\";
+                        }
+
+                        identifier.Path = path;
+                        identifier.Id = path;
+                        identifier.Address = path;
+                        identifier.Uri = $"{FsH.FILE_URI_SCHEME}{path}";
 
                         errorMessage = null;
                     }
@@ -164,58 +185,85 @@ namespace Turmerik.AspNetCore.Services.DriveItems
         protected override bool TryNormalizeDriveFolderNavigationCore(
             DriveFolderIdentifier identifier,
             DriveFolderNavigation navigation,
-            DriveFolderIdentifier parentIdentifier,
             out string errorMessage)
         {
-            bool isValid;
-            string path = navigation.FolderId;
+            errorMessage = null;
 
-            if (string.IsNullOrWhiteSpace(path))
+            bool isValid = identifier.IsRootFolder;
+            string path = string.Empty;
+
+            if (!identifier.IsRootFolder)
             {
-                path = identifier.Id;
-            }
-
-            if (parentIdentifier != null)
-            {
-                isValid = !string.IsNullOrWhiteSpace(path);
-
-                if (isValid)
+                if (navigation.NavigateToParent == true)
                 {
-                    path = Path.GetDirectoryName(path);
-                    errorMessage = null;
+                    isValid = !string.IsNullOrWhiteSpace(identifier.Id);
+
+                    if (isValid)
+                    {
+                        if (IsRootPath(identifier.Id))
+                        {
+                            path = string.Empty;
+                        }
+                        else
+                        {
+                            path = Path.GetDirectoryName(identifier.Id);
+                        }
+                    }
                 }
                 else
                 {
-                    errorMessage = "Cannot navigate to parent when the current folder is the root folder";
-                }
-            }
-            else
-            {
-                isValid = !string.IsNullOrWhiteSpace(navigation.SubFolderName);
+                    isValid = !string.IsNullOrWhiteSpace(navigation.FolderId);
 
-                if (isValid)
-                {
-                    path = Path.Combine(path, navigation.SubFolderName);
-                    errorMessage = null;
-                }
-                else
-                {
-                    errorMessage = "Sub-folder name must be provided when navigating to a sub-folder";
+                    if (isValid)
+                    {
+                        path = navigation.FolderId;
+                    }
+                    else
+                    {
+                        isValid = !string.IsNullOrWhiteSpace(identifier.Id);
+                        isValid = isValid && !string.IsNullOrWhiteSpace(navigation.SubFolderName);
+
+                        if (isValid)
+                        {
+                            path = Path.Combine(identifier.Id, navigation.SubFolderName);
+                        }
+                    }
                 }
             }
 
             if (isValid)
             {
                 identifier.Id = path;
+                identifier.IsRootFolder = string.IsNullOrWhiteSpace(path);
+            }
+            else
+            {
+                errorMessage = "Invalid navigation object";
             }
 
             return isValid;
         }
 
-        private bool IsWinDriveRootPath(string dirPath)
+        private bool IsRootPath(string path)
         {
-            bool retVal = dirPath.EndsWith(":");
-            return retVal;
+            bool isRootPath = IsWinDrivePath(path) || IsUnixRootPath(path);
+            return isRootPath;
+        }
+
+        private bool IsWinDrivePath(string path)
+        {
+            bool isWinDrive = path.LastOrDefault() == ':';
+            return isWinDrive;
+        }
+
+        private bool IsUnixRootPath(string path)
+        {
+            bool isUnixRootPath = "\\/".Contains(path.FirstOrDefault());
+
+            isUnixRootPath = isUnixRootPath && path.TrimStart(
+                '/', '\\').None(c => "\\/".Contains(c));
+
+            return isUnixRootPath;
         }
 
         private string GetDriveInfoDisplayName(DriveInfo info)
@@ -227,7 +275,7 @@ namespace Turmerik.AspNetCore.Services.DriveItems
                 displayName = string.Join(
                     " ",
                     displayName,
-                    $"{(info.VolumeLabel)}");
+                    $"({(info.VolumeLabel)})");
             }
 
             return displayName;

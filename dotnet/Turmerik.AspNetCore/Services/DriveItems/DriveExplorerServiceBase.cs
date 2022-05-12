@@ -24,28 +24,17 @@ namespace Turmerik.AspNetCore.Services.DriveItems
         {
             if (args.FolderIdentifier != null)
             {
-                TryNormalizeDriveFolderIdentifiers(args.FolderIdentifier);
-            }
-
-            if (args.ParentFolderIdentifier != null)
-            {
-                TryNormalizeDriveFolderIdentifiers(args.ParentFolderIdentifier);
+                TryNormalizeDriveFolderIdentifier(args.FolderIdentifier);
             }
 
             args.Data = args.Data ?? new DriveExplorerData
             {
-                TabPageItems = new DriveItemsViewState()
+                TabPageItems = GetDriveItemsViewState()
             };
 
             await WebStorage.AddOrUpdateAsync(
                 LocalStorageKeys.DriveItemsViewStateKey(args.CacheKeyGuid),
-                async () => new DriveItemsViewState
-                {
-                    Header = new TabHeaderViewState
-                    {
-                        TabPageHeads = new List<TabPageHead>()
-                    },
-                },
+                async () => GetDriveItemsViewState(),
                 async viewState =>
                 {
                     var tabPageHeads = args.Data.TabPageItems.Header.TabPageHeads;
@@ -60,6 +49,28 @@ namespace Turmerik.AspNetCore.Services.DriveItems
                     }
 
                     await NavigateCoreAsync(args);
+
+                    if (args.Data.TabPageItems.Header.TabPageHeads.None())
+                    {
+                        var pageHead = new TabPageHead
+                        {
+                            IsCurrent = true,
+                            Name = args.Data.TabPageItems.CurrentlyOpenFolder.Name,
+                            Uuid = Guid.NewGuid(),
+                            Id = args.Data.TabPageItems.CurrentlyOpenFolder.Id,
+                            Idx = 0
+                        };
+
+                        tabPageHeads.Add(pageHead);
+                    }
+
+                    if (!args.TabPageUuid.HasValue)
+                    {
+                        args.TabPageUuid = args.Data.TabPageItems.Header.TabPageHeads.Single(
+                            head => head.IsCurrent == true).Uuid;
+                    }
+
+                    args.Data.TabPageItems.GoUpButtonEnabled = !(args.Data.TabPageItems.CurrentlyOpenFolder.IsRootFolder ?? false);
                     return args.Data.TabPageItems;
                 });
         }
@@ -74,10 +85,9 @@ namespace Turmerik.AspNetCore.Services.DriveItems
         protected abstract bool TryNormalizeDriveFolderNavigationCore(
             DriveFolderIdentifier identifier,
             DriveFolderNavigation navigation,
-            DriveFolderIdentifier parentIdentifier,
             out string errorMessage);
 
-        private void TryNormalizeDriveFolderIdentifiers(
+        private void TryNormalizeDriveFolderIdentifier(
             DriveFolderIdentifier identifier)
         {
             string errorMessage;
@@ -97,21 +107,19 @@ namespace Turmerik.AspNetCore.Services.DriveItems
 
         private void TryNormalizeDriveFolderNavigation(
             DriveFolderIdentifier identifier,
-            DriveFolderNavigation navigation,
-            DriveFolderIdentifier parentIdentifier)
+            DriveFolderNavigation navigation)
         {
             string errorMessage;
 
             if (!TryNormalizeDriveFolderNavigationCore(
                 identifier,
                 navigation,
-                parentIdentifier,
                 out errorMessage))
             {
                 throw new InvalidOperationException(errorMessage);
             }
 
-            TryNormalizeDriveFolderIdentifiers(identifier);
+            TryNormalizeDriveFolderIdentifier(identifier);
         }
 
         private async Task NavigateCoreAsync(
@@ -126,10 +134,11 @@ namespace Turmerik.AspNetCore.Services.DriveItems
                     await RefreshCurrentTabAsync(args);
                     break;
                 case DriveExplorerActionType.Navigate:
+                    args.FolderIdentifier = args.FolderIdentifier ?? new DriveFolderIdentifier();
+
                     TryNormalizeDriveFolderNavigation(
                         args.FolderIdentifier,
-                        args.FolderNavigation,
-                        args.ParentFolderIdentifier);
+                        args.FolderNavigation);
 
                     await NavigateToFolderAsync(args);
                     break;
@@ -165,7 +174,7 @@ namespace Turmerik.AspNetCore.Services.DriveItems
                     IsRootFolder = true
                 };
 
-            TryNormalizeDriveFolderIdentifiers(
+            TryNormalizeDriveFolderIdentifier(
                 args.FolderIdentifier);
 
             args.Data.TabPageItems.CurrentlyOpenFolder = await GetDriveFolderAsync(
@@ -189,7 +198,8 @@ namespace Turmerik.AspNetCore.Services.DriveItems
         {
             var historyInstn = await AddOrUpdateTabPageHistoryAsync(
                 args,
-                async history =>
+                await GetDriveFolderAsync(args.FolderIdentifier, args.CacheKeyGuid, true),
+                async (driveFolder, history) =>
                 {
                     history.ForwardHistory.Add(history.Current);
                     history.Current = history.BackHistory.Last();
@@ -197,12 +207,6 @@ namespace Turmerik.AspNetCore.Services.DriveItems
                     args.FolderNavigation = history.Current;
                     return history;
                 });
-
-            TryNormalizeDriveFolderNavigation(
-                args.FolderIdentifier, args.FolderNavigation, args.ParentFolderIdentifier);
-
-            args.Data.TabPageItems.CurrentlyOpenFolder = await GetDriveFolderAsync(
-                args.FolderIdentifier, args.CacheKeyGuid, true);
         }
 
         private async Task NavigateForwardAsync(
@@ -210,7 +214,8 @@ namespace Turmerik.AspNetCore.Services.DriveItems
         {
             var historyInstn = await AddOrUpdateTabPageHistoryAsync(
                 args,
-                async history =>
+                await GetDriveFolderAsync(args.FolderIdentifier, args.CacheKeyGuid, true),
+                async (driveFolder, history) =>
                 {
                     history.BackHistory.Add(history.Current);
                     history.Current = history.ForwardHistory.First();
@@ -218,44 +223,32 @@ namespace Turmerik.AspNetCore.Services.DriveItems
                     args.FolderNavigation = history.Current;
                     return history;
                 });
-
-            TryNormalizeDriveFolderNavigation(
-                args.FolderIdentifier,
-                args.FolderNavigation,
-                args.ParentFolderIdentifier);
-
-            args.Data.TabPageItems.CurrentlyOpenFolder = await GetDriveFolderAsync(
-                args.FolderIdentifier, args.CacheKeyGuid, true);
         }
 
         private async Task NavigateToFolderAsync(
             DriveExplorerServiceArgs args)
         {
-            var currentlyOpenFolder = await GetDriveFolderAsync(
-                args.FolderIdentifier, args.CacheKeyGuid, true);
-
-            args.Data.TabPageItems.CurrentlyOpenFolder = currentlyOpenFolder;
-
             var pageHead = args.Data.TabPageItems.Header.TabPageHeads.Single(
                 item => item.IsCurrent == true);
 
-            pageHead.Name = currentlyOpenFolder.Name;
-            pageHead.Id = currentlyOpenFolder.Id;
-
             await AddOrUpdateTabPageHistoryAsync(
                 args,
-                async history =>
+                await GetDriveFolderAsync(args.FolderIdentifier, args.CacheKeyGuid, true),
+                async (driveFolder, history) =>
                 {
                     history.BackHistory.Add(history.Current);
 
                     history.Current = new DriveFolderNavigation
                     {
-                        FolderId = currentlyOpenFolder.Id
+                        FolderId = driveFolder.Id
                     };
 
                     history.ForwardHistory.Clear();
                     return history;
                 });
+
+            pageHead.Name = args.Data.TabPageItems.CurrentlyOpenFolder.Name;
+            pageHead.Id = args.Data.TabPageItems.CurrentlyOpenFolder.Id;
         }
 
         private async Task ChangeTabAsync(
@@ -288,7 +281,8 @@ namespace Turmerik.AspNetCore.Services.DriveItems
             };
 
             await AddOrUpdateTabPageHistoryAsync(args,
-                async history =>
+                await GetDriveFolderAsync(args.FolderIdentifier, args.CacheKeyGuid, true),
+                async (driveFolder, history) =>
                 {
                     history.Current = args.FolderNavigation;
                     return history;
@@ -361,7 +355,8 @@ namespace Turmerik.AspNetCore.Services.DriveItems
 
         private async Task<TabPageHistory> AddOrUpdateTabPageHistoryAsync(
             DriveExplorerServiceArgs args,
-            Func<TabPageHistory, Task<TabPageHistory>> updateFunc)
+            DriveFolder driveFolder,
+            Func<DriveFolder, TabPageHistory, Task<TabPageHistory>> updateFunc)
         {
             var key = LocalStorageKeys.AddressHistoryStackKey(
                 args.CacheKeyGuid,
@@ -374,14 +369,14 @@ namespace Turmerik.AspNetCore.Services.DriveItems
                     BackHistory = new List<DriveFolderNavigation>(),
                     ForwardHistory = new List<DriveFolderNavigation>()
                 },
-                updateFunc);
+                async (historyInstn) => await updateFunc(driveFolder, historyInstn));
 
             var tabPageItems = args.Data.TabPageItems;
+            tabPageItems.CurrentlyOpenFolder = driveFolder;
 
             tabPageItems.GoBackButtonEnabled = history.BackHistory.Any();
             tabPageItems.GoForwardButtonEnabled = history.ForwardHistory.Any();
 
-            tabPageItems.GoUpButtonEnabled = !(tabPageItems.CurrentlyOpenFolder.IsRootFolder ?? false);
             return history;
         }
 
@@ -395,7 +390,7 @@ namespace Turmerik.AspNetCore.Services.DriveItems
             DriveFolderIdentifier identifier = null;
 
             matchCallback = matchCallback.FirstNotNull(
-                (tabPage, idnf) => TryNormalizeDriveFolderIdentifiers(idnf));
+                (tabPage, idnf) => TryNormalizeDriveFolderIdentifier(idnf));
 
             if (tabUuid.HasValue)
             {
@@ -407,8 +402,13 @@ namespace Turmerik.AspNetCore.Services.DriveItems
                     {
                         identifier = new DriveFolderIdentifier
                         {
-                            Id = tabPage.Id,
+                            Id = tabPage.Id
                         };
+
+                        if (string.IsNullOrWhiteSpace(tabPage.Id))
+                        {
+                            identifier.IsRootFolder = true;
+                        }
 
                         matchCallback(tabPage, identifier);
                     }
@@ -441,6 +441,7 @@ namespace Turmerik.AspNetCore.Services.DriveItems
             else
             {
                 driveFolder = await GetDriveFolderAsync(identifier.Id, localSessionGuid, refreshCache);
+                identifier.ParentId = driveFolder.ParentFolderId;
             }
 
             return driveFolder;
@@ -503,6 +504,19 @@ namespace Turmerik.AspNetCore.Services.DriveItems
 
             string errorMessage = $"Invalid tab page uuid: {uuidStr}";
             throw new InvalidOperationException(errorMessage);
+        }
+
+        private DriveItemsViewState GetDriveItemsViewState()
+        {
+            var viewState = new DriveItemsViewState
+            {
+                Header = new TabHeaderViewState
+                {
+                    TabPageHeads = new List<TabPageHead>()
+                }
+            };
+
+            return viewState;
         }
     }
 }

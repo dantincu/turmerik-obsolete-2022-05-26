@@ -34,13 +34,17 @@ namespace Turmerik.Core.Services.DriveItems
             Path = src.Path;
             Uri = src.Uri;
             Address = src.Address;
+            ParentId = src.ParentId;
             IsRootFolder = src.IsRootFolder;
+            DriveItemType = src.DriveItemType;
         }
 
         public string Id { get; set ; }
         public string Path { get; set; }
         public string Uri { get; set; }
         public string Address { get; set; }
+        public string ParentId { get; set; }
         public bool IsRootFolder { get; set; }
+        public DriveItemType? DriveItemType { get; set; }
     }
 }

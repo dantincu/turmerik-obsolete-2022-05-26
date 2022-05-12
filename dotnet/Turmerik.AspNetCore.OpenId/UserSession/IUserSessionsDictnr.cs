@@ -135,7 +135,7 @@ namespace Turmerik.AspNetCore.OpenId.UserSession
 
         private bool IsTrmrkKey(string key)
         {
-            bool retVal = key.StartsWith(
+            bool retVal = key.StartsWithChr(
                 LocalStorageKeys.TRMRK,
                 true,
                 '-',
