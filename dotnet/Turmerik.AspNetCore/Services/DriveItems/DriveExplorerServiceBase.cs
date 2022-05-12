@@ -199,8 +199,8 @@ namespace Turmerik.AspNetCore.Services.DriveItems
                     var current = history.BackHistory.Last();
                     history.BackHistory.RemoveAt(history.BackHistory.Count - 1);
 
-                    history.ForwardHistory.Add(current);
-                    args.FolderNavigation = GetDriveFolderNavigation(args, current, true);
+                    history.ForwardHistory.Insert(0, current);
+                    AssignDriveFolderIdentifier(args, history);
 
                     return history;
                 });
@@ -217,7 +217,7 @@ namespace Turmerik.AspNetCore.Services.DriveItems
                     history.ForwardHistory.RemoveAt(0);
 
                     history.BackHistory.Add(current);
-                    args.FolderNavigation = GetDriveFolderNavigation(args, current, false);
+                    AssignDriveFolderIdentifier(args, history);
 
                     return history;
                 });
@@ -523,19 +523,74 @@ namespace Turmerik.AspNetCore.Services.DriveItems
             return viewState;
         }
 
-        private DriveFolderNavigation GetDriveFolderNavigation(
+        private void AssignDriveFolderIdentifier(
             DriveExplorerServiceArgs args,
-            DriveFolderNavigation currentHistory,
-            bool isBackHistory)
+            TabPageHistory history)
         {
-            var folderIdentifier = args.FolderIdentifier;
+            string path = string.Empty;
 
-            TryNormalizeDriveFolderNavigation(
-                ref folderIdentifier,
-                currentHistory);
+            if (history.BackHistory.Any())
+            {
+                bool @break = false;
 
+                var historyParts = history.BackHistory.Reverse<DriveFolderNavigation>(
+                ).TakeWhile(h =>
+                {
+                    bool retVal = !@break;
+                    @break = !string.IsNullOrWhiteSpace(h.Id);
+
+                    return retVal;
+                }).Reverse().ToArray();
+
+                var pathParts = historyParts.Select(
+                    (h, i) =>
+                    {
+                        string part;
+
+                        if (i == 0 && !string.IsNullOrWhiteSpace(h.Id))
+                        {
+                            part = h.Id;
+                        }
+                        else if (h.Up == true)
+                        {
+                            part = "..";
+                        }
+                        else
+                        {
+                            part = h.Name;
+                        }
+
+                        return part;
+                    }).ToList();
+
+                int idx = 0;
+
+                while (idx < pathParts.Count)
+                {
+                    string part = pathParts[idx];
+
+                    if (part == "..")
+                    {
+                        idx--;
+                        pathParts.RemoveRange(idx, 2);
+                    }
+                    else
+                    {
+                        idx++;
+                    }
+                }
+
+                path = Path.Combine(pathParts.ToArray());
+            }
+
+            var folderIdentifier = new DriveFolderIdentifier
+            {
+                Id = path,
+                IsRootFolder = string.IsNullOrWhiteSpace(path)
+            };
+
+            TryNormalizeDriveFolderIdentifier(ref folderIdentifier);
             args.FolderIdentifier = folderIdentifier;
-            return currentHistory;
         }
     }
 }
