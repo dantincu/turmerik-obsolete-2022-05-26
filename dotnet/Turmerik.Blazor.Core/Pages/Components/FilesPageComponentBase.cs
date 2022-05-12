@@ -151,13 +151,16 @@ namespace Turmerik.Blazor.Core.Pages.Components
             await NavigateCore(serviceArgs =>
             {
                 serviceArgs.ActionType = DriveExplorerActionType.Navigate;
+                AssignFolderIdentifier(serviceArgs);
 
-                if (string.IsNullOrWhiteSpace(driveFolder.Id))
+                if (!string.IsNullOrWhiteSpace(driveFolder.Id))
                 {
-                    AssignFolderIdentifier(serviceArgs);
+                    AssignFolderNavigation(serviceArgs, null, driveFolder.Id);
                 }
-                
-                AssignFolderNavigation(serviceArgs, driveFolder.Name, driveFolder.Id);
+                else
+                {
+                    AssignFolderNavigation(serviceArgs, driveFolder.Name, null);
+                }
             });
         }
 
@@ -257,9 +260,9 @@ namespace Turmerik.Blazor.Core.Pages.Components
         {
             serviceArgs.FolderNavigation = new DriveFolderNavigation
             {
-                FolderId = folderId,
-                SubFolderName = folderName,
-                NavigateToParent = navigateToParent
+                Id = folderId,
+                Name = folderName,
+                Up = navigateToParent
             };
 
             return serviceArgs.FolderNavigation;

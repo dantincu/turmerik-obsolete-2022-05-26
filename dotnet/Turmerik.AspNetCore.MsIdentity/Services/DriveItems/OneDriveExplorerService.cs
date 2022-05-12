@@ -22,15 +22,16 @@ namespace Turmerik.AspNetCore.MsIdentity.Services.DriveItems
             throw new NotImplementedException();
         }
 
-        protected override bool TryNormalizeDriveFolderIdentifiersCore(DriveFolderIdentifier identifier, out string errorMessage)
+        protected override bool TryNormalizeDriveFolderIdentifiersCore(
+            ref DriveFolderIdentifier identifier,
+            out string errorMessage)
         {
             throw new NotImplementedException();
         }
 
         protected override bool TryNormalizeDriveFolderNavigationCore(
-            DriveFolderIdentifier identifier,
+            ref DriveFolderIdentifier identifier,
             DriveFolderNavigation navigation,
-            DriveFolderIdentifier parentIdentifier,
             out string errorMessage)
         {
             throw new NotImplementedException();

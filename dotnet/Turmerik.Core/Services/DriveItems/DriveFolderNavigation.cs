@@ -12,12 +12,13 @@ namespace Turmerik.Core.Services.DriveItems
 
         public DriveFolderNavigation(DriveFolderNavigation src)
         {
-            FolderId = src.FolderId;
-            SubFolderName = src.SubFolderName;
+            Up = src.Up;
+            Id = src.Id;
+            Name = src.Name;
         }
 
-        public bool? NavigateToParent { get; set; }
-        public string FolderId { get; set; }
-        public string SubFolderName { get; set; }
+        public bool? Up { get; set; }
+        public string Id { get; set; }
+        public string Name { get; set; }
     }
 }

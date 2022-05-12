@@ -94,88 +94,76 @@ namespace Turmerik.AspNetCore.Services.DriveItems
         }
 
         protected override bool TryNormalizeDriveFolderIdentifiersCore(
-            DriveFolderIdentifier identifier,
+            ref DriveFolderIdentifier identifier,
             out string errorMessage)
         {
-            bool isValid;
+            bool isValid = true;
+            errorMessage = null;
 
-            if (identifier.IsRootFolder)
+            identifier = identifier ?? new DriveFolderIdentifier();
+
+            string path = identifier.Id;
+
+            if (string.IsNullOrWhiteSpace(path))
             {
-                identifier.Id = string.Empty;
-                identifier.Uri = string.Empty;
-                identifier.Path = string.Empty;
-                identifier.Address = string.Empty;
-
-                isValid = true;
-                errorMessage = null;
+                path = identifier.Path;
             }
-            else
+
+            if (string.IsNullOrWhiteSpace(path))
             {
-                string path = identifier.Id;
+                path = identifier.Address;
+            }
 
-                if (string.IsNullOrWhiteSpace(path))
-                {
-                    path = identifier.Path;
-                }
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                path = identifier.Uri;
+            }
 
-                if (string.IsNullOrWhiteSpace(path))
-                {
-                    path = identifier.Address;
-                }
-
-                if (string.IsNullOrWhiteSpace(path))
-                {
-                    path = identifier.Uri;
-                }
-
-                isValid = !string.IsNullOrWhiteSpace(path);
+            if (!string.IsNullOrWhiteSpace(path))
+            {
+                var normResult = fsPathNormalizer.TryNormalizePath(path, null);
+                isValid = normResult.IsValid && normResult.IsRooted;
 
                 if (isValid)
                 {
-                    var normResult = fsPathNormalizer.TryNormalizePath(path, null);
-                    isValid = normResult.IsValid && normResult.IsRooted;
+                    path = normResult.NormalizedPath;
 
-                    if (isValid)
+                    if (normResult.IsAbsUri == true)
                     {
-                        path = normResult.NormalizedPath;
+                        isValid = path.StartsWithStr(FsH.FILE_URI_SCHEME, true);
 
-                        if (normResult.IsAbsUri == true)
+                        if (isValid)
                         {
-                            isValid = path.StartsWithStr(FsH.FILE_URI_SCHEME, true);
-
-                            if (isValid)
-                            {
-                                path = path.Substring(FsH.FILE_URI_SCHEME.Length);
-                            }
+                            path = path.Substring(FsH.FILE_URI_SCHEME.Length);
                         }
                     }
+                }
 
-                    if (isValid)
+                if (isValid)
+                {
+                    if (path.IsWinDrive())
                     {
-                        if (IsWinDrivePath(path))
-                        {
-                            path = $"{path}\\";
-                        }
+                        path = $"{path}\\";
+                    }
 
-                        identifier.Path = path;
-                        identifier.Id = path;
-                        identifier.Address = path;
-                        identifier.Uri = $"{FsH.FILE_URI_SCHEME}{path}";
+                    identifier.Path = path;
+                    identifier.Id = path;
+                    identifier.Address = path;
+                    identifier.Uri = $"{FsH.FILE_URI_SCHEME}{path}";
 
-                        errorMessage = null;
-                    }
-                    else if (!normResult.IsValid)
-                    {
-                        errorMessage = "Provided path is invalid";
-                    }
-                    else
-                    {
-                        errorMessage = "Normalized path is not rooted";
-                    }
+                    errorMessage = null;
+                }
+                else if (!normResult.IsValid)
+                {
+                    errorMessage = "Provided path is invalid";
+                }
+                else if (normResult.IsAbsUri == true)
+                {
+                    errorMessage = "Only file path or file path uri is accepted";
                 }
                 else
                 {
-                    errorMessage = "Provided identifier property values are all empty or only contain whitespaces";
+                    errorMessage = "Normalized path is not rooted";
                 }
             }
 
@@ -183,52 +171,45 @@ namespace Turmerik.AspNetCore.Services.DriveItems
         }
 
         protected override bool TryNormalizeDriveFolderNavigationCore(
-            DriveFolderIdentifier identifier,
+            ref DriveFolderIdentifier identifier,
             DriveFolderNavigation navigation,
             out string errorMessage)
         {
             errorMessage = null;
+            bool isValid = true;
 
-            bool isValid = identifier.IsRootFolder;
             string path = string.Empty;
+            identifier = identifier ?? new DriveFolderIdentifier();
 
-            if (!identifier.IsRootFolder)
+            if (navigation.Up == true)
             {
-                if (navigation.NavigateToParent == true)
+                if (!string.IsNullOrWhiteSpace(identifier.Id))
                 {
-                    isValid = !string.IsNullOrWhiteSpace(identifier.Id);
-
-                    if (isValid)
-                    {
-                        if (IsRootPath(identifier.Id))
-                        {
-                            path = string.Empty;
-                        }
-                        else
-                        {
-                            path = Path.GetDirectoryName(identifier.Id);
-                        }
-                    }
+                    path = Path.GetDirectoryName(identifier.Id) ?? string.Empty;
+                }
+            }
+            else if (!string.IsNullOrWhiteSpace(navigation.Id))
+            {
+                path = navigation.Id;
+            }
+            else if (!string.IsNullOrWhiteSpace(identifier.Id))
+            {
+                if (!string.IsNullOrWhiteSpace(navigation.Name))
+                {
+                    path = Path.Combine(identifier.Id, navigation.Name);
                 }
                 else
                 {
-                    isValid = !string.IsNullOrWhiteSpace(navigation.FolderId);
-
-                    if (isValid)
-                    {
-                        path = navigation.FolderId;
-                    }
-                    else
-                    {
-                        isValid = !string.IsNullOrWhiteSpace(identifier.Id);
-                        isValid = isValid && !string.IsNullOrWhiteSpace(navigation.SubFolderName);
-
-                        if (isValid)
-                        {
-                            path = Path.Combine(identifier.Id, navigation.SubFolderName);
-                        }
-                    }
+                    path = identifier.Id;
                 }
+            }
+            else if (!string.IsNullOrWhiteSpace(navigation.Id))
+            {
+                path = navigation.Id;
+            }
+            else if (!string.IsNullOrWhiteSpace(navigation.Name))
+            {
+                path = navigation.Name;
             }
 
             if (isValid)
@@ -242,28 +223,6 @@ namespace Turmerik.AspNetCore.Services.DriveItems
             }
 
             return isValid;
-        }
-
-        private bool IsRootPath(string path)
-        {
-            bool isRootPath = IsWinDrivePath(path) || IsUnixRootPath(path);
-            return isRootPath;
-        }
-
-        private bool IsWinDrivePath(string path)
-        {
-            bool isWinDrive = path.LastOrDefault() == ':';
-            return isWinDrive;
-        }
-
-        private bool IsUnixRootPath(string path)
-        {
-            bool isUnixRootPath = "\\/".Contains(path.FirstOrDefault());
-
-            isUnixRootPath = isUnixRootPath && path.TrimStart(
-                '/', '\\').None(c => "\\/".Contains(c));
-
-            return isUnixRootPath;
         }
 
         private string GetDriveInfoDisplayName(DriveInfo info)
