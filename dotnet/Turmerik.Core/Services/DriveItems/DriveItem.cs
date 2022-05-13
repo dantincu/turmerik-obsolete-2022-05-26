@@ -35,6 +35,7 @@ namespace Turmerik.Core.Services.DriveItems
 
         public DriveItem(DriveItem src) : base(src)
         {
+            Label = src.Label;
             ParentFolderId = src.ParentFolderId;
             CreationTime = src.CreationTime;
             LastAccessTime = src.LastAccessTime;
@@ -42,6 +43,7 @@ namespace Turmerik.Core.Services.DriveItems
             DriveItemType = src.DriveItemType;
         }
 
+        public string Label { get; set; }
         /// <summary>
         /// Only used by cloud storage explorer apps
         /// </summary>

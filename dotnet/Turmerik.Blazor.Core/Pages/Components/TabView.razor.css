@@ -22,7 +22,8 @@
         display: inline-flex;
         border: 1px solid #404040;
         border-radius: 2px;
-        height: 1.4rem;
+        line-height: 0.9rem;
+        font-size: 0.9rem;
         word-wrap: anywhere;
         line-break: anywhere;
         flex-wrap: wrap;
@@ -37,12 +38,13 @@
         padding: 4px 4px 4px 4px;
         margin: 0;
         font-weight: normal;
+        font-size: 0.8rem;
+        line-height: 0.8rem;
     }
 
         .trmrk-tab-view-header > .oi{
             padding-top: 5px;
         }
-
 
             .trmrk-tab-view-header > .oi:hover,
             .trmrk-tab-page-head > .oi:hover,
@@ -52,7 +54,7 @@
 
 .trmrk-tab-page-head > .trmrk-name,
 .trmrk-tab-page-head.trmrk-current > .trmrk-name {
-    padding: 2px 4px 4px 4px;
+    padding: 4px 4px 4px 4px;
     margin: 0;
 }
 

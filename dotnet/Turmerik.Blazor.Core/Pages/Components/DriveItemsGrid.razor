@@ -44,7 +44,11 @@
             <tr>
                 <th scope="row"><span class="oi @IconCssClass" aria-hidden="true"></span></th>
                 <td @onclick=@OnDriveItemClickEventHandler(dvItem)>
-                    @dvItem.Name
+                    <span class="@CssClassH.CellName">@dvItem.Name</span>&nbsp;
+                    @if (!string.IsNullOrWhiteSpace(dvItem.Label))
+                    {
+                        <span class="@CssClassH.CellLabel">@dvItem.Label</span>
+                    }
                  </td>
                 <td title="Options">
                     <i class="oi oi-ellipses trmrk-rotate90deg" @onclick=@OnDriveItemOptionsClickEventHandler(dvItem)></i>

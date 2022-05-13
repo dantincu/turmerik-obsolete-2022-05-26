@@ -55,12 +55,31 @@ namespace Turmerik.AspNetCore.Services.DriveItems
 
             var drives = DriveInfo.GetDrives(
                 ).Where(d => d.IsReady).Select(
-                d => new DriveItem
+                d =>
                 {
-                    Id = d.Name,
-                    Name = GetDriveInfoDisplayName(d),
-                    DriveItemType = DriveItemType.FsDriveRoot
+                    string label = d.VolumeLabel;
+
+                    if (!string.IsNullOrWhiteSpace(label))
+                    {
+                        label = $"({label})";
+                    }
+                    else
+                    {
+                        label = null;
+                    }
+
+                    var item = new DriveItem
+                    {
+                        Id = d.Name,
+                        Name = d.Name,
+                        Label = label,
+                        DriveItemType = DriveItemType.FsDriveRoot
+                    };
+
+                    return item;
                 });
+
+            string userHomePath = GetFolderPath(SpecialFolder.UserProfile);
 
             var folders = new Dictionary<SpecialFolder, string>
             {
@@ -72,11 +91,28 @@ namespace Turmerik.AspNetCore.Services.DriveItems
                 { SpecialFolder.MyMusic, "Music" },
                 { SpecialFolder.Desktop, "Desktop" }
             }.Select(
-                kvp => new DriveItem
+                kvp =>
                 {
-                    Id = GetFolderPath(kvp.Key),
-                    Name = kvp.Value,
-                    DriveItemType = DriveItemType.FsSpecialFolder
+                    string path = GetFolderPath(kvp.Key);
+                    string label = path;
+
+                    if (label.StartsWith(userHomePath))
+                    {
+                        label = label.Substring(userHomePath.Length).TrimStart('/', '\\');
+                        label = $"~{Path.DirectorySeparatorChar}{label}";
+                    }
+
+                    label = $"({label})";
+
+                    var item = new DriveItem
+                    {
+                        Id = path,
+                        Name = kvp.Value,
+                        Label = label,
+                        DriveItemType = DriveItemType.FsSpecialFolder
+                    };
+
+                    return item;
                 });
 
             foldersList.AddRange(drives);
@@ -223,21 +259,6 @@ namespace Turmerik.AspNetCore.Services.DriveItems
             }
 
             return isValid;
-        }
-
-        private string GetDriveInfoDisplayName(DriveInfo info)
-        {
-            string displayName = info.Name;
-
-            if (!string.IsNullOrWhiteSpace(info.VolumeLabel))
-            {
-                displayName = string.Join(
-                    " ",
-                    displayName,
-                    $"({(info.VolumeLabel)})");
-            }
-
-            return displayName;
         }
     }
 }

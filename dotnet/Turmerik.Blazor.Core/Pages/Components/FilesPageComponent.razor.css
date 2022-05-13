@@ -14,6 +14,9 @@
     ::deep .trmrk-drive-folders-grid tbody tr,
     ::deep .trmrk-drive-items-grid tbody tr {
         line-height: 1rem;
+        max-width: 100%;
+        word-break: break-all;
+        word-wrap: anywhere;
     }
 
         ::deep .trmrk-drive-folders-grid tbody tr td,
@@ -29,6 +32,10 @@
 ::deep .trmrk-drive-items-grid th.trmrk-col-ext {
     width: 40px;
 }
+
+    ::deep .trmrk-drive-folders-grid td > .trmrk-cell-label {
+        color: #AAA;
+    }
 
 ::deep th[data-trmrk-date-time] {
     width: 10rem;

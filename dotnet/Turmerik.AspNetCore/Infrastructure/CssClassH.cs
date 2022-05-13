@@ -29,6 +29,7 @@ namespace Turmerik.AspNetCore.Infrastructure
         public const string BAR = "bar";
         public const string BRAND = "brand";
         public const string NAME = "name";
+        public const string LABEL = "label";
         public const string EXT = "ext";
         public const string ITEM = "item";
         public const string ITEMS = "items";
@@ -89,6 +90,8 @@ namespace Turmerik.AspNetCore.Infrastructure
         public static readonly string ColName = Class(COL, NAME);
         public static readonly string ColExt = Class(COL, EXT);
         public static readonly string ColDateTime = Class(COL, DATE, TIME);
+        public static readonly string CellName = Class(CELL, NAME);
+        public static readonly string CellLabel = Class(CELL, LABEL);
         public static readonly string Container = Class(CONTAINER);
         public static readonly string Spacer = Class(SPACER);
 
