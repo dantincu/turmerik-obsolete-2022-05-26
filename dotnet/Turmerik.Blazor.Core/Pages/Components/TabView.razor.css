@@ -35,10 +35,10 @@
     .trmrk-tab-page-head.trmrk-current > .oi {
         position: relative;
         top: 0px;
-        padding: 4px 4px 4px 4px;
+        padding: 5px 5px 5px 5px;
         margin: 0;
         font-weight: normal;
-        font-size: 0.8rem;
+        font-size: 0.7rem;
         line-height: 0.8rem;
     }
 
@@ -56,6 +56,9 @@
 .trmrk-tab-page-head.trmrk-current > .trmrk-name {
     padding: 4px 4px 4px 4px;
     margin: 0;
+    border-right: none;
+    border-right-width: 0px;
+    margin-right: 0px;
 }
 
 .trmrk-tab-page-head.trmrk-current > .trmrk-name,
@@ -65,12 +68,7 @@
     margin: 0;
 }
 
-.trmrk-tab-page-head.trmrk-current > .trmrk-name {
-    border-right: none;
-    border-right-width: 0px;
-    margin-right: 0px;
-}
-
+.trmrk-tab-page-head > .oi,
 .trmrk-tab-page-head.trmrk-current > .oi {
     border-left: none;
     border-left-width: 0px;
@@ -86,10 +84,6 @@
 .trmrk-tab-view-header {
     display: flex;
     flex-flow: row wrap;
-}
-
-.trmrk-tab-page-head .btn,
-.trmrk-tab-page-header .btn > .oi {
 }
 
     .trmrk-tab-page {

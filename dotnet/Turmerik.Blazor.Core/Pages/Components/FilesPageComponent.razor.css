@@ -1,4 +1,12 @@
-﻿.trmrk-spacer {
+﻿.trmrk-title {
+    max-width: 100%;
+    word-wrap: anywhere;
+    line-break: anywhere;
+    flex-wrap: wrap;
+    overflow-wrap: anywhere;
+}
+
+.trmrk-spacer {
     height: 10px;
 }
 

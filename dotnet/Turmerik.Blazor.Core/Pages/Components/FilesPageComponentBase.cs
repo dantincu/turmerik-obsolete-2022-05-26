@@ -211,8 +211,12 @@ namespace Turmerik.Blazor.Core.Pages.Components
                     argsCallback(serviceArgs);
                     await DriveFolderService.NavigateAsync(serviceArgs);
 
-                    serviceArgs.FolderIdentifier = serviceArgs.FolderIdentifier ?? ServiceArgs.FolderIdentifier;
-                    needsRedirect = needsRedirect || ServiceArgs.TabPageUuid != serviceArgs.TabPageUuid;
+                    serviceArgs.FolderIdentifier = serviceArgs.FolderIdentifier ?? ServiceArgs?.FolderIdentifier;
+
+                    if (ServiceArgs != null)
+                    {
+                        needsRedirect = needsRedirect || ServiceArgs.TabPageUuid != serviceArgs.TabPageUuid;
+                    }
 
                     ServiceArgs = serviceArgs;
                     ClearError();

@@ -30,6 +30,7 @@ namespace Turmerik.AspNetCore.Infrastructure
         public const string BRAND = "brand";
         public const string NAME = "name";
         public const string LABEL = "label";
+        public const string TITLE = "title";
         public const string EXT = "ext";
         public const string ITEM = "item";
         public const string ITEMS = "items";
@@ -70,6 +71,7 @@ namespace Turmerik.AspNetCore.Infrastructure
         public static readonly string Current = Class(CURRENT);
         public static readonly string Selected = Class(SELECTED);
         public static readonly string Name = Class(NAME);
+        public static readonly string Title = Class(TITLE);
         public static readonly string Loading = Class(LOADING);
         public static readonly string ErrorBlock = Class(ERROR, BLOCK);
         public static readonly string ErrorBlockSmall = Class(ERROR, BLOCK, SMALL);
