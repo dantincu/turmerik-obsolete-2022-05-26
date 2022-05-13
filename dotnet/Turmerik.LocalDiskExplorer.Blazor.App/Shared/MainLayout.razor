@@ -12,6 +12,7 @@
 @inject IHttpContextAccessor httpContextAccessor;
 @inject ILocalStorageWrapper localStorage;
 @inject ISessionStorageWrapper sessionStorage
+@inject IMainLayoutService mainLayoutService;
 
 <PageTitle>Turmerik Local Disk Explorer</PageTitle>
 
@@ -41,6 +42,7 @@
         this.HttpContextAccessor = httpContextAccessor;
         this.LocalStorage = localStorage;
         this.SessionStorage = sessionStorage;
+        this.MainLayoutService = mainLayoutService;
 
         return base.OnInitializedAsync();
     }

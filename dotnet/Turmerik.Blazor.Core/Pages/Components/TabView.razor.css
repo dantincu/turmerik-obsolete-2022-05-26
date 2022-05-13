@@ -40,6 +40,7 @@
         font-weight: normal;
         font-size: 0.7rem;
         line-height: 0.8rem;
+        color: #FFD0A0;
     }
 
         .trmrk-tab-view-header > .oi{
@@ -49,7 +50,7 @@
             .trmrk-tab-view-header > .oi:hover,
             .trmrk-tab-page-head > .oi:hover,
             .trmrk-tab-page-head.trmrk-current > .oi:hover {
-                color: lightgoldenrodyellow;
+                color: darkorange;
             }
 
 .trmrk-tab-page-head > .trmrk-name,
@@ -63,9 +64,15 @@
 
 .trmrk-tab-page-head.trmrk-current > .trmrk-name,
 .trmrk-tab-page-head.trmrk-current > .oi {
-    background-color: #302818;
+    background-color: #403020;
     border: 1px solid #606060;
     margin: 0;
+}
+
+
+.trmrk-tab-page-head.trmrk-current > .trmrk-name {
+    color: white;
+    font-weight: bold;
 }
 
 .trmrk-tab-page-head > .oi,

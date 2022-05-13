@@ -23,6 +23,7 @@
 @inject ILocalStorageWrapper localStorage;
 @inject ISessionStorageWrapper sessionStorage
 @inject IUserSessionsManager userSessionsManager;
+@inject IMainLayoutService mainLayoutService;
 
 <style>
     main .content {
@@ -67,6 +68,7 @@
         this.LocalStorage = localStorage;
         this.SessionStorage = sessionStorage;
         this.UserSessionsManager = userSessionsManager;
+        this.MainLayoutService = mainLayoutService;
 
         return base.OnInitializedAsync();
     }

@@ -19,6 +19,7 @@
 
 @inject IJSRuntime jsRuntime;
 @inject ITimeStampHelper timeStampH;
+@inject IMainLayoutService mainLayoutService;
 
 <table class="table table-sm table-dark table-hover @CssClassH.Table @TableCssClass"
     data-trmrk-ref-date-time="@FormatDateTimeExact(Now)">
@@ -27,13 +28,18 @@
             <th scope="col"></th>
             <th class="@CssClassH.ColName">Name</th>
             <th class="@CssClassH.Options" title="Options"></th>
+
             @if (SpecificRowColumns != null)
             {
                 @SpecificRowColumns(null)
-            }   
-            <th data-trmrk-date-time="" class=@CssClassH.ColDateTime>Accessed</th>
-            <th data-trmrk-date-time="" class=@CssClassH.ColDateTime>Written</th>
-            <th data-trmrk-date-time="" class=@CssClassH.ColDateTime>Created</th>
+            }
+
+            @if (!SideBarLarge)
+            {
+                <th data-trmrk-date-time="" class=@CssClassH.ColDateTime>Accessed</th>
+                <th data-trmrk-date-time="" class=@CssClassH.ColDateTime>Written</th>
+                <th data-trmrk-date-time="" class=@CssClassH.ColDateTime>Created</th>
+            }
         </tr>
     </thead>
     <tbody>
@@ -57,15 +63,19 @@
                 {
                     @SpecificRowCells(dvItem)
                 }
-                @foreach (var dt in new DateTime?[]
-                    {
-                        dvItem.LastAccessTime,
-                        dvItem.LastWriteTime,
-                        dvItem.CreationTime
-                    })
+
+                @if (!SideBarLarge)
                 {
-                    string ts = FormatDateTimeExact(dt);
-                    <td title="@ts" data-trmrk-date-time="@ts">@ts</td>
+                    @foreach (var dt in new DateTime?[]
+                        {
+                            dvItem.LastAccessTime,
+                            dvItem.LastWriteTime,
+                            dvItem.CreationTime
+                        })
+                    {
+                        string ts = FormatDateTimeExact(dt);
+                        <td title="@ts" data-trmrk-date-time="@ts">@ts</td>
+                    }
                 }
             </tr>
         }
@@ -106,5 +116,9 @@
     {
         this.JSRuntime = jsRuntime;
         this.TimeStampH = timeStampH;
+        this.MainLayoutService = mainLayoutService;
+
+        mainLayoutService.OnSideBarSizeChanged += this.OnSideBarSizeChanged;
+        ColDateTimeCssClass = CssClassH.ColDateTime;
     }
 }

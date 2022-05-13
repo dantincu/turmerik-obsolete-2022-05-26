@@ -19,6 +19,7 @@ namespace Turmerik.Blazor.Core.Pages.Shared
         protected IHttpContextAccessor HttpContextAccessor { get; set; }
         protected ILocalStorageWrapper LocalStorage { get; set; }
         protected ISessionStorageWrapper SessionStorage { get; set; }
+        protected IMainLayoutService MainLayoutService { get; set; }
         protected bool SideBarLarge { get; set; } = false;
         protected string? SideBarSizeCssClass => SideBarLarge ? CssClassH.Large : CssClassH.Small;
         protected Guid? LocalSessionGuid { get; set; }
@@ -38,6 +39,7 @@ namespace Turmerik.Blazor.Core.Pages.Shared
         protected void SizeChangedCallback(MouseEventArgs e)
         {
             SideBarLarge = !SideBarLarge;
+            MainLayoutService.SideBarSizeChanged(SideBarLarge);
         }
 
         protected void NavigateToLocalSessionId(Guid localSessionGuid, bool forceLoad)

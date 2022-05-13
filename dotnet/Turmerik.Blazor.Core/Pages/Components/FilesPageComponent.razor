@@ -1,5 +1,6 @@
 ﻿@using Blazored.LocalStorage
 @using Blazored.SessionStorage
+@using Microsoft.AspNetCore.Components.Web
 @using Microsoft.JSInterop
 @using System.Collections
 @using Turmerik.AspNetCore.Infrastructure
@@ -53,7 +54,11 @@
             OnCloseTabPageClick=@OnCloseTabPageClickAsync>
             <PageTemplate>
                 <div class="@CssClassH.DriveTabViewPage">
-                    <h6>Folders</h6>
+                    <h6>
+                        Folders
+                        <span class="oi oi-caret-bottom @CollapseFoldersGridBtnCssClass" aria-hidden="true" @onmouseup=@OnCollapseFoldersGridClickAsync></span>
+                        <span class="oi oi-caret-right @ExpandFoldersGridBtnCssClass" aria-hidden="true" @onmouseup=@OnExpandFoldersGridClickAsync></span>
+                    </h6>
 
                     <DriveItemsGrid
                         DriveItemType=DriveItem
@@ -70,7 +75,11 @@
                             </SpecificRowCells>
                     </DriveItemsGrid>
 
-                    <h6>Files</h6>
+                    <h6>
+                        Files
+                        <span class="oi oi-caret-bottom @CollapseFilesGridBtnCssClass" aria-hidden="true" @onmouseup=@OnCollapseFilesGridClickAsync></span>
+                        <span class="oi oi-caret-right @ExpandFilesGridBtnCssClass" aria-hidden="true" @onmouseup=@OnExpandFilesGridClickAsync></span>
+                    </h6>
 
                     <DriveItemsGrid
                             DriveItemType=DriveItem
@@ -171,6 +180,26 @@
         SelectedDriveItemId = driveItem.Id;
 
         await OnDriveItemOptionsClickAsync(driveItem);
+    }
+
+    protected async Task OnExpandFoldersGridClickAsync(MouseEventArgs args)
+    {
+        FoldersGridCollapsed = false;
+    }
+
+    protected async Task OnCollapseFoldersGridClickAsync(MouseEventArgs args)
+    {
+        FoldersGridCollapsed = true;
+    }
+
+    protected async Task OnExpandFilesGridClickAsync(MouseEventArgs args)
+    {
+        FilesGridCollapsed = false;
+    }
+
+    protected async Task OnCollapseFilesGridClickAsync(MouseEventArgs args)
+    {
+        FilesGridCollapsed = true;
     }
 
     protected override async Task OnInitializedAsync()

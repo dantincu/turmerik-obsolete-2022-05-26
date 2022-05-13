@@ -38,7 +38,7 @@
     }
 
 ::deep .trmrk-drive-items-grid th.trmrk-col-ext {
-    width: 40px;
+    width: 100px;
 }
 
     ::deep .trmrk-drive-folders-grid td > .trmrk-cell-label {

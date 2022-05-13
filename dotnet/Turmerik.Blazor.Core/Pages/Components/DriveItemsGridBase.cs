@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Turmerik.AspNetCore.Infrastructure;
+using Turmerik.AspNetCore.Services;
 using Turmerik.Core.Components;
 using Turmerik.Core.Services.DriveItems;
 
@@ -15,9 +16,13 @@ namespace Turmerik.Blazor.Core.Pages.Components
 {
     public class DriveItemsGridBase : ComponentCoreBase
     {
-        protected IJSRuntime JSRuntime;
-        protected ITimeStampHelper TimeStampH;
+        protected IJSRuntime JSRuntime { get; set; }
+        protected ITimeStampHelper TimeStampH { get; set; }
+        protected IMainLayoutService MainLayoutService { get; set; }
         protected DateTime Now { get; set; } = DateTime.Now;
+        protected bool SideBarLarge { get; set; }
+        protected string ColDateTimeCssClass { get; set; }
+        protected string CellDateTimeCssClass { get; set; }
 
         protected Func<DriveItem, Task> OnDriveItemClickAsync { get; set; }
         protected Func<DriveItem, Task> OnDriveItemOptionsClickAsync { get; set; }
@@ -29,6 +34,12 @@ namespace Turmerik.Blazor.Core.Pages.Components
             await JSRuntime.InvokeVoidAsync(
                 JsH.Get(JsH.InitDateTimeUserFriendlyLabels),
                 this.UuidStr);
+        }
+
+        protected void OnSideBarSizeChanged(bool sideBarLarge)
+        {
+            SideBarLarge = sideBarLarge;
+            StateHasChanged();
         }
 
         protected string FormatDateTimeExact(DateTime? nlblValue)

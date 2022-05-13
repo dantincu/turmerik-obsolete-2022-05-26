@@ -34,16 +34,8 @@ namespace Turmerik.AspNetCore.Services.DriveItems
                 CreationTime = dirInfo.CreationTime,
                 LastAccessTime = dirInfo.LastAccessTime,
                 LastWriteTime = dirInfo.LastWriteTime,
-                FileItems = fsEntries.OfType<FileInfo>().Select(
-                    f => new DriveItem
-                    {
-                        Name = f.Name,
-                    }).ToList(),
-                FolderItems = fsEntries.OfType<DirectoryInfo>().Select(
-                    f => new DriveItem
-                    {
-                        Name = f.Name,
-                    }).ToList(),
+                FileItems = fsEntries.OfType<FileInfo>().Select(GetDriveItem).ToList(),
+                FolderItems = fsEntries.OfType<DirectoryInfo>().Select(GetDriveItem).ToList(),
             };
 
             return driveFolder;
@@ -103,14 +95,14 @@ namespace Turmerik.AspNetCore.Services.DriveItems
                     }
 
                     label = $"({label})";
+                    DirectoryInfo d = new DirectoryInfo(path);
 
-                    var item = new DriveItem
-                    {
-                        Id = path,
-                        Name = kvp.Value,
-                        Label = label,
-                        DriveItemType = DriveItemType.FsSpecialFolder
-                    };
+                    var item = GetDriveItem(d);
+                    item.Id = path;
+
+                    item.Name = kvp.Value;
+                    item.Label = label;
+                    item.DriveItemType = DriveItemType.FsSpecialFolder;
 
                     return item;
                 });
@@ -259,6 +251,19 @@ namespace Turmerik.AspNetCore.Services.DriveItems
             }
 
             return isValid;
+        }
+
+        private DriveItem GetDriveItem(FileSystemInfo fsi)
+        {
+            var item = new DriveItem
+            {
+                Name = fsi.Name,
+                CreationTime = fsi.CreationTime,
+                LastAccessTime = fsi.LastAccessTime,
+                LastWriteTime = fsi.LastWriteTime
+            };
+
+            return item;
         }
     }
 }

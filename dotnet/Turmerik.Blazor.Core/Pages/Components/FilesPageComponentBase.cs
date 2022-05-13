@@ -25,6 +25,12 @@ namespace Turmerik.Blazor.Core.Pages.Components
         protected IDriveExplorerService DriveFolderService { get; set; }
         protected ErrorViewModel ErrorViewModel { get; set; }
         protected DriveExplorerServiceArgs ServiceArgs { get; set; }
+        protected bool FoldersGridCollapsed { get; set; }
+        protected bool FilesGridCollapsed { get; set; }
+        protected string CollapseFoldersGridBtnCssClass => FoldersGridCollapsed ? string.Empty : CssClassH.Hidden;
+        protected string ExpandFoldersGridBtnCssClass => FoldersGridCollapsed ? CssClassH.Hidden : string.Empty;
+        protected string CollapseFilesGridBtnCssClass => FilesGridCollapsed ? string.Empty : CssClassH.Hidden;
+        protected string ExpandFilesGridBtnCssClass => FilesGridCollapsed ? CssClassH.Hidden : string.Empty;
 
         protected Guid? TabPageUuid => NavManager.QueryStrings.GetNullableValue(
             QsKeys.TAB_PAGE_UUID, (StringValues str, out Guid value) => Guid.TryParse(str, out value));
@@ -193,7 +199,7 @@ namespace Turmerik.Blazor.Core.Pages.Components
             });
         }
 
-        protected async Task NavigateCore(
+        private async Task NavigateCore(
             Action<DriveExplorerServiceArgs> argsCallback,
             bool needsRedirect = false)
         {
@@ -254,12 +260,12 @@ namespace Turmerik.Blazor.Core.Pages.Components
             });
         }
 
-        protected void ClearError()
+        private void ClearError()
         {
             ErrorViewModel = null;
         }
 
-        protected void SetError(
+        private void SetError(
             string errorMessage,
             Exception exc = null)
         {
@@ -268,7 +274,7 @@ namespace Turmerik.Blazor.Core.Pages.Components
                 AppSettings.IsDevMode);
         }
 
-        protected DriveFolder AssignFolderIdentifier(DriveExplorerServiceArgs serviceArgs)
+        private DriveFolder AssignFolderIdentifier(DriveExplorerServiceArgs serviceArgs)
         {
             var currentlyOpenFolder = ServiceArgs.Data.TabPageItems.CurrentlyOpenFolder;
 
@@ -281,7 +287,7 @@ namespace Turmerik.Blazor.Core.Pages.Components
             return currentlyOpenFolder;
         }
 
-        protected DriveFolderNavigation AssignFolderNavigation(
+        private DriveFolderNavigation AssignFolderNavigation(
             DriveExplorerServiceArgs serviceArgs,
             string folderName,
             string folderId = null,

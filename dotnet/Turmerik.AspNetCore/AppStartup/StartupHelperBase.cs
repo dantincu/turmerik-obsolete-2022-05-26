@@ -65,6 +65,8 @@ namespace Turmerik.AspNetCore.AppStartup
 
             services.AddScoped<ILocalStorageWrapper, LocalStorageWrapper>();
             services.AddScoped<ISessionStorageWrapper, SessionStorageWrapper>();
+
+            services.AddScoped<IMainLayoutService, MainLayoutService>();
         }
     }
 }
