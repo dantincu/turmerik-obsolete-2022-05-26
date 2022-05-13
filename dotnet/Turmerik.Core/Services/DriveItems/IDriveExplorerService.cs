@@ -30,6 +30,7 @@ namespace Turmerik.Core.Services.DriveItems
 
         public DriveExplorerActionType ActionType { get; set; }
         public Guid? TabPageUuid { get; set; }
+        public Guid? TrgTabPageUuid { get; set; }
         public DriveFolderIdentifier FolderIdentifier { get; set; }
         public DriveFolderNavigation FolderNavigation { get; set; }
         public Guid CacheKeyGuid { get; set; }

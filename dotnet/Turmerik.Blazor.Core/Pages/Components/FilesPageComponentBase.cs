@@ -36,7 +36,7 @@ namespace Turmerik.Blazor.Core.Pages.Components
             if (firstRender)
             {
                 DriveFolderIdentifier identifier = null;
-                bool needsRedirectUrl = !TabPageUuid.HasValue;
+                bool needsRedirect = !TabPageUuid.HasValue;
 
                 string id = NavManager.QueryStrings.GetStringOrNull(QsKeys.DRIVE_ITEM_ID);
                 string path = NavManager.QueryStrings.GetStringOrNull(QsKeys.DRIVE_ITEM_PATH);
@@ -46,7 +46,7 @@ namespace Turmerik.Blazor.Core.Pages.Components
 
                 if (new string[] { id, path, uri, address }.Any(str => !string.IsNullOrWhiteSpace(str)))
                 {
-                    needsRedirectUrl = true;
+                    needsRedirect = true;
 
                     identifier = new DriveFolderIdentifier
                     {
@@ -62,16 +62,7 @@ namespace Turmerik.Blazor.Core.Pages.Components
                     serviceArgs.ActionType = DriveExplorerActionType.Initialize;
                     serviceArgs.FolderIdentifier = identifier;
                 },
-                () =>
-                {
-                    if (needsRedirectUrl)
-                    {
-                        NavManager.NavigateTo("files", false, new Dictionary<string, string>
-                        {
-                            { QsKeys.TAB_PAGE_UUID, ServiceArgs.TabPageUuid.Value.ToString("N") }
-                        });
-                    }
-                });
+                needsRedirect);
             }
         }
 
@@ -176,17 +167,35 @@ namespace Turmerik.Blazor.Core.Pages.Components
         {
         }
 
+        protected async Task OnTabPageHeadClickAsync(IntEventArgsWrapper args)
+        {
+            await NavigateCore(serviceArgs =>
+            {
+                serviceArgs.ActionType = DriveExplorerActionType.ChangeTab;
+                serviceArgs.TabPageUuid = ServiceArgs.Data.TabPageItems.Header.TabPageHeads[args.Value].Uuid;
+            });
+        }
+
         protected async Task OnNewTabPageClickAsync(MouseEventArgs args)
         {
+            await NavigateCore(serviceArgs =>
+            {
+                serviceArgs.ActionType = DriveExplorerActionType.NewTab;
+            });
         }
 
         protected async Task OnCloseTabPageClickAsync(IntEventArgsWrapper args)
         {
+            await NavigateCore(serviceArgs =>
+            {
+                serviceArgs.ActionType = DriveExplorerActionType.CloseTab;
+                serviceArgs.TrgTabPageUuid = ServiceArgs.Data.TabPageItems.Header.TabPageHeads[args.Value].Uuid;
+            });
         }
 
         protected async Task NavigateCore(
             Action<DriveExplorerServiceArgs> argsCallback,
-            Action callback = null)
+            bool needsRedirect = false)
         {
             await IfLocalSessionGuidHasValueAsync(async localSessionGuid =>
             {
@@ -194,12 +203,16 @@ namespace Turmerik.Blazor.Core.Pages.Components
                 {
                     CacheKeyGuid = localSessionGuid,
                     TabPageUuid = TabPageUuid,
+                    Data = ServiceArgs?.Data,
                 };
 
                 try
                 {
                     argsCallback(serviceArgs);
                     await DriveFolderService.NavigateAsync(serviceArgs);
+
+                    serviceArgs.FolderIdentifier = serviceArgs.FolderIdentifier ?? ServiceArgs.FolderIdentifier;
+                    needsRedirect = needsRedirect || ServiceArgs.TabPageUuid != serviceArgs.TabPageUuid;
 
                     ServiceArgs = serviceArgs;
                     ClearError();
@@ -209,18 +222,6 @@ namespace Turmerik.Blazor.Core.Pages.Components
                     SetError("An unhandled error ocurred", ex);
                 }
 
-                if (ErrorViewModel == null && callback != null)
-                {
-                    try
-                    {
-                        callback.Invoke();
-                    }
-                    catch (Exception ex)
-                    {
-                        SetError("An unhandled error ocurred", ex);
-                    }
-                }
-
                 if (ErrorViewModel != null)
                 {
                     ServiceArgs.Data.TabPageItems.GoUpButtonEnabled = false;
@@ -228,7 +229,7 @@ namespace Turmerik.Blazor.Core.Pages.Components
 
                     if (string.IsNullOrWhiteSpace(address))
                     {
-                        address = serviceArgs.FolderIdentifier.Id;
+                        address = serviceArgs.FolderIdentifier?.Id;
                     }
 
                     if (!string.IsNullOrWhiteSpace(address))
@@ -238,6 +239,14 @@ namespace Turmerik.Blazor.Core.Pages.Components
                 }
 
                 StateHasChanged();
+
+                if (needsRedirect)
+                {
+                    NavManager.NavigateTo("files", false, new Dictionary<string, string>
+                        {
+                            { QsKeys.TAB_PAGE_UUID, ServiceArgs.TabPageUuid.Value.ToString("N") }
+                        });
+                }
             });
         }
 

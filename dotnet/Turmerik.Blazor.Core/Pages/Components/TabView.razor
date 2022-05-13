@@ -20,7 +20,7 @@
                 var tabPageHead = TabHeaderViewState.TabPageHeads[i];
 
                 <div class="@GetTabPageHeadCssClass(tabPageHead)" data-trmrk-idx="">
-                    <span class="@CssClassH.Name">@tabPageHead.Name</span>
+                    <span class="@CssClassH.Name" @onmouseup=@OnTabPageHeadClickEventHandler(i)>@tabPageHead.Name</span>
                     <span class="oi oi-x" aria-hidden="true" @onmouseup=@OnCloseTabPageClickEventHandler(i)></span>
                 </div>
             }
@@ -74,6 +74,9 @@
     public ErrorViewModel Error { get; set; }
 
     [Parameter]
+    public Func<IntEventArgsWrapper, Task> OnTabPageHeadClick { get; set; }
+
+    [Parameter]
     public Func<MouseEventArgs, Task> OnNewTabPageClick { get; set; }
 
     [Parameter]
@@ -102,6 +105,17 @@
         {
             var eventArgs = new IntEventArgsWrapper(args, idx);
             await OnCloseTabPageClick.InvokeAsyncIfReq(eventArgs);
+        };
+
+        return eventHandler;
+    }
+
+    protected Func<MouseEventArgs, Task> OnTabPageHeadClickEventHandler(int idx)
+    {
+        Func<MouseEventArgs, Task> eventHandler = async args =>
+        {
+            var eventArgs = new IntEventArgsWrapper(args, idx);
+            await OnTabPageHeadClick.InvokeAsyncIfReq(eventArgs);
         };
 
         return eventHandler;
