@@ -27,10 +27,10 @@ namespace Turmerik.Blazor.Core.Pages.Components
         protected DriveExplorerServiceArgs ServiceArgs { get; set; }
         protected bool FoldersGridCollapsed { get; set; }
         protected bool FilesGridCollapsed { get; set; }
-        protected string CollapseFoldersGridBtnCssClass => FoldersGridCollapsed ? string.Empty : CssClassH.Hidden;
-        protected string ExpandFoldersGridBtnCssClass => FoldersGridCollapsed ? CssClassH.Hidden : string.Empty;
-        protected string CollapseFilesGridBtnCssClass => FilesGridCollapsed ? string.Empty : CssClassH.Hidden;
-        protected string ExpandFilesGridBtnCssClass => FilesGridCollapsed ? CssClassH.Hidden : string.Empty;
+        protected string CollapseFoldersGridBtnCssClass => FoldersGridCollapsed ? CssClassH.Hidden : string.Empty;
+        protected string ExpandFoldersGridBtnCssClass => FoldersGridCollapsed ? string.Empty : CssClassH.Hidden;
+        protected string CollapseFilesGridBtnCssClass => FilesGridCollapsed ? CssClassH.Hidden : string.Empty;
+        protected string ExpandFilesGridBtnCssClass => FilesGridCollapsed ? string.Empty : CssClassH.Hidden;
 
         protected Guid? TabPageUuid => NavManager.QueryStrings.GetNullableValue(
             QsKeys.TAB_PAGE_UUID, (StringValues str, out Guid value) => Guid.TryParse(str, out value));

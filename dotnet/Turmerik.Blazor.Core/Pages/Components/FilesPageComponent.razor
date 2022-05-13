@@ -60,20 +60,23 @@
                         <span class="oi oi-caret-right @ExpandFoldersGridBtnCssClass" aria-hidden="true" @onmouseup=@OnExpandFoldersGridClickAsync></span>
                     </h6>
 
-                    <DriveItemsGrid
-                        DriveItemType=DriveItem
-                        DriveItems=tabPageItems.CurrentlyOpenFolder.FolderItems
-                        TableCssClass="@CssClassH.DriveFoldersGrid"
-                        IconCssClass="oi-folder"
-                        OnDriveItemClick="@OnDriveFolderClickAsync"
-                        OnDriveItemOptionsClick=@OnDriveFolderOptionsClick>
-                            <SpecificRowColumns Context="ctx">
+                    @if (!FoldersGridCollapsed)
+                    {
+                        <DriveItemsGrid
+                            DriveItemType=DriveItem
+                            DriveItems=tabPageItems.CurrentlyOpenFolder.FolderItems
+                            TableCssClass="@CssClassH.DriveFoldersGrid"
+                            IconCssClass="oi-folder"
+                            OnDriveItemClick="@OnDriveFolderClickAsync"
+                            OnDriveItemOptionsClick=@OnDriveFolderOptionsClick>
+                                <SpecificRowColumns Context="ctx">
 
-                            </SpecificRowColumns>
-                            <SpecificRowCells Context="dvFolder">
+                                </SpecificRowColumns>
+                                <SpecificRowCells Context="dvFolder">
 
-                            </SpecificRowCells>
-                    </DriveItemsGrid>
+                                </SpecificRowCells>
+                        </DriveItemsGrid>
+                    }
 
                     <h6>
                         Files
@@ -81,7 +84,9 @@
                         <span class="oi oi-caret-right @ExpandFilesGridBtnCssClass" aria-hidden="true" @onmouseup=@OnExpandFilesGridClickAsync></span>
                     </h6>
 
-                    <DriveItemsGrid
+                    @if (!FilesGridCollapsed)
+                    {
+                        <DriveItemsGrid
                             DriveItemType=DriveItem
                             DriveItems=@tabPageItems.CurrentlyOpenFolder.FileItems
                             TableCssClass="@CssClassH.DriveItemsGrid"
@@ -98,6 +103,7 @@
                                     <td>@extension</td>
                                 </SpecificRowCells>
                         </DriveItemsGrid>
+                    }
                 </div>
             </PageTemplate>
         </TabView>
@@ -185,21 +191,25 @@
     protected async Task OnExpandFoldersGridClickAsync(MouseEventArgs args)
     {
         FoldersGridCollapsed = false;
+        StateHasChanged();
     }
 
     protected async Task OnCollapseFoldersGridClickAsync(MouseEventArgs args)
     {
         FoldersGridCollapsed = true;
+        StateHasChanged();
     }
 
     protected async Task OnExpandFilesGridClickAsync(MouseEventArgs args)
     {
         FilesGridCollapsed = false;
+        StateHasChanged();
     }
 
     protected async Task OnCollapseFilesGridClickAsync(MouseEventArgs args)
     {
         FilesGridCollapsed = true;
+        StateHasChanged();
     }
 
     protected override async Task OnInitializedAsync()
