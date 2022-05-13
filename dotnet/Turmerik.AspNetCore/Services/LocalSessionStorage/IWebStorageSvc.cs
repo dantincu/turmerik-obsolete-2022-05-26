@@ -81,7 +81,11 @@ namespace Turmerik.AspNetCore.Services.LocalSessionStorage
 
         public async ValueTask SetItemAsync<T>(string key, T data, CancellationToken? cancellationToken = null)
         {
-            string json = JsonConvert.SerializeObject(data);
+            string json = JsonConvert.SerializeObject(data, new JsonSerializerSettings
+            {
+                DefaultValueHandling = DefaultValueHandling.Ignore,
+                NullValueHandling = NullValueHandling.Ignore
+            });
 
             await JSRuntime.InvokeVoidAsync(
                 JsH.Get(JsH.WebStorage.SetItem),

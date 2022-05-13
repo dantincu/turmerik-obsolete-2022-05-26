@@ -583,26 +583,6 @@ namespace Turmerik.AspNetCore.Services.DriveItems
                         return part;
                     }).ToList();
 
-                /* int idx = 0;
-
-                while (idx < pathParts.Count)
-                {
-                    string part = pathParts[idx];
-
-                    if (part == "..")
-                    {
-                        if (idx > 0)
-                        {
-                            idx--;
-                            pathParts.RemoveRange(idx, 2);
-                        }
-                    }
-                    else
-                    {
-                        idx++;
-                    }
-                } */
-
                 if (!@break && !string.IsNullOrWhiteSpace(history.InitialId))
                 {
                     pathParts.Insert(0, history.InitialId);

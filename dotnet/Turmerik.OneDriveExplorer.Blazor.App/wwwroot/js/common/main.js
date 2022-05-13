@@ -30,7 +30,7 @@ trmrk.textToLines = (text, maxLineLen) => {
 
 trmrk.addCssClass = (domElId, selector, cssClass, removalSelector) => {
     if (typeof (removalSelector) === "string" && removalSelector.length > 0) {
-        trmrk.removeCssClass(domElId, removalSelector, cssClass);
+        Trmrk.removeCssClass(domElId, removalSelector, cssClass);
     }
 
     let helper = new DomHelper(domElId, selector);
@@ -99,13 +99,13 @@ trmrk.textBoxWrapperSetEditable = (
 trmrk.webStorage = {
     bigItems: {},
     getItem: (key, isPersistent) => {
-        let storage = trmrk.webStorage.getStorage(isPersistent);
+        let storage = Trmrk.webStorage.getStorage(isPersistent);
         let retVal = storage.getItem(key);
 
         return retVal;
     },
     setItem: (key, value, isPersistent) => {
-        let storage = trmrk.webStorage.getStorage(isPersistent);
+        let storage = Trmrk.webStorage.getStorage(isPersistent);
         storage.setItem(key, value);
     },
     getStorage: (isPersistent) => {
@@ -120,24 +120,24 @@ trmrk.webStorage = {
         return storage;
     },
     getBigItemChunksCount: (key, guidStr, maxChunkLength, isPersistent) => {
-        let text = trmrk.webStorage.getItem(key, isPersistent);
+        let text = Trmrk.webStorage.getItem(key, isPersistent);
 
         if (typeof (text) !== "string") {
             text = "";
         }
 
-        let lines = trmrk.textToLines(text, maxChunkLength);
-        trmrk.webStorage.bigItems[guidStr] = lines;
+        let lines = Trmrk.textToLines(text, maxChunkLength);
+        Trmrk.webStorage.bigItems[guidStr] = lines;
 
         let chunksCount = lines.length;
         return chunksCount;
     },
     getBigItemChunk: (guidStr, idx) => {
-        let textChunk = trmrk.webStorage.bigItems[guidStr][idx];
+        let textChunk = Trmrk.webStorage.bigItems[guidStr][idx];
         return textChunk;
     },
     clearBigItemChunks: guidStr => {
-        delete trmrk.webStorage.bigItems[guidStr];
+        delete Trmrk.webStorage.bigItems[guidStr];
     }
 }
 

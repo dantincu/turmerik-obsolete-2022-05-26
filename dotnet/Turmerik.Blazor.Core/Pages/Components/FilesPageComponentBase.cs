@@ -209,8 +209,6 @@ namespace Turmerik.Blazor.Core.Pages.Components
                     SetError("An unhandled error ocurred", ex);
                 }
 
-                StateHasChanged();
-
                 if (ErrorViewModel == null && callback != null)
                 {
                     try
@@ -222,6 +220,24 @@ namespace Turmerik.Blazor.Core.Pages.Components
                         SetError("An unhandled error ocurred", ex);
                     }
                 }
+
+                if (ErrorViewModel != null)
+                {
+                    ServiceArgs.Data.TabPageItems.GoUpButtonEnabled = false;
+                    string address = serviceArgs.FolderNavigation?.Id;
+
+                    if (string.IsNullOrWhiteSpace(address))
+                    {
+                        address = serviceArgs.FolderIdentifier.Id;
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(address))
+                    {
+                        ServiceArgs.FolderIdentifier.Address = address;
+                    }
+                }
+
+                StateHasChanged();
             });
         }
 

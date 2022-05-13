@@ -7,16 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Services\DriveItems\DriveFolderServiceBase$not-compiled$.cs" />
-    <Compile Remove="Services\DriveItems\FileSystemFolderService$not-compiled$.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="Services\DriveItems\DriveFolderServiceBase%24not-compiled%24.cs" />
-    <None Include="Services\DriveItems\FileSystemFolderService%24not-compiled%24.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Blazored.LocalStorage" Version="4.2.0" />
     <PackageReference Include="Blazored.SessionStorage" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
