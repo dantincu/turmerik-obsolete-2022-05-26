@@ -90,8 +90,7 @@
                 x => x.ToString("N")).Select(
                     x => $"[{x}]").ToArray();
 
-            string key = GetKey(segments);
-
+            string key = string.Concat(segments.Prepend(TRMRK));
             return key;
         }
 
