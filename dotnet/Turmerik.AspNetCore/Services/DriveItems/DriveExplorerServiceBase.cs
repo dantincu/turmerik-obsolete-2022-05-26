@@ -351,7 +351,7 @@ namespace Turmerik.AspNetCore.Services.DriveItems
 
                 var key = LocalStorageKeys.AddressHistoryStackKey(
                     args.CacheKeyGuid,
-                    args.TabPageUuid.Value);
+                    trgTabPageUuid);
 
                 await WebStorage.TryRemoveItemAsync(key);
             }

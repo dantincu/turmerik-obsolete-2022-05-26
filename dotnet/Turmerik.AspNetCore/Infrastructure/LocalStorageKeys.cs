@@ -86,7 +86,10 @@
 
         private static string GetKey(params Guid[] guids)
         {
-            string[] segments = guids.Select(x => x.ToString("N")).ToArray();
+            string[] segments = guids.Select(
+                x => x.ToString("N")).Select(
+                    x => $"[{x}]").ToArray();
+
             string key = GetKey(segments);
 
             return key;

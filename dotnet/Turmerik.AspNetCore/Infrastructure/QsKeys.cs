@@ -12,5 +12,6 @@
         public const string DRIVE_ITEM_PATH = "drive-item-path";
         public const string DRIVE_ITEM_ADDRESS = "drive-item-address";
         public const string TAB_PAGE_UUID = "tab-page-uuid";
+        public const string NEW_TAB_PAGE = "new-tab-page";
     }
 }
