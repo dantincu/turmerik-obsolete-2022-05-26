@@ -28,6 +28,14 @@
     @if (ServiceArgs != null)
     {
         var tabPageItems = ServiceArgs.Data.TabPageItems;
+        var currentlyOpenFolder = tabPageItems.CurrentlyOpenFolder;
+
+        bool isRootFolder = true;
+
+        if (currentlyOpenFolder != null)
+        {
+            isRootFolder = currentlyOpenFolder.IsRootFolder ?? false;
+        }
 
         <AddressBar
             InitialAddressStrValue=@ServiceArgs.FolderIdentifier.Address
@@ -39,11 +47,14 @@
             OnSubmitAddress=@OnSubmitAddress
             AddressGoBackBtnDisabled=@(!tabPageItems.GoBackButtonEnabled)
             AddressGoForwardBtnDisabled=@(!tabPageItems.GoForwardButtonEnabled)
-            AddressGoParentBtnDisabled=@(!tabPageItems.GoUpButtonEnabled)></AddressBar>
+            AddressGoParentBtnDisabled=@(!tabPageItems.GoUpButtonEnabled)
+            OptionsBtnDisabled=@(ErrorViewModel != null)></AddressBar>
 
         <div class="@CssClassH.Spacer"></div>
 
-        <label class="@CssClassH.Title">@ServiceArgs.Data.TabPageItems.CurrentlyOpenFolder?.Name</label>
+        <label class="@CssClassH.Title">
+            @ServiceArgs.Data.TabPageItems.CurrentlyOpenFolder?.Name
+        </label>
 
         <TabView
             PageItem=tabPageItems.CurrentlyOpenFolder
@@ -97,9 +108,10 @@
                                     <th class="@CssClassH.ColExt">Ext</th>
                                 </SpecificRowColumns>
                                 <SpecificRowCells Context="dvFile">
-                                @{
-                                    string extension = Path.GetExtension(dvFile.Name);
-                                }
+                                    @{
+                                        string extension = Path.GetExtension(dvFile.Name);
+                                    }
+
                                     <td>@extension</td>
                                 </SpecificRowCells>
                         </DriveItemsGrid>
@@ -112,12 +124,30 @@
             ModalId="currently-open-folder-options-modal">
             <HeaderTemplate>
                 <h5 class="modal-title">@tabPageItems?.CurrentlyOpenFolder?.Name</h5>
+                @if (!isRootFolder)
+                {
+                    <span class="oi oi-clipboard" @onmouseup=OnCurrentlyOpenDriveFolderNameToClipboardClick></span>
+                }
             </HeaderTemplate>
             <BodyTemplate>
-                <pre>@tabPageItems?.CurrentlyOpenFolder?.Id</pre>
+                @if (!isRootFolder)
+                {
+                    <span class="oi oi-clipboard" @onmouseup=OnCurrentlyOpenDriveFolderAddressToClipboardClick></span>
+                }
+                
+                <pre>@ServiceArgs.FolderIdentifier.Address</pre>
+
                 <button type="button" class="btn btn-dark">
                     Open folder in Windows Explorer
                 </button>
+
+                @if (!isRootFolder)
+                {
+                    <hr />
+                
+                    <span class="oi oi-clipboard" @onmouseup=OnCurrentlyOpenDriveFolderUriToClipboardClick></span>
+                    <pre>@ServiceArgs.FolderIdentifier.Uri</pre>
+                }
             </BodyTemplate>
         </SimpleModal>
 
@@ -125,25 +155,65 @@
             ModalId="drive-folder-options-modal">
             <HeaderTemplate>
                 <h5 class="modal-title">@SelectedDriveFolderName</h5>
+                <span class="oi oi-clipboard" @onmouseup=OnDriveFolderNameToClipboardClick></span>
             </HeaderTemplate>
             <BodyTemplate>
-                <pre>@SelectedDriveFolderId</pre>
+                <span class="oi oi-clipboard" @onmouseup=OnDriveFolderAddressToClipboardClick></span>
+                <pre>@SelectedDriveFolderAddress</pre>
+
+                <button type="button" class="btn btn-dark">
+                    Open folder
+                </button>
+
+                <hr />
+
                 <button type="button" class="btn btn-dark">
                     Open folder in Windows Explorer
                 </button>
+
+                <hr />
+                
+                <span class="oi oi-clipboard" @onmouseup=OnDriveFolderUriToClipboardClick></span>
+                <pre>@SelectedDriveFolderUri</pre>
             </BodyTemplate>
         </SimpleModal>
 
         <SimpleModal
             ModalId="drive-item-options-modal">
             <HeaderTemplate>
+                <span class="oi oi-clipboard" @onmouseup=OnDriveItemNameToClipboardClick></span>
                 <h5 class="modal-title">@SelectedDriveItemName</h5>
             </HeaderTemplate>
             <BodyTemplate>
-                <pre>@SelectedDriveItemId</pre>
+                <span class="oi oi-clipboard" @onmouseup=OnDriveItemAddressToClipboardClick></span>
+                <pre>@SelectedDriveItemAddress</pre>
+
+                <button type="button" class="btn btn-dark">
+                    Open file
+                </button>
+
+                <hr />
+
                 <button type="button" class="btn btn-dark">
                     Open folder in Windows Explorer
                 </button>
+
+                <button type="button" class="btn btn-dark">
+                    Open as text file
+                </button>
+
+                <button type="button" class="btn btn-dark">
+                    Open file externally
+                </button>
+
+                <button type="button" class="btn btn-dark">
+                    Open as text file externally
+                </button>
+
+                <hr />
+                
+                <span class="oi oi-clipboard" @onmouseup=OnDriveItemUriToClipboardClick></span>
+                <pre>@SelectedDriveItemUri</pre>
             </BodyTemplate>
         </SimpleModal>
     }
@@ -170,6 +240,69 @@
     protected async Task OnDriveItemOptionsClick(DriveItem driveItem)
     {
         await OnDriveItemOptionsClickAsync(driveItem);
+    }
+
+    protected async Task OnCurrentlyOpenDriveFolderNameToClipboardClick(MouseEventArgs args)
+    {
+        await jsRuntime.InvokeVoidAsync(
+            JsH.Get(JsH.WriteToClipboardAsync),
+            ServiceArgs.Data.TabPageItems.CurrentlyOpenFolder.Name);
+    }
+
+    protected async Task OnDriveFolderNameToClipboardClick(MouseEventArgs args)
+    {
+        await jsRuntime.InvokeVoidAsync(
+            JsH.Get(JsH.WriteToClipboardAsync),
+            SelectedDriveFolderName);
+    }
+
+    protected async Task OnDriveItemNameToClipboardClick(MouseEventArgs args)
+    {
+        await jsRuntime.InvokeVoidAsync(
+            JsH.Get(JsH.WriteToClipboardAsync),
+            SelectedDriveItemName);
+    }
+
+    protected async Task OnCurrentlyOpenDriveFolderAddressToClipboardClick(MouseEventArgs args)
+    {
+        await jsRuntime.InvokeVoidAsync(
+            JsH.Get(JsH.WriteToClipboardAsync),
+            ServiceArgs.FolderIdentifier.Address);
+    }
+
+    protected async Task OnDriveFolderAddressToClipboardClick(MouseEventArgs args)
+    {
+        await jsRuntime.InvokeVoidAsync(
+            JsH.Get(JsH.WriteToClipboardAsync),
+            SelectedDriveFolderAddress);
+    }
+
+    protected async Task OnDriveItemAddressToClipboardClick(MouseEventArgs args)
+    {
+        await jsRuntime.InvokeVoidAsync(
+            JsH.Get(JsH.WriteToClipboardAsync),
+            SelectedDriveItemAddress);
+    }
+
+    protected async Task OnCurrentlyOpenDriveFolderUriToClipboardClick(MouseEventArgs args)
+    {
+        await jsRuntime.InvokeVoidAsync(
+            JsH.Get(JsH.WriteToClipboardAsync),
+            ServiceArgs.FolderIdentifier.Uri);
+    }
+
+    protected async Task OnDriveFolderUriToClipboardClick(MouseEventArgs args)
+    {
+        await jsRuntime.InvokeVoidAsync(
+            JsH.Get(JsH.WriteToClipboardAsync),
+            SelectedDriveFolderUri);
+    }
+
+    protected async Task OnDriveItemUriToClipboardClick(MouseEventArgs args)
+    {
+        await jsRuntime.InvokeVoidAsync(
+            JsH.Get(JsH.WriteToClipboardAsync),
+            SelectedDriveItemUri);
     }
 
     protected async Task OnExpandFoldersGridClickAsync(MouseEventArgs args)

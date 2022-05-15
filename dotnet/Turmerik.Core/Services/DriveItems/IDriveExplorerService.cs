@@ -9,6 +9,10 @@ namespace Turmerik.Core.Services.DriveItems
     public interface IDriveExplorerService
     {
         Task NavigateAsync(DriveExplorerServiceArgs args);
+        string GetDriveItemId(DriveItemIdentifier identifier);
+        string GetDriveItemAddress(DriveItemIdentifier identifier);
+        string GetDriveItemPath(DriveItemIdentifier identifier);
+        string GetDriveItemUri(DriveItemIdentifier identifier);
     }
 
     public class DriveExplorerServiceArgs
@@ -29,9 +33,12 @@ namespace Turmerik.Core.Services.DriveItems
         }
 
         public DriveExplorerActionType ActionType { get; set; }
+        public bool? ActionAppliesToCurrentFolder { get; set; }
         public Guid? TabPageUuid { get; set; }
         public Guid? TrgTabPageUuid { get; set; }
-        public DriveFolderIdentifier FolderIdentifier { get; set; }
+        public DriveItemIdentifier FolderIdentifier { get; set; }
+        public DriveItemIdentifier NewFolderIdentifier { get; set; }
+        public DriveItemIdentifier NewItemIdentifier { get; set; }
         public DriveFolderNavigation FolderNavigation { get; set; }
         public Guid CacheKeyGuid { get; set; }
         public bool RefreshCache { get; set; }

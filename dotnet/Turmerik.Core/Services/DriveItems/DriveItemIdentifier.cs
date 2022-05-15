@@ -20,31 +20,51 @@ namespace Turmerik.Core.Services.DriveItems
         ChangeTab,
         NewTab,
         CloseTab,
+        CreateNewFolder,
+        CreateNewTextFile,
+        CreateNewMsOfficeFile,
+        DeleteFolder,
+        DeleteFile,
+        RenameFolder,
+        RenameFile,
+        MoveFolder,
+        MoveFile
     }
 
-    public class DriveFolderIdentifier
+    public enum MsOfficeFileType
     {
-        public DriveFolderIdentifier()
+        Docx,
+        Xlsx,
+        Pptx
+    }
+
+    public class DriveItemIdentifier
+    {
+        public DriveItemIdentifier()
         {
         }
 
-        public DriveFolderIdentifier(DriveFolderIdentifier src)
+        public DriveItemIdentifier(DriveItemIdentifier src)
         {
             Id = src.Id;
+            Name = src.Name;
             Path = src.Path;
             Uri = src.Uri;
             Address = src.Address;
             ParentId = src.ParentId;
             IsRootFolder = src.IsRootFolder;
             DriveItemType = src.DriveItemType;
+            MsOfficeFileType = src.MsOfficeFileType;
         }
 
         public string Id { get; set ; }
+        public string Name { get; set; }
         public string Path { get; set; }
         public string Uri { get; set; }
         public string Address { get; set; }
         public string ParentId { get; set; }
         public bool IsRootFolder { get; set; }
         public DriveItemType? DriveItemType { get; set; }
+        public MsOfficeFileType? MsOfficeFileType { get; set; }
     }
 }

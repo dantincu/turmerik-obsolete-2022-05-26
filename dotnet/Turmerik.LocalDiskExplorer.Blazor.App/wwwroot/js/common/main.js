@@ -148,7 +148,7 @@ trmrk.initDateTimeUserFriendlyLabels = (domElId, selector) => {
 
 trmrk.openModal = modalId => {
     var modalEl = document.getElementById(modalId);
-    var modal = bootstrap.Modal.getInstance(modalEl) ?? new bootstrap.Modal(modalEl);
+    var modal = bootstrap.Modal.getOrCreateInstance(modalEl);
 
     modal.show();
 }

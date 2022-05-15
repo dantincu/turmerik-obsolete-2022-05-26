@@ -34,11 +34,15 @@ namespace Turmerik.Blazor.Core.Pages.Components
         protected string CollapseFilesGridBtnCssClass => FilesGridCollapsed ? CssClassH.Hidden : string.Empty;
         protected string ExpandFilesGridBtnCssClass => FilesGridCollapsed ? string.Empty : CssClassH.Hidden;
 
-        protected string SelectedDriveFolderName { get; set; }
         protected string SelectedDriveFolderId { get; set; }
+        protected string SelectedDriveFolderName { get; set; }
+        protected string SelectedDriveFolderAddress { get; set; }
+        protected string SelectedDriveFolderUri { get; set; }
 
-        protected string SelectedDriveItemName { get; set; }
         protected string SelectedDriveItemId { get; set; }
+        protected string SelectedDriveItemName { get; set; }
+        protected string SelectedDriveItemAddress { get; set; }
+        protected string SelectedDriveItemUri { get; set; }
 
         protected Guid? TabPageUuid => NavManager.QueryStrings.GetNullableValue(
             QsKeys.TAB_PAGE_UUID, (StringValues str, out Guid value) => Guid.TryParse(str, out value));
@@ -49,7 +53,7 @@ namespace Turmerik.Blazor.Core.Pages.Components
 
             if (firstRender)
             {
-                DriveFolderIdentifier identifier = null;
+                DriveItemIdentifier identifier = null;
                 Guid? tabPageUuid = TabPageUuid;
 
                 bool newTabPage = NavManager.QueryStrings.GetNullableValue(
@@ -83,7 +87,7 @@ namespace Turmerik.Blazor.Core.Pages.Components
                 {
                     needsRedirect = true;
 
-                    identifier = new DriveFolderIdentifier
+                    identifier = new DriveItemIdentifier
                     {
                         Id = id,
                         Path = path,
@@ -165,7 +169,7 @@ namespace Turmerik.Blazor.Core.Pages.Components
 
                 if (string.IsNullOrWhiteSpace(address))
                 {
-                    serviceArgs.FolderIdentifier = new DriveFolderIdentifier
+                    serviceArgs.FolderIdentifier = new DriveItemIdentifier
                     {
                         IsRootFolder = true,
                     };
@@ -206,10 +210,16 @@ namespace Turmerik.Blazor.Core.Pages.Components
 
         protected async Task OnDriveFolderOptionsClickAsync(DriveItem driveFolder)
         {
-            SelectedDriveFolderName = driveFolder.Name;
+            var identifier = new DriveItemIdentifier
+            {
+                Id = driveFolder.Id,
+                Name = driveFolder.Name,
+                ParentId = ServiceArgs.Data.TabPageItems.CurrentlyOpenFolder.Id,
+            };
 
-            SelectedDriveFolderId = driveFolder.Id ?? Path.Combine(
-                ServiceArgs.Data.TabPageItems.CurrentlyOpenFolder.Id, driveFolder.Name);
+            SelectedDriveFolderName = driveFolder.Name;
+            SelectedDriveFolderId = DriveFolderService.GetDriveItemId(identifier);
+            SelectedDriveFolderAddress = DriveFolderService.GetDriveItemAddress(identifier);
 
             StateHasChanged();
 
@@ -220,10 +230,16 @@ namespace Turmerik.Blazor.Core.Pages.Components
 
         protected async Task OnDriveItemOptionsClickAsync(DriveItem driveItem)
         {
-            SelectedDriveItemName = driveItem.Name;
+            var identifier = new DriveItemIdentifier
+            {
+                Id = driveItem.Id,
+                Name = driveItem.Name,
+                ParentId = ServiceArgs.Data.TabPageItems.CurrentlyOpenFolder.Id,
+            };
 
-            SelectedDriveItemId = driveItem.Id ?? Path.Combine(
-                ServiceArgs.Data.TabPageItems.CurrentlyOpenFolder.Id, driveItem.Name);
+            SelectedDriveItemName = driveItem.Name;
+            SelectedDriveItemId = DriveFolderService.GetDriveItemId(identifier);
+            SelectedDriveItemAddress = DriveFolderService.GetDriveItemAddress(identifier);
 
             StateHasChanged();
 
@@ -275,6 +291,14 @@ namespace Turmerik.Blazor.Core.Pages.Components
                     Data = ServiceArgs?.Data,
                 };
 
+                if (ErrorViewModel != null && !string.IsNullOrWhiteSpace(ServiceArgs.FolderIdentifier?.Address))
+                {
+                    serviceArgs.FolderIdentifier = new DriveItemIdentifier
+                    {
+                        Address = ServiceArgs.FolderIdentifier.Address
+                    };
+                }
+
                 try
                 {
                     argsCallback(serviceArgs);
@@ -297,18 +321,7 @@ namespace Turmerik.Blazor.Core.Pages.Components
 
                 if (ErrorViewModel != null)
                 {
-                    ServiceArgs.Data.TabPageItems.GoUpButtonEnabled = false;
-                    string address = serviceArgs.FolderNavigation?.Id;
-
-                    if (string.IsNullOrWhiteSpace(address))
-                    {
-                        address = serviceArgs.FolderIdentifier?.Id;
-                    }
-
-                    if (!string.IsNullOrWhiteSpace(address))
-                    {
-                        ServiceArgs.FolderIdentifier.Address = address;
-                    }
+                    ServiceArgs.FolderIdentifier = serviceArgs.FolderIdentifier;
                 }
 
                 StateHasChanged();
@@ -341,10 +354,11 @@ namespace Turmerik.Blazor.Core.Pages.Components
         {
             var currentlyOpenFolder = ServiceArgs.Data.TabPageItems.CurrentlyOpenFolder;
 
-            serviceArgs.FolderIdentifier = new DriveFolderIdentifier
+            serviceArgs.FolderIdentifier = new DriveItemIdentifier
             {
                 Id = currentlyOpenFolder.Id,
-                IsRootFolder = currentlyOpenFolder.IsRootFolder ?? false
+                IsRootFolder = currentlyOpenFolder.IsRootFolder ?? false,
+                Name = currentlyOpenFolder.Name,
             };
 
             return currentlyOpenFolder;

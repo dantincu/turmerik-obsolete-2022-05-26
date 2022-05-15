@@ -16,7 +16,7 @@
     <input type="text" value="@InitialAddressStrValue" class="@CssClassH.AddressBar @CssClassH.Hidden" @onfocus=@OnAddressBarFocusAsync @onkeydown=@OnAddressBarKeyDownAsyncEventHandler />
     <input type="text" readonly value="@InitialAddressStrValue" class="@CssClassH.AddressBarReadonly" @onclick=@OnAddressBarReadonlyClickAsyncEventHandler></input>
 
-    <IconButton CssClass="oi oi-ellipses trmrk-rotate90deg" Title="Options" OnMouseUp=@OnOptionsMouseUpAsyncEventHandler></IconButton>
+    <IconButton IsDisabled=@OptionsBtnDisabled CssClass="oi oi-ellipses trmrk-rotate90deg" Title="Options" OnMouseUp=@OnOptionsMouseUpAsyncEventHandler></IconButton>
     
     <IconButton CssClass="oi oi-arrow-circle-right" Title="Go to address" OnMouseUp=@OnGoToAddressMouseUpAsyncEventHandler></IconButton>
     <IconButton CssClass="oi oi-reload" Title="Reload" OnMouseUp=@OnReloadMouseUpAsyncEventHandler></IconButton>
@@ -55,6 +55,9 @@
 
     [Parameter]
     public bool AddressGoForwardBtnDisabled { get; set; }
+
+    [Parameter]
+    public bool OptionsBtnDisabled { get; set; }
 
     protected string AddressStrValue { get; set; }
 
@@ -96,7 +99,10 @@
 
     protected async Task OnOptionsMouseUpAsyncEventHandler(MouseEventArgs args)
     {
-        await OnOptionsClick.InvokeMouseClickAsyncIfLeftBtn(args);
+        if (!OptionsBtnDisabled)
+        {
+            await OnOptionsClick.InvokeMouseClickAsyncIfLeftBtn(args);
+        }
     }
 
     protected async Task OnGoToAddressMouseUpAsyncEventHandler(MouseEventArgs args)

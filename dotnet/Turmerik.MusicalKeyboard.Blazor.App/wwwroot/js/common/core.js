@@ -5,6 +5,13 @@
         }
 
         throw err;
+    },
+    readFromClipboardAsync: async () => {
+        let text = await navigator.clipboard.readText();
+        return text;
+    },
+    writeToClipboardAsync: async (text) => {
+        await navigator.clipboard.writeText(text);
     }
 }
 

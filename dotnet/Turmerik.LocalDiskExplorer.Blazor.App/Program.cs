@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.ResponseCompression;
+using Turmerik.Blazor.Core.Hubs;
 using Turmerik.LocalDiskExplorer.Blazor.App.AppStartup;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +12,12 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 
 helper.RegisterServices(builder.Services, appSvcs.TrmrkAppSettings.UseMockData);
+
+builder.Services.AddResponseCompression(opts =>
+{
+    opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
+        new[] { "application/octet-stream" });
+});
 
 var app = builder.Build();
 
@@ -28,6 +36,7 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.MapBlazorHub();
+app.MapHub<TrmrkAppHub>(appSvcs.TrmrkAppSettings.TrmrkAppHubRelUrl);
 app.MapFallbackToPage("/_Host");
 
 app.Run();

@@ -93,12 +93,12 @@ app {
     }
 
     .trmrk-modal-content {
-        background-color: black;
+        background-color: #202020;
     }
 
-.trmrk-grid-keyboard-grid {
-    width: 24rem;
-}
+        .trmrk-grid-keyboard-grid {
+            width: 24rem;
+        }
 
 .trmrk-table.trmrk-grid-keyboard-grid > tbody > tr {
     margin: 0 0 0 0;
