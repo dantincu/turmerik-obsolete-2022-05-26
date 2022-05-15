@@ -1,7 +1,12 @@
-﻿
+﻿@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.JSInterop
+@using Turmerik.AspNetCore.Infrastructure
+
 @inherits SimpleModalBase
 
-<div class="modal" id="@ModalId" tabindex="-1" role="dialog">
+@inject IJSRuntime jsRuntime;
+
+<div class="modal fade" id="@ModalId" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         @if (ContentElementTemplate != null)
         {
@@ -9,7 +14,7 @@
         }
         else
         {
-            <div class="modal-content">
+            <div class="modal-content @CssClassH.ModalContent">
                 @if (HeaderElementTemplate != null)
                 {
                     @HeaderElementTemplate(null)
@@ -28,7 +33,7 @@
                 
                         @if (HasCloseButton)
                         {
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <button type="button" class="btn btn-outline-dark close" data-dismiss="modal" aria-label="Close" @onmouseup=OnCloseModalClickAsync>
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         }
@@ -74,4 +79,9 @@
 
     [Parameter]
     public RenderFragment<object> FooterTemplate { get; set; }
+
+    private async Task OnCloseModalClickAsync(MouseEventArgs args)
+    {
+        await jsRuntime.InvokeVoidAsync(JsH.Get(JsH.CloseModal), ModalId);
+    }
 }

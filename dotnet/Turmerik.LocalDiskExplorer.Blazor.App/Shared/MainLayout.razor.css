@@ -10,7 +10,7 @@ main {
 
     main > article.content {
         padding-right: 1rem !important;
-        padding-left: 1rem !important;
+        padding-left: 2rem !important;
     }
 
 .sidebar {
@@ -46,7 +46,7 @@ main {
     }
 
 .trmrk-app-sidebar {
-    position: sticky;
+    /* position: sticky; */
     top: 0px;
 }
 

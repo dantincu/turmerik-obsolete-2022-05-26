@@ -92,6 +92,9 @@ app {
         content: "An error has occurred."
     }
 
+    .trmrk-modal-content {
+        background-color: black;
+    }
 
 .trmrk-grid-keyboard-grid {
     width: 24rem;

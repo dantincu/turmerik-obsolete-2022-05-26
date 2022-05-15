@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using System.Collections.Concurrent;
 using Turmerik.Core.Data;
 using Turmerik.Core.Services;
+using Microsoft.JSInterop;
 
 namespace Turmerik.Blazor.Core.Pages.Components
 {
@@ -23,6 +24,7 @@ namespace Turmerik.Blazor.Core.Pages.Components
         protected ILocalStorageWrapper LocalStorage { get; set; }
         protected ISessionStorageWrapper SessionStorage { get; set; }
         protected IDriveExplorerService DriveFolderService { get; set; }
+        protected IJSRuntime JSRuntime { get; set; }
         protected ErrorViewModel ErrorViewModel { get; set; }
         protected DriveExplorerServiceArgs ServiceArgs { get; set; }
         protected bool FoldersGridCollapsed { get; set; }
@@ -31,6 +33,12 @@ namespace Turmerik.Blazor.Core.Pages.Components
         protected string ExpandFoldersGridBtnCssClass => FoldersGridCollapsed ? string.Empty : CssClassH.Hidden;
         protected string CollapseFilesGridBtnCssClass => FilesGridCollapsed ? CssClassH.Hidden : string.Empty;
         protected string ExpandFilesGridBtnCssClass => FilesGridCollapsed ? string.Empty : CssClassH.Hidden;
+
+        protected string SelectedDriveFolderName { get; set; }
+        protected string SelectedDriveFolderId { get; set; }
+
+        protected string SelectedDriveItemName { get; set; }
+        protected string SelectedDriveItemId { get; set; }
 
         protected Guid? TabPageUuid => NavManager.QueryStrings.GetNullableValue(
             QsKeys.TAB_PAGE_UUID, (StringValues str, out Guid value) => Guid.TryParse(str, out value));
@@ -130,10 +138,6 @@ namespace Turmerik.Blazor.Core.Pages.Components
             TabPageUuid);
         }
 
-        protected async Task OnCurrentlyOpenFolderOptionsClick(MouseEventArgs args)
-        {
-        }
-
         protected async Task OnAddressBarReloadClick(MouseEventArgs args)
         {
             await NavigateCore(serviceArgs =>
@@ -193,12 +197,39 @@ namespace Turmerik.Blazor.Core.Pages.Components
         {
         }
 
+        protected async Task OnCurrentlyOpenDriveFolderOptionsClickAsync()
+        {
+            await JSRuntime.InvokeVoidAsync(
+                JsH.Get(JsH.OpenModal),
+                ModalIds.CURRENTLY_OPEN_DRIVE_FOLDER_OPTIONS);
+        }
+
         protected async Task OnDriveFolderOptionsClickAsync(DriveItem driveFolder)
         {
+            SelectedDriveFolderName = driveFolder.Name;
+
+            SelectedDriveFolderId = driveFolder.Id ?? Path.Combine(
+                ServiceArgs.Data.TabPageItems.CurrentlyOpenFolder.Id, driveFolder.Name);
+
+            StateHasChanged();
+
+            await JSRuntime.InvokeVoidAsync(
+                JsH.Get(JsH.OpenModal),
+                ModalIds.DRIVE_FOLDER_OPTIONS);
         }
 
         protected async Task OnDriveItemOptionsClickAsync(DriveItem driveItem)
         {
+            SelectedDriveItemName = driveItem.Name;
+
+            SelectedDriveItemId = driveItem.Id ?? Path.Combine(
+                ServiceArgs.Data.TabPageItems.CurrentlyOpenFolder.Id, driveItem.Name);
+
+            StateHasChanged();
+
+            await JSRuntime.InvokeVoidAsync(
+                JsH.Get(JsH.OpenModal),
+                ModalIds.DRIVE_ITEM_OPTIONS);
         }
 
         protected async Task OnTabPageHeadClickAsync(IntEventArgsWrapper args)

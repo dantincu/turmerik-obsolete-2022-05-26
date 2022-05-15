@@ -34,7 +34,7 @@
             OnGoBackClick=@OnAddressBarGoBackClick
             OnGoUpClick=@OnAddressBarGoUpClick
             OnGoForwardClick=@OnAddressBarGoForwardClick
-            OnOptionsClick=@OnCurrentlyOpenFolderOptionsClick
+            OnOptionsClick=@OnCurrentlyOpenDriveFolderOptionsClick
             OnReloadClick=@OnAddressBarReloadClick
             OnSubmitAddress=@OnSubmitAddress
             AddressGoBackBtnDisabled=@(!tabPageItems.GoBackButtonEnabled)
@@ -112,15 +112,12 @@
             ModalId="currently-open-folder-options-modal">
             <HeaderTemplate>
                 <h5 class="modal-title">@tabPageItems?.CurrentlyOpenFolder?.Name</h5>
-                <pre>@tabPageItems?.CurrentlyOpenFolder?.Id</pre>
             </HeaderTemplate>
             <BodyTemplate>
-                @if (IsLocalDiskExplorer)
-                {
-                    <button type="button" class="btn btn-dark">
-                      Open folder in Windows Explorer
-                    </button>
-                }
+                <pre>@tabPageItems?.CurrentlyOpenFolder?.Id</pre>
+                <button type="button" class="btn btn-dark">
+                    Open folder in Windows Explorer
+                </button>
             </BodyTemplate>
         </SimpleModal>
 
@@ -128,15 +125,12 @@
             ModalId="drive-folder-options-modal">
             <HeaderTemplate>
                 <h5 class="modal-title">@SelectedDriveFolderName</h5>
-                <pre>@SelectedDriveFolderId</pre>
             </HeaderTemplate>
             <BodyTemplate>
-                @if (IsLocalDiskExplorer)
-                {
-                    <button type="button" class="btn btn-dark">
-                      Open folder in Windows Explorer
-                    </button>
-                }
+                <pre>@SelectedDriveFolderId</pre>
+                <button type="button" class="btn btn-dark">
+                    Open folder in Windows Explorer
+                </button>
             </BodyTemplate>
         </SimpleModal>
 
@@ -144,15 +138,12 @@
             ModalId="drive-item-options-modal">
             <HeaderTemplate>
                 <h5 class="modal-title">@SelectedDriveItemName</h5>
-                <pre>@SelectedDriveItemId</pre>
             </HeaderTemplate>
             <BodyTemplate>
-                @if (IsLocalDiskExplorer)
-                {
-                    <button type="button" class="btn btn-dark">
-                      Open folder in Windows Explorer
-                    </button>
-                }
+                <pre>@SelectedDriveItemId</pre>
+                <button type="button" class="btn btn-dark">
+                    Open folder in Windows Explorer
+                </button>
             </BodyTemplate>
         </SimpleModal>
     }
@@ -166,25 +157,18 @@
     [Parameter]
     public bool IsLocalDiskExplorer { get; set; }
 
-    private string SelectedDriveFolderName { get; set; }
-    private string SelectedDriveFolderId { get; set; }
-
-    private string SelectedDriveItemName { get; set; }
-    private string SelectedDriveItemId { get; set; }
+    protected async Task OnCurrentlyOpenDriveFolderOptionsClick(MouseEventArgs args)
+    {
+        await OnCurrentlyOpenDriveFolderOptionsClickAsync();
+    }
 
     protected async Task OnDriveFolderOptionsClick(DriveItem driveFolder)
     {
-        SelectedDriveFolderName = driveFolder.Name;
-        SelectedDriveFolderId = driveFolder.Id;
-
         await OnDriveFolderOptionsClickAsync(driveFolder);
     }
 
     protected async Task OnDriveItemOptionsClick(DriveItem driveItem)
     {
-        SelectedDriveItemName = driveItem.Name;
-        SelectedDriveItemId = driveItem.Id;
-
         await OnDriveItemOptionsClickAsync(driveItem);
     }
 
@@ -223,6 +207,7 @@
         DriveFolderService = driveFolderService;
         AppSettings = appSettings;
 
+        JSRuntime = jsRuntime;
         await base.OnInitializedAsync();
     }
 }

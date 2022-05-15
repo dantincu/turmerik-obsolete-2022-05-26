@@ -54,6 +54,8 @@ namespace Turmerik.AspNetCore.Infrastructure
         public const string HEADER = "header";
         public const string PAGE = "page";
         public const string GRID = "grid";
+        public const string MODAL = "modal";
+        public const string CONTENT = "content";
 
         public const string NAVBAR = "navbar";
         public const string GREET = "greet";
@@ -96,6 +98,7 @@ namespace Turmerik.AspNetCore.Infrastructure
         public static readonly string CellLabel = Class(CELL, LABEL);
         public static readonly string Container = Class(CONTAINER);
         public static readonly string Spacer = Class(SPACER);
+        public static readonly string ModalContent = Class(MODAL, CONTENT);
 
         public static readonly string Large = Class(LARGE);
         public static readonly string Small = Class(SMALL);

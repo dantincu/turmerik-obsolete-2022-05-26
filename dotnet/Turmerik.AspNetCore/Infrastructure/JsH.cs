@@ -21,6 +21,8 @@ namespace Turmerik.AspNetCore.Infrastructure
         public static readonly string GetDomElOuterHTML;
         public static readonly string TextBoxWrapperSetEditable;
         public static readonly string InitDateTimeUserFriendlyLabels;
+        public static readonly string OpenModal;
+        public static readonly string CloseModal;
 
         static JsH()
         {
@@ -33,6 +35,8 @@ namespace Turmerik.AspNetCore.Infrastructure
             GetDomElOuterHTML = nameof(GetDomElOuterHTML).DecapitalizeFirstLetter();
             TextBoxWrapperSetEditable = nameof(TextBoxWrapperSetEditable).DecapitalizeFirstLetter();
             InitDateTimeUserFriendlyLabels = nameof(InitDateTimeUserFriendlyLabels).DecapitalizeFirstLetter();
+            OpenModal = nameof(OpenModal).DecapitalizeFirstLetter();
+            CloseModal = nameof(CloseModal).DecapitalizeFirstLetter();
         }
 
         public static string Get(params string[] segments)
