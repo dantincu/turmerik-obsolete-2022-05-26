@@ -161,35 +161,33 @@ namespace Turmerik.AspNetCore.Services.DriveItems
 
             var tabPageHeads = args.Data.TabPageItems.Header.TabPageHeads;
 
-            if (args.FolderIdentifier != null && !args.TabPageUuid.HasValue)
+            if (args.FolderIdentifier != null)
             {
-                foreach (var head in tabPageHeads)
+                bool addTab = !args.TabPageUuid.HasValue || tabPageHeads.None(
+                    head => head.Uuid == args.TabPageUuid.Value);
+
+                if (addTab)
                 {
-                    head.IsCurrent = false;
+                    foreach (var head in tabPageHeads)
+                    {
+                        head.IsCurrent = false;
+                    }
+
+                    var pageHead = new TabPageHead
+                    {
+                        IsCurrent = true,
+                        Name = args.Data.TabPageItems.CurrentlyOpenFolder.Name,
+                        Uuid = args.TabPageUuid ?? Guid.NewGuid(),
+                        Id = args.Data.TabPageItems.CurrentlyOpenFolder.Id
+                    };
+
+                    tabPageHeads.Add(pageHead);
+
+                    if (!args.TabPageUuid.HasValue)
+                    {
+                        args.TabPageUuid = pageHead.Uuid;
+                    }
                 }
-
-                var pageHead = new TabPageHead
-                {
-                    IsCurrent = true,
-                    Name = args.Data.TabPageItems.CurrentlyOpenFolder.Name,
-                    Uuid = Guid.NewGuid(),
-                    Id = args.Data.TabPageItems.CurrentlyOpenFolder.Id
-                };
-
-                tabPageHeads.Add(pageHead);
-            }
-
-            if (tabPageHeads.None())
-            {
-                var pageHead = new TabPageHead
-                {
-                    IsCurrent = true,
-                    Name = args.Data.TabPageItems.CurrentlyOpenFolder.Name,
-                    Uuid = Guid.NewGuid(),
-                    Id = args.Data.TabPageItems.CurrentlyOpenFolder.Id
-                };
-
-                tabPageHeads.Add(pageHead);
             }
 
             if (!args.TabPageUuid.HasValue)
