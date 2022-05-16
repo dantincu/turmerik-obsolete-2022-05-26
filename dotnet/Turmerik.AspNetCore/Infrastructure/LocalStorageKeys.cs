@@ -3,7 +3,7 @@
     public static class LocalStorageKeys
     {
         public const string TRMRK = "trmrk";
-        public const string SESSION = "trmrk";
+        public const string SESSION = "session";
         public const string ID = "id";
 
         public const string LOCAL = "local";

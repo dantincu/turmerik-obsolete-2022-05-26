@@ -1,16 +1,8 @@
-﻿using Blazored.LocalStorage;
-using Blazored.SessionStorage;
-using Microsoft.JSInterop;
+﻿using Microsoft.JSInterop;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Turmerik.AspNetCore.Infrastructure;
 using Turmerik.AspNetCore.Settings;
 using Turmerik.Core.Cloneable;
-using Turmerik.Core.Components;
 
 namespace Turmerik.AspNetCore.Services.LocalSessionStorage
 {
@@ -21,21 +13,23 @@ namespace Turmerik.AspNetCore.Services.LocalSessionStorage
         ValueTask<string> GetItemAsStringAsync(string key, bool canExceedBuffer = false, CancellationToken ? cancellationToken = null);
         ValueTask<bool> ContainKeyAsync(string key, CancellationToken? cancellationToken = null);
         ValueTask RemoveItemAsync(string key, CancellationToken? cancellationToken = null);
+        ValueTask RemoveItemsAsync(string[] keysArr, CancellationToken? cancellationToken = null);
+        ValueTask<string[]> KeysAsync(CancellationToken? cancellationToken = null);
         ValueTask SetItemAsync<T>(string key, T data, CancellationToken? cancellationToken = null);
         ValueTask SetItemAsStringAsync(string key, string data, CancellationToken? cancellationToken = null);
     }
 
     public interface ISessionStorageSvc : IWebStorageSvc
     {
-        ISessionStorageService Storage { get; }
+        // ISessionStorageService Storage { get; }
     }
 
     public interface ILocalStorageSvc : IWebStorageSvc
     {
-        ILocalStorageService Storage { get; }
+        // ILocalStorageService Storage { get; }
     }
 
-    public abstract class WebStorageBase
+    public abstract class WebStorageBase : IWebStorageSvc
     {
         protected WebStorageBase(
             ICloneableMapper mapper,
@@ -92,6 +86,36 @@ namespace Turmerik.AspNetCore.Services.LocalSessionStorage
                 key, json, IsPersistent);
         }
 
+        public async ValueTask ClearAsync(CancellationToken? cancellationToken = null)
+        {
+            await JSRuntime.InvokeVoidAsync(
+                JsH.Get(JsH.WebStorage.Clear),
+                IsPersistent);
+        }
+
+        public async ValueTask<bool> ContainKeyAsync(string key, CancellationToken? cancellationToken = null)
+        {
+            bool retVal = await JSRuntime.InvokeAsync<bool>(
+                JsH.Get(JsH.WebStorage.ContainsKey),
+                key, IsPersistent).AsTask();
+
+            return retVal;
+        }
+
+        public async ValueTask RemoveItemAsync(string key, CancellationToken? cancellationToken = null)
+        {
+            await JSRuntime.InvokeVoidAsync(
+                JsH.Get(JsH.WebStorage.RemoveItem),
+                key, IsPersistent);
+        }
+
+        public async ValueTask SetItemAsStringAsync(string key, string data, CancellationToken? cancellationToken = null)
+        {
+            await JSRuntime.InvokeVoidAsync(
+                JsH.Get(JsH.WebStorage.SetItem),
+                key, data, IsPersistent);
+        }
+
         protected async ValueTask<string> GetItemAsBigStringAsync(string key)
         {
             Guid textGuid = Guid.NewGuid();
@@ -119,61 +143,56 @@ namespace Turmerik.AspNetCore.Services.LocalSessionStorage
             string bigText = string.Concat(chunksArr);
             return bigText;
         }
+
+        public async ValueTask RemoveItemsAsync(string[] keysArr, CancellationToken? cancellationToken = null)
+        {
+            await JSRuntime.InvokeVoidAsync(
+                JsH.Get(JsH.WebStorage.RemoveItems),
+                keysArr, IsPersistent);
+        }
+
+        public async ValueTask<string[]> KeysAsync(CancellationToken? cancellationToken = null)
+        {
+            var keysArr = await JSRuntime.InvokeAsync<string[]>(
+                JsH.Get(JsH.WebStorage.Keys),
+                IsPersistent);
+
+            return keysArr;
+        }
     }
 
     public class SessionStorageSvc : WebStorageBase, ISessionStorageSvc
     {
         public SessionStorageSvc(
             ICloneableMapper mapper,
-            ISessionStorageService storage,
+            // ISessionStorageService storage,
             IJSRuntime jSRuntime,
             ITrmrkAppSettings appSettings) : base(mapper, jSRuntime, appSettings)
         {
-            this.Storage = storage ?? throw new ArgumentNullException(nameof(storage));
+            // this.Storage = storage ?? throw new ArgumentNullException(nameof(storage));
         }
 
-        public ISessionStorageService Storage { get; }
+        // public ISessionStorageService Storage { get; }
 
         protected override bool IsPersistent => false;
-
-        public async ValueTask ClearAsync(CancellationToken? cancellationToken = null)
-        {
-            await Storage.ClearAsync(cancellationToken);
-        }
-
-        public async ValueTask<bool> ContainKeyAsync(string key, CancellationToken? cancellationToken = null)
-        {
-            var retVal = await Storage.ContainKeyAsync(key, cancellationToken);
-            return retVal;
-        }
-
-        public async ValueTask RemoveItemAsync(string key, CancellationToken? cancellationToken = null)
-        {
-            await Storage.RemoveItemAsync(key, cancellationToken);
-        }
-
-        public async ValueTask SetItemAsStringAsync(string key, string data, CancellationToken? cancellationToken = null)
-        {
-            await Storage.SetItemAsStringAsync(key, data, cancellationToken);
-        }
     }
 
     public class LocalStorageSvc : WebStorageBase, ILocalStorageSvc
     {
         public LocalStorageSvc(
             ICloneableMapper mapper,
-            ILocalStorageService storage,
+            // ILocalStorageService storage,
             IJSRuntime jSRuntime,
             ITrmrkAppSettings appSettings) : base(mapper, jSRuntime, appSettings)
         {
-            this.Storage = storage ?? throw new ArgumentNullException(nameof(storage));
+            // this.Storage = storage ?? throw new ArgumentNullException(nameof(storage));
         }
 
-        public ILocalStorageService Storage { get; }
+        // public ILocalStorageService Storage { get; }
 
         protected override bool IsPersistent => true;
 
-        public async ValueTask ClearAsync(CancellationToken? cancellationToken = null)
+        /* public async ValueTask ClearAsync(CancellationToken? cancellationToken = null)
         {
             await Storage.ClearAsync(cancellationToken);
         }
@@ -192,6 +211,6 @@ namespace Turmerik.AspNetCore.Services.LocalSessionStorage
         public async ValueTask SetItemAsStringAsync(string key, string data, CancellationToken? cancellationToken = null)
         {
             await Storage.SetItemAsStringAsync(key, data, cancellationToken);
-        }
+        } */
     }
 }

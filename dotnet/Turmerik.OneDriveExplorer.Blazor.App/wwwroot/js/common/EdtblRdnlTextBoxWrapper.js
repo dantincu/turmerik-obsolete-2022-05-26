@@ -1,4 +1,4 @@
-﻿import { Trmrk } from './core.js';
+﻿import { Trmrk as trmrk } from './core.js';
 import { DomElWrapperBase } from './DomElWrapperBase.js';
 
 export class EdtblRdnlTextBoxWrapper extends DomElWrapperBase {
@@ -14,8 +14,8 @@ export class EdtblRdnlTextBoxWrapper extends DomElWrapperBase {
         editableTextBoxSelector,
         readonlyTextBoxSelector) {
         super(domElId || Trmrk.throw("Must specify parent dom element id"));
-        this.EditableTextBoxSelector = editableTextBoxSelector || Trmrk.throw("Must specify editable textbox selector");
-        this.ReadonlyTextBoxSelector = readonlyTextBoxSelector || Trmrk.throw("Must specify readonly textbox selector");
+        this.EditableTextBoxSelector = editableTextBoxSelector || trmrk.throw("Must specify editable textbox selector");
+        this.ReadonlyTextBoxSelector = readonlyTextBoxSelector || trmrk.throw("Must specify readonly textbox selector");
         this.__isEditable = !this.EditableTextBox.classList.contains("trmrk-hidden");
     }
 

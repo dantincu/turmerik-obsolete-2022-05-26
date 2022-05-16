@@ -1,11 +1,5 @@
-﻿using Blazored.LocalStorage;
-using Blazored.SessionStorage;
-using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Http;
+using Turmerik.AspNetCore.Services.LocalSessionStorage;
 
 namespace Turmerik.AspNetCore.OpenId.UserSession
 {
@@ -19,14 +13,14 @@ namespace Turmerik.AspNetCore.OpenId.UserSession
     {
         private readonly IUserSessionsDictnr userSessionsDictnr;
         private readonly IHttpContextAccessor httpContextAccessor;
-        private readonly ILocalStorageService localStorage;
-        private readonly ISessionStorageService sessionStorage;
+        private readonly ILocalStorageSvc localStorage;
+        private readonly ISessionStorageSvc sessionStorage;
 
         public UserSessionsManager(
             IUserSessionsDictnr userSessionsDictnr,
             IHttpContextAccessor httpContextAccessor,
-            ILocalStorageService localStorage,
-            ISessionStorageService sessionStorage)
+            ILocalStorageSvc localStorage,
+            ISessionStorageSvc sessionStorage)
         {
             this.userSessionsDictnr = userSessionsDictnr ?? throw new ArgumentNullException(nameof(userSessionsDictnr));
             this.httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));

@@ -1,10 +1,4 @@
-﻿using Blazored.LocalStorage;
-using Blazored.SessionStorage;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Turmerik.AspNetCore.Services.LocalSessionStorage;
 
 namespace Turmerik.AspNetCore.LocalSession
 {
@@ -17,13 +11,13 @@ namespace Turmerik.AspNetCore.LocalSession
     public class LocalSessionsManager : ILocalSessionsManager
     {
         private readonly ILocalSessionsDictnr localSessionsDictnr;
-        private readonly ILocalStorageService localStorage;
-        private readonly ISessionStorageService sessionStorage;
+        private readonly ILocalStorageSvc localStorage;
+        private readonly ISessionStorageSvc sessionStorage;
 
         public LocalSessionsManager(
             ILocalSessionsDictnr localSessionsDictnr,
-            ILocalStorageService localStorage,
-            ISessionStorageService sessionStorage)
+            ILocalStorageSvc localStorage,
+            ISessionStorageSvc sessionStorage)
         {
             this.localSessionsDictnr = localSessionsDictnr ?? throw new ArgumentNullException(nameof(localSessionsDictnr));
             this.localStorage = localStorage ?? throw new ArgumentNullException(nameof(localStorage));

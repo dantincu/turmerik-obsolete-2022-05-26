@@ -59,6 +59,11 @@ namespace Turmerik.AspNetCore.Infrastructure
         {
             public static readonly string BasePrefix = typeof(WebStorage).Name.DecapitalizeFirstLetter();
 
+            public static readonly string ContainsKey;
+            public static readonly string RemoveItem;
+            public static readonly string RemoveItems;
+            public static readonly string Keys;
+            public static readonly string Clear;
             public static readonly string GetItem;
             public static readonly string SetItem;
             public static readonly string GetBigItemChunksCount;
@@ -67,6 +72,11 @@ namespace Turmerik.AspNetCore.Infrastructure
 
             static WebStorage()
             {
+                ContainsKey = GetMethodName(nameof(ContainsKey).DecapitalizeFirstLetter());
+                RemoveItem = GetMethodName(nameof(RemoveItem).DecapitalizeFirstLetter());
+                RemoveItems = GetMethodName(nameof(RemoveItems).DecapitalizeFirstLetter());
+                Keys = GetMethodName(nameof(Keys).DecapitalizeFirstLetter());
+                Clear = GetMethodName(nameof(Clear).DecapitalizeFirstLetter());
                 GetItem = GetMethodName(nameof(GetItem).DecapitalizeFirstLetter());
                 SetItem = GetMethodName(nameof(SetItem).DecapitalizeFirstLetter());
                 GetBigItemChunksCount = GetMethodName(nameof(GetBigItemChunksCount).DecapitalizeFirstLetter());

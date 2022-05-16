@@ -1,12 +1,6 @@
-﻿using Blazored.LocalStorage;
-using Blazored.SessionStorage;
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Concurrent;
 using Turmerik.AspNetCore.Infrastructure;
+using Turmerik.AspNetCore.Services.LocalSessionStorage;
 using Turmerik.Core.Cloneable;
 
 namespace Turmerik.AspNetCore.LocalSession
@@ -14,13 +8,13 @@ namespace Turmerik.AspNetCore.LocalSession
     public interface ILocalSessionsDictnr
     {
         Task<ILocalSessionData> TryAddOrUpdateLocalSessionAsync(
-            ILocalStorageService localStorage,
-            ISessionStorageService sessionStorage,
+            ILocalStorageSvc localStorage,
+            ISessionStorageSvc sessionStorage,
             Guid localSessionGuid);
 
         Task<ILocalSessionData> TryRemoveLocalSessionAsync(
-            ILocalStorageService localStorage,
-            ISessionStorageService sessionStorage,
+            ILocalStorageSvc localStorage,
+            ISessionStorageSvc sessionStorage,
             Guid localSessionGuid);
     }
 
@@ -37,8 +31,8 @@ namespace Turmerik.AspNetCore.LocalSession
         }
 
         public async Task<ILocalSessionData> TryAddOrUpdateLocalSessionAsync(
-            ILocalStorageService localStorage,
-            ISessionStorageService sessionStorage,
+            ILocalStorageSvc localStorage,
+            ISessionStorageSvc sessionStorage,
             Guid localSessionGuid)
         {
             var localSessionData = dictnr.GetOrAdd(
@@ -62,8 +56,8 @@ namespace Turmerik.AspNetCore.LocalSession
         }
 
         public async Task<ILocalSessionData> TryRemoveLocalSessionAsync(
-            ILocalStorageService localStorage,
-            ISessionStorageService sessionStorage,
+            ILocalStorageSvc localStorage,
+            ISessionStorageSvc sessionStorage,
             Guid localSessionGuid)
         {
             ILocalSessionData localSessionData;

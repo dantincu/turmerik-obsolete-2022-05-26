@@ -1,13 +1,5 @@
-﻿using Blazored.LocalStorage;
-using Blazored.SessionStorage;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Turmerik.AspNetCore.Infrastructure;
 using Turmerik.AspNetCore.LocalSession;
 using Turmerik.AspNetCore.Services;
@@ -51,9 +43,6 @@ namespace Turmerik.AspNetCore.AppStartup
 
         public virtual void RegisterServices(IServiceCollection services, bool useMockData)
         {
-            services.AddBlazoredLocalStorage();
-            services.AddBlazoredSessionStorage();
-
             services.AddHttpContextAccessor();
             services.AddScoped<INavManager, NavManager>();
 

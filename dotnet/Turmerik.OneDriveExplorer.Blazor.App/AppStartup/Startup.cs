@@ -1,17 +1,10 @@
-using Blazored.LocalStorage;
-using Blazored.SessionStorage;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Microsoft.Identity.Web;
-using System;
 using System.Linq;
-using Turmerik.AspNetCore.MsIdentity.Graph;
 using Turmerik.AspNetCore.Services;
 using Turmerik.Blazor.Core.Hubs;
 

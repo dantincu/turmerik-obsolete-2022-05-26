@@ -1,8 +1,6 @@
-﻿using Blazored.SessionStorage;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.WebUtilities;
 using Turmerik.AspNetCore.Infrastructure;
 using Turmerik.AspNetCore.LocalSession;
 using Turmerik.AspNetCore.Services;

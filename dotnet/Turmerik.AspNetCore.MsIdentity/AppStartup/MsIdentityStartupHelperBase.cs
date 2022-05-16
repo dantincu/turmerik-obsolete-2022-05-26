@@ -23,8 +23,6 @@ using Turmerik.AspNetCore.OpenId.Services;
 using Turmerik.AspNetCore.Services;
 using Turmerik.AspNetCore.Services.DriveItems;
 using Turmerik.Core.Helpers;
-using Blazored.LocalStorage;
-using Blazored.SessionStorage;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;

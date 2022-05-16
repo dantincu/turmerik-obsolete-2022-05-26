@@ -325,7 +325,7 @@ namespace Turmerik.Blazor.Core.Pages.Components
                     SetError("An unhandled error ocurred", ex);
                 }
 
-                if (ErrorViewModel != null)
+                if (ErrorViewModel != null && ServiceArgs != null)
                 {
                     ServiceArgs.FolderIdentifier = serviceArgs.FolderIdentifier;
                 }
