@@ -160,4 +160,18 @@ trmrk.closeModal = modalId => {
     modal.hide();
 }
 
+trmrk.showPopover = (domElId, selector) => {
+    let helper = new DomHelper(domElId, selector);
+    var popover = bootstrap.Popover.getOrCreateInstance(helper.DomEl);
+
+    popover.show();
+}
+
+trmrk.hidePopover = (domElId, selector) => {
+    let helper = new DomHelper(domElId, selector);
+    var popover = bootstrap.Popover.getInstance(helper.DomEl);
+
+    popover.show();
+}
+
 export const Trmrk = trmrk;

@@ -1,0 +1,115 @@
+﻿@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.JSInterop
+@using Turmerik.AspNetCore.Infrastructure
+@using System.Web;
+@using Turmerik.Blazor.Core.Pages.Components
+@using Turmerik.Core.Helpers;
+
+@inherits DriveItemOptionsModalBase
+
+@inject IJSRuntime jsRuntime;
+
+<SimpleModal ModalId="@ModalId">
+    <HeaderTemplate>
+        <IdentifierLabel
+            IdentifierValue=@DriveItemName
+            RenderClipboardButton=@(AllowAllToClipboard || AllowDriveItemNameToClipboard)>
+            <AfterIconTemplate Context="afterIconCtx">
+                <h5 class="modal-title">@DriveItemName</h5>
+            </AfterIconTemplate>
+        </IdentifierLabel>
+    </HeaderTemplate>
+    <BodyTemplate>
+        <IdentifierLabel
+            IdentifierValue=@DriveItemAddress
+            RenderClipboardButton="true"
+            RenderNothing=@(!(AllowAllToClipboard || ShowDriveItemAddress))>
+            <AfterIconTemplate Context="afterIconCtx">
+                <pre>@DriveItemAddress</pre>
+                <hr />
+            </AfterIconTemplate>
+        </IdentifierLabel>
+
+        @{
+            bool isFirstGroup = true;
+        }
+
+        @if (CommandsMx != null)
+        {
+            int len = CommandsMx.Count;
+
+            @for (int i = 0; i < len; i++)
+            {
+                var commandsList = CommandsMx[i];
+
+                if (!isFirstGroup)
+                {
+                    <hr />
+                }
+
+                isFirstGroup = isFirstGroup && commandsList == null;
+
+                if (commandsList != null)
+                {
+                    foreach (var cmd in commandsList)
+                    {
+                        <button type="button" class="btn btn-dark" @onmouseup=@cmd.Item2>
+                            @cmd.Item1
+                        </button>
+                    }
+                }
+            }
+        }
+
+        <IdentifierLabel
+            IdentifierValue=@DriveItemUri
+            RenderClipboardButton="true"
+            RenderNothing=@(!(AllowAllToClipboard || ShowDriveItemUri))>
+            <BeforeIconTemplate Context="beforeIconCtx">
+                @if (!isFirstGroup)
+                {
+                    <hr />
+                }
+            </BeforeIconTemplate>
+            <AfterIconTemplate Context="afterIconCtx">
+                <pre>@DriveItemUri</pre>
+            </AfterIconTemplate>
+        </IdentifierLabel>
+    </BodyTemplate>
+</SimpleModal>
+
+@code {
+    [Parameter]
+    public string ModalId { get; set; }
+
+    [Parameter]
+    public string DriveItemName { get; set; }
+    
+    [Parameter]
+    public bool AllowAllToClipboard { get; set; }
+    
+    [Parameter]
+    public bool AllowDriveItemNameToClipboard { get; set; }
+    
+    [Parameter]
+    public string DriveItemAddress { get; set; }
+    
+    [Parameter]
+    public bool ShowDriveItemAddress { get; set; }
+    
+    [Parameter]
+    public string DriveItemUri { get; set; }
+    
+    [Parameter]
+    public bool ShowDriveItemUri { get; set; }
+
+    [Parameter]
+    public string DriveItemId { get; set; }
+
+    [Parameter]
+    public List<List<Tuple<string, Func<MouseEventArgs, Task>>>> CommandsMx { get; set; }
+
+    protected bool? DriveItemNameClipboardIconAfterTemplate => (AllowAllToClipboard || AllowDriveItemNameToClipboard) ? true : null;
+    protected bool? DriveItemAddressClipboardIconAfterTemplate => (AllowAllToClipboard || ShowDriveItemAddress) ? true : null;
+    protected bool? DriveItemUriClipboardIconAfterTemplate => (AllowAllToClipboard || ShowDriveItemUri) ? true : null;
+}

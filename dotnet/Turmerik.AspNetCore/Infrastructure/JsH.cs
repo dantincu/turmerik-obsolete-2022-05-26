@@ -23,6 +23,8 @@ namespace Turmerik.AspNetCore.Infrastructure
         public static readonly string InitDateTimeUserFriendlyLabels;
         public static readonly string OpenModal;
         public static readonly string CloseModal;
+        public static readonly string ShowPopover;
+        public static readonly string HidePopover;
         public static readonly string ReadFromClipboardAsync;
         public static readonly string WriteToClipboardAsync;
 
@@ -39,6 +41,8 @@ namespace Turmerik.AspNetCore.Infrastructure
             InitDateTimeUserFriendlyLabels = nameof(InitDateTimeUserFriendlyLabels).DecapitalizeFirstLetter();
             OpenModal = nameof(OpenModal).DecapitalizeFirstLetter();
             CloseModal = nameof(CloseModal).DecapitalizeFirstLetter();
+            ShowPopover = nameof(ShowPopover).DecapitalizeFirstLetter();
+            HidePopover = nameof(HidePopover).DecapitalizeFirstLetter();
             ReadFromClipboardAsync = nameof(ReadFromClipboardAsync).DecapitalizeFirstLetter();
             WriteToClipboardAsync = nameof(WriteToClipboardAsync).DecapitalizeFirstLetter();
         }

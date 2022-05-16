@@ -1,0 +1,60 @@
+﻿@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.JSInterop
+@using Turmerik.AspNetCore.Infrastructure
+@using System.Web;
+@using Turmerik.Blazor.Core.Pages.Components
+@using Turmerik.Core.Helpers;
+
+@inherits ComponentCoreBase
+
+@inject IJSRuntime jsRuntime;
+
+@if (!RenderNothing)
+{
+    <div id="@UuidStr" class="@ComponentCssClass">
+        @BeforeIconTemplate?.Invoke(null)
+        
+        @if (RenderClipboardButton)
+        {
+            <FadingTooltipIconButton
+                CssClass="oi oi-clipboard"
+                OnClick=@OnIdentifierToClipboardClick>
+            </FadingTooltipIconButton>
+        }
+
+        @AfterIconTemplate?.Invoke(null)
+    </div>
+}
+
+@code {
+    [Parameter]
+    public bool RenderNothing { get; set; }
+
+    [Parameter]
+    public string ComponentCssClass { get; set; }
+
+    [Parameter]
+    public bool IsDisabled { get; set; }
+
+    [Parameter]
+    public bool RenderClipboardButton { get; set; }
+
+    [Parameter]
+    public string IdentifierValue { get; set; }
+
+    [Parameter]
+    public RenderFragment<object> BeforeIconTemplate { get; set; }
+
+    [Parameter]
+    public RenderFragment<object> AfterIconTemplate { get; set; }
+
+    private async Task OnIdentifierToClipboardClick(MouseEventArgs args)
+    {
+        if (!IsDisabled)
+        {
+            await jsRuntime.InvokeVoidAsync(
+                JsH.Get(JsH.WriteToClipboardAsync),
+                IdentifierValue);
+        }
+    }
+}

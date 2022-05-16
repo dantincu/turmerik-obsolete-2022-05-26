@@ -1,0 +1,48 @@
+﻿@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.JSInterop
+@using Turmerik.AspNetCore.Infrastructure
+@using Turmerik.Blazor.Core.Pages.Components
+@using Turmerik.Core.Helpers;
+
+@inherits ComponentCoreBase;
+@inject IJSRuntime JSRuntime;
+
+<IconButton
+    CssClass=@CssClass
+    IsDisabled=@IsDisabled
+    OnMouseUp=@OnMouseUpAsync>
+    <InnerTemplate>
+        <span tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="@ClickMessage" data-bs-animation="true">
+        </span>
+    </InnerTemplate>
+</IconButton>
+
+@code {
+    [Parameter]
+    public string CssClass { get; set; }
+
+    [Parameter]
+    public string ClickMessage { get; set; }
+
+    [Parameter]
+    public Func<MouseEventArgs, Task> OnClick { get; set; }
+
+    [Parameter]
+    public bool IsDisabled { get; set; }
+
+    private async Task OnMouseUpAsync(MouseEventArgs args)
+    {
+        if (!IsDisabled)
+        {
+            if (OnClick != null)
+            {
+                await OnClick(args);
+            }
+
+            await JSRuntime.InvokeVoidAsync(
+                JsH.Get(JsH.ShowPopover),
+                UuidStr,
+                "[data-bs-toggle='popover']");
+            }
+    }
+}

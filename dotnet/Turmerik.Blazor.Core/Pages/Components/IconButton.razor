@@ -14,6 +14,10 @@
     @onmousedown=@OnMouseDownEventHandler
     @onmouseup=@OnMouseUpEventHandler
     disabled="@IsDisabled">
+    @if (InnerTemplate != null)
+    {
+        @InnerTemplate(null);
+    }
 </span>
 
 @code {
@@ -31,6 +35,9 @@
 
     [Parameter]
     public bool IsDisabled { get; set; }
+
+    [Parameter]
+    public RenderFragment<object> InnerTemplate { get; set; }
 
     protected async Task OnMouseDownEventHandler(MouseEventArgs args)
     {

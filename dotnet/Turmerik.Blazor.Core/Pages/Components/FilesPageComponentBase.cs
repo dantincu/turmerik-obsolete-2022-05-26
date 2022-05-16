@@ -34,11 +34,13 @@ namespace Turmerik.Blazor.Core.Pages.Components
         protected string CollapseFilesGridBtnCssClass => FilesGridCollapsed ? CssClassH.Hidden : string.Empty;
         protected string ExpandFilesGridBtnCssClass => FilesGridCollapsed ? string.Empty : CssClassH.Hidden;
 
+        protected DriveItem SelectedDriveFolder { get; set; }
         protected string SelectedDriveFolderId { get; set; }
         protected string SelectedDriveFolderName { get; set; }
         protected string SelectedDriveFolderAddress { get; set; }
         protected string SelectedDriveFolderUri { get; set; }
 
+        protected DriveItem SelectedDriveItem { get; set; }
         protected string SelectedDriveItemId { get; set; }
         protected string SelectedDriveItemName { get; set; }
         protected string SelectedDriveItemAddress { get; set; }
@@ -217,9 +219,11 @@ namespace Turmerik.Blazor.Core.Pages.Components
                 ParentId = ServiceArgs.Data.TabPageItems.CurrentlyOpenFolder.Id,
             };
 
+            SelectedDriveFolder = driveFolder;
             SelectedDriveFolderName = driveFolder.Name;
             SelectedDriveFolderId = DriveFolderService.GetDriveItemId(identifier);
             SelectedDriveFolderAddress = DriveFolderService.GetDriveItemAddress(identifier);
+            SelectedDriveFolderUri = DriveFolderService.GetDriveItemUri(identifier);
 
             StateHasChanged();
 
@@ -237,9 +241,11 @@ namespace Turmerik.Blazor.Core.Pages.Components
                 ParentId = ServiceArgs.Data.TabPageItems.CurrentlyOpenFolder.Id,
             };
 
+            SelectedDriveItem = driveItem;
             SelectedDriveItemName = driveItem.Name;
             SelectedDriveItemId = DriveFolderService.GetDriveItemId(identifier);
             SelectedDriveItemAddress = DriveFolderService.GetDriveItemAddress(identifier);
+            SelectedDriveItemUri = DriveFolderService.GetDriveItemUri(identifier);
 
             StateHasChanged();
 
