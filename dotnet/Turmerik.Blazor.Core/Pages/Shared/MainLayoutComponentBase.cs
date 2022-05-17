@@ -6,6 +6,7 @@ using Turmerik.AspNetCore.LocalSession;
 using Turmerik.AspNetCore.Services;
 using Turmerik.AspNetCore.Services.LocalSessionStorage;
 using Turmerik.AspNetCore.Settings;
+using Turmerik.Core.Data;
 
 namespace Turmerik.Blazor.Core.Pages.Shared
 {
@@ -32,9 +33,10 @@ namespace Turmerik.Blazor.Core.Pages.Shared
             await base.OnInitializedAsync();
             LocalSessionGuid = NavManager.LocalSessionGuid;
 
-            if (!LocalSessionGuid.HasValue)
+            var localSessionData = await LocalSessionsManager.TryAddOrUpdateLocalSessionAsync(LocalSessionGuid);
+
+            if (!LocalSessionGuid.HasValue || LocalSessionGuid.Value != localSessionData.Data.LocalSessionGuid)
             {
-                var localSessionData = await LocalSessionsManager.TryAddOrUpdateLocalSessionAsync(null);
                 NavigateToLocalSessionId(localSessionData.Data.LocalSessionGuid, true);
             }
         }

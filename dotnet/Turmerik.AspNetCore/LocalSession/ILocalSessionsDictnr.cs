@@ -3,6 +3,7 @@ using System.Security.Cryptography;
 using Turmerik.AspNetCore.Infrastructure;
 using Turmerik.AspNetCore.Services.LocalSessionStorage;
 using Turmerik.Core.Cloneable;
+using Turmerik.Core.Data;
 using Turmerik.Core.Helpers;
 
 namespace Turmerik.AspNetCore.LocalSession
@@ -10,14 +11,14 @@ namespace Turmerik.AspNetCore.LocalSession
     public interface ILocalSessionsDictnr
     {
         Task<LocalSessionData> TryAddOrUpdateLocalSessionAsync(
-            ILocalStorageSvc localStorage,
-            ISessionStorageSvc sessionStorage,
-            Guid localSessionGuid,
+            ILocalStorageWrapper localStorage,
+            ISessionStorageWrapper sessionStorage,
+            Guid? localSessionGuid,
             bool getExtended = false);
 
         Task<LocalSessionData> TryRemoveLocalSessionAsync(
-            ILocalStorageSvc localStorage,
-            ISessionStorageSvc sessionStorage,
+            ILocalStorageWrapper localStorage,
+            ISessionStorageWrapper sessionStorage,
             Guid localSessionGuid,
             bool getExtended = false);
     }
@@ -35,24 +36,45 @@ namespace Turmerik.AspNetCore.LocalSession
         }
 
         public async Task<LocalSessionData> TryAddOrUpdateLocalSessionAsync(
-            ILocalStorageSvc localStorage,
-            ISessionStorageSvc sessionStorage,
-            Guid localSessionGuid,
+            ILocalStorageWrapper localStorage,
+            ISessionStorageWrapper sessionStorage,
+            Guid? localSessionGuid,
             bool getExtended = false)
         {
+            string existsKey;
+
+            if (localSessionGuid.HasValue)
+            {
+                existsKey = LocalStorageKeys.LocalSessionExistsKey(localSessionGuid.Value);
+                var existsTpl = await sessionStorage.TryGetValueAsync<bool>(existsKey);
+
+                if (!existsTpl.Item1 || !existsTpl.Item2)
+                {
+                    localSessionGuid = Guid.NewGuid();
+                }
+            }
+            else
+            {
+                localSessionGuid = Guid.NewGuid();
+                existsKey = LocalStorageKeys.LocalSessionExistsKey(localSessionGuid.Value);
+
+                await sessionStorage.Service.SetItemAsync(existsKey, true);
+            }
+
             var localSessionData = dictnr.GetOrAdd(
-                localSessionGuid,
+                localSessionGuid.Value,
                 key =>
                 {
                     //Generate a public/private key pair.  
                     RSA rsa = RSA.Create();
+
                     //Save the public key information to an RSAParameters structure.  
                     var publicKey = rsa.ExportRSAPublicKey().RdnlC();
                     var privateKey = rsa.ExportRSAPrivateKey().RdnlC();
 
                     var mtbl = new LocalSessionDataMtbl
                     {
-                        LocalSessionGuid = localSessionGuid
+                        LocalSessionGuid = localSessionGuid.Value
                     };
 
                     var immtbl = new LocalSessionDataImmtbl(mapper, mtbl);
@@ -61,21 +83,17 @@ namespace Turmerik.AspNetCore.LocalSession
                     return retObj;
                 });
 
-            await sessionStorage.SetItemAsync(
+            await sessionStorage.Service.SetItemAsync(
                 LocalStorageKeys.LocalSessionId,
                 localSessionGuid);
 
-            await localStorage.SetItemAsync(
-                LocalStorageKeys.LocalSessionId,
-                localSessionGuid);
-
-            var retData = GetLocalSessionData(localSessionData);
-            return localSessionData;
+            var retData = GetLocalSessionData(localSessionData, getExtended);
+            return retData;
         }
 
         public async Task<LocalSessionData> TryRemoveLocalSessionAsync(
-            ILocalStorageSvc localStorage,
-            ISessionStorageSvc sessionStorage,
+            ILocalStorageWrapper localStorage,
+            ISessionStorageWrapper sessionStorage,
             Guid localSessionGuid,
             bool getExtended = false)
         {
@@ -85,11 +103,10 @@ namespace Turmerik.AspNetCore.LocalSession
                 localSessionGuid,
                 out localSessionData);
 
-            await sessionStorage.RemoveItemAsync(LocalStorageKeys.LocalSessionId);
-            await localStorage.RemoveItemAsync(LocalStorageKeys.LocalSessionId);
+            await sessionStorage.Service.RemoveItemAsync(LocalStorageKeys.LocalSessionId);
 
-            var retData = GetLocalSessionData(localSessionData);
-            return localSessionData;
+            var retData = GetLocalSessionData(localSessionData, getExtended);
+            return retData;
         }
 
         private LocalSessionData GetLocalSessionData(

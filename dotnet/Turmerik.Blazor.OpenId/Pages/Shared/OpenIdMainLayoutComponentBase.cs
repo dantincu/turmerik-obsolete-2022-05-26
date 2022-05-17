@@ -36,7 +36,8 @@ namespace Turmerik.Blazor.OpenId.Pages.Shared
             }
             else
             {
-                await UserSessionsManager.TryAddOrUpdateUserSessionAsync(LocalSessionGuid.Value);
+                await UserSessionsManager.TryAddOrUpdateUserSessionAsync(
+                    LocalSessionGuid.Value);
             }
         }
     }

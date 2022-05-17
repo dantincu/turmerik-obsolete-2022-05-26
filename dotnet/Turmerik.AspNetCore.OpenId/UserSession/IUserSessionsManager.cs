@@ -1,11 +1,14 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Turmerik.AspNetCore.Services.LocalSessionStorage;
+using Turmerik.Core.Data;
 
 namespace Turmerik.AspNetCore.OpenId.UserSession
 {
     public interface IUserSessionsManager
     {
-        Task<IAppUserSessionData> TryAddOrUpdateUserSessionAsync(Guid localSessionGuid);
+        Task<IAppUserSessionData> TryAddOrUpdateUserSessionAsync(
+            Guid localSessionGuid);
+
         Task<IAppUserSessionData> TryRemoveUserSessionAsync();
     }
 
@@ -13,14 +16,14 @@ namespace Turmerik.AspNetCore.OpenId.UserSession
     {
         private readonly IUserSessionsDictnr userSessionsDictnr;
         private readonly IHttpContextAccessor httpContextAccessor;
-        private readonly ILocalStorageSvc localStorage;
-        private readonly ISessionStorageSvc sessionStorage;
+        private readonly ILocalStorageWrapper localStorage;
+        private readonly ISessionStorageWrapper sessionStorage;
 
         public UserSessionsManager(
             IUserSessionsDictnr userSessionsDictnr,
             IHttpContextAccessor httpContextAccessor,
-            ILocalStorageSvc localStorage,
-            ISessionStorageSvc sessionStorage)
+            ILocalStorageWrapper localStorage,
+            ISessionStorageWrapper sessionStorage)
         {
             this.userSessionsDictnr = userSessionsDictnr ?? throw new ArgumentNullException(nameof(userSessionsDictnr));
             this.httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
@@ -29,7 +32,8 @@ namespace Turmerik.AspNetCore.OpenId.UserSession
             this.sessionStorage = sessionStorage ?? throw new ArgumentNullException(nameof(sessionStorage));
         }
 
-        public async Task<IAppUserSessionData> TryAddOrUpdateUserSessionAsync(Guid localSessionGuid)
+        public async Task<IAppUserSessionData> TryAddOrUpdateUserSessionAsync(
+            Guid localSessionGuid)
         {
             var appUserSessionData = await userSessionsDictnr.TryAddOrUpdateUserSessionAsync(
                 httpContextAccessor,

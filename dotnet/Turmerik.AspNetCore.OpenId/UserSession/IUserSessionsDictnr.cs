@@ -6,6 +6,7 @@ using Turmerik.AspNetCore.Services.LocalSessionStorage;
 using Turmerik.Core.Cloneable;
 using Turmerik.Core.Cloneable.Nested;
 using Turmerik.Core.Components;
+using Turmerik.Core.Data;
 using Turmerik.Core.Helpers;
 
 namespace Turmerik.AspNetCore.OpenId.UserSession
@@ -14,14 +15,14 @@ namespace Turmerik.AspNetCore.OpenId.UserSession
     {
         Task<IAppUserSessionData> TryAddOrUpdateUserSessionAsync(
             IHttpContextAccessor httpContextAccessor,
-            ILocalStorageSvc localStorage,
-            ISessionStorageSvc sessionStorage,
+            ILocalStorageWrapper localStorage,
+            ISessionStorageWrapper sessionStorage,
             Guid localSessionGuid);
 
         Task<IAppUserSessionData> TryRemoveUserSessionAsync(
             IHttpContextAccessor httpContextAccessor,
-            ILocalStorageSvc localStorage,
-            ISessionStorageSvc sessionStorage);
+            ILocalStorageWrapper localStorage,
+            ISessionStorageWrapper sessionStorage);
     }
 
     public class UserSessionsDictnr : IUserSessionsDictnr
@@ -42,8 +43,8 @@ namespace Turmerik.AspNetCore.OpenId.UserSession
 
         public async Task<IAppUserSessionData> TryAddOrUpdateUserSessionAsync(
             IHttpContextAccessor httpContextAccessor,
-            ILocalStorageSvc localStorage,
-            ISessionStorageSvc sessionStorage,
+            ILocalStorageWrapper localStorage,
+            ISessionStorageWrapper sessionStorage,
             Guid localSessionGuid)
         {
             var sessionProps = GetSessionProps(httpContextAccessor);
@@ -86,8 +87,12 @@ namespace Turmerik.AspNetCore.OpenId.UserSession
                         (k, isUpdate, data) =>
                         {
                             data.LastActiveDateTimeUtc = utcNow;
-                            data.LocalSessionGuids.Mtbl.Add(localSessionGuid);
 
+                            if (!data.LocalSessionGuids.Mtbl.Contains(localSessionGuid))
+                            {
+                                data.LocalSessionGuids.Mtbl.Add(localSessionGuid);
+                            }
+                            
                             return data;
                         });
 
@@ -96,7 +101,7 @@ namespace Turmerik.AspNetCore.OpenId.UserSession
 
                 var mtbl = new AppUserSessionDataMtbl(mapper, immtbl);
 
-                await localStorage.SetItemAsync(
+                await localStorage.Service.SetItemAsync(
                     LocalStorageKeys.UserSessionId,
                     mtbl);
             }
@@ -106,8 +111,8 @@ namespace Turmerik.AspNetCore.OpenId.UserSession
 
         public async Task<IAppUserSessionData> TryRemoveUserSessionAsync(
             IHttpContextAccessor httpContextAccessor,
-            ILocalStorageSvc localStorage,
-            ISessionStorageSvc sessionStorage)
+            ILocalStorageWrapper localStorage,
+            ISessionStorageWrapper sessionStorage)
         {
             var sessionProps = GetSessionProps(httpContextAccessor);
             IAppUserSessionData immtbl = null;
@@ -143,20 +148,20 @@ namespace Turmerik.AspNetCore.OpenId.UserSession
         }
 
         private async Task ClearStorage(
-            ILocalStorageSvc localStorage,
-            ISessionStorageSvc sessionStorage)
+            ILocalStorageWrapper localStorage,
+            ISessionStorageWrapper sessionStorage)
         {
-            if (await localStorage.ContainKeyAsync(LocalStorageKeys.UserSessionId))
+            if (await localStorage.Service.ContainKeyAsync(LocalStorageKeys.UserSessionId))
             {
-                await localStorage.RemoveItemAsync(
+                await localStorage.Service.RemoveItemAsync(
                     LocalStorageKeys.UserSessionId);
             }
 
-            var keysArr = (await localStorage.KeysAsync(
+            var keysArr = (await localStorage.Service.KeysAsync(
                 )).Where(IsTrmrkKey).ToArray();
 
-            await localStorage.RemoveItemsAsync(keysArr);
-            await sessionStorage.ClearAsync();
+            await localStorage.Service.RemoveItemsAsync(keysArr);
+            await sessionStorage.Service.ClearAsync();
         }
 
         private TMtbl SetAppUserDataProps<TMtbl>(

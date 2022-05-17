@@ -28,9 +28,16 @@
         public const string STACK = "stack";
         public const string VIEW = "view";
         public const string STATE = "state";
+        public const string EXISTS = "exists";
 
         public static readonly string LocalSessionId = GetKey(LOCAL, SESSION, ID);
         public static readonly string UserSessionId = GetKey(USER, SESSION, ID);
+
+        public static string LocalSessionExistsKey(Guid localSessionGuid)
+        {
+            string key = GetLocalStorageKey(localSessionGuid, LOCAL, SESSION, EXISTS);
+            return key;
+        }
 
         public static string AddressHistoryStackKey(Guid localSessionGuid, Guid tabPageGuid)
         {
@@ -63,7 +70,6 @@
             params string[] segments)
         {
             string baseKey = $"{TRMRK}[{localSessionGuid.ToString("N")}]";
-            segments = segments.Prepend(TRMRK).ToArray();
 
             string key = string.Join('-', segments);
             key = string.Concat(baseKey, key);
