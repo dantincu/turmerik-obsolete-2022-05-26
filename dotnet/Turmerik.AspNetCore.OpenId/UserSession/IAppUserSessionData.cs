@@ -11,6 +11,7 @@ namespace Turmerik.AspNetCore.OpenId.UserSession
         DateTime LoginDateTimeUtc { get; }
         DateTime LastActiveDateTimeUtc { get; }
         DateTime? LogoutDateTimeUtc { get; }
+        NestedObjNmrbl<Guid> LocalSessionGuids { get; }
     }
 
     public class AppUserSessionDataImmtbl : AppUserDataCoreImmtbl, IAppUserSessionData
@@ -27,6 +28,7 @@ namespace Turmerik.AspNetCore.OpenId.UserSession
         public DateTime LoginDateTimeUtc { get; protected set; }
         public DateTime LastActiveDateTimeUtc { get; protected set; }
         public DateTime? LogoutDateTimeUtc { get; protected set; }
+        public NestedObjNmrbl<Guid> LocalSessionGuids { get; protected set; }
     }
 
     public class AppUserSessionDataMtbl : AppUserDataCoreMtbl, IAppUserSessionData
@@ -47,5 +49,6 @@ namespace Turmerik.AspNetCore.OpenId.UserSession
         public DateTime LoginDateTimeUtc { get; set; }
         public DateTime LastActiveDateTimeUtc { get; set; }
         public DateTime? LogoutDateTimeUtc { get; set; }
+        public NestedObjNmrbl<Guid> LocalSessionGuids { get; set; }
     }
 }

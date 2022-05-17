@@ -15,7 +15,8 @@ namespace Turmerik.AspNetCore.OpenId.UserSession
         Task<IAppUserSessionData> TryAddOrUpdateUserSessionAsync(
             IHttpContextAccessor httpContextAccessor,
             ILocalStorageSvc localStorage,
-            ISessionStorageSvc sessionStorage);
+            ISessionStorageSvc sessionStorage,
+            Guid localSessionGuid);
 
         Task<IAppUserSessionData> TryRemoveUserSessionAsync(
             IHttpContextAccessor httpContextAccessor,
@@ -42,7 +43,8 @@ namespace Turmerik.AspNetCore.OpenId.UserSession
         public async Task<IAppUserSessionData> TryAddOrUpdateUserSessionAsync(
             IHttpContextAccessor httpContextAccessor,
             ILocalStorageSvc localStorage,
-            ISessionStorageSvc sessionStorage)
+            ISessionStorageSvc sessionStorage,
+            Guid localSessionGuid)
         {
             var sessionProps = GetSessionProps(httpContextAccessor);
             IAppUserSessionData immtbl = null;
@@ -76,13 +78,16 @@ namespace Turmerik.AspNetCore.OpenId.UserSession
                             new AppUserSessionDataMtbl
                             {
                                 UserSessionGuid = userSessionGuid,
-                                LoginDateTimeUtc = utcNow
+                                LoginDateTimeUtc = utcNow,
+                                LocalSessionGuids = new NestedObjNmrbl<Guid>(null, new List<Guid>())
                             },
                         usernameHash,
                         usernameHashBytesList),
                         (k, isUpdate, data) =>
                         {
                             data.LastActiveDateTimeUtc = utcNow;
+                            data.LocalSessionGuids.Mtbl.Add(localSessionGuid);
+
                             return data;
                         });
 

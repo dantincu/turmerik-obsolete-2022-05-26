@@ -25,12 +25,17 @@ namespace Turmerik.Blazor.Core.Pages.Shared
         protected async override Task OnAfterRenderAsync(bool firstRender)
         {
             await base.OnAfterRenderAsync(firstRender);
+        }
+
+        protected async override Task OnInitializedAsync()
+        {
+            await base.OnInitializedAsync();
             LocalSessionGuid = NavManager.LocalSessionGuid;
 
             if (!LocalSessionGuid.HasValue)
             {
                 var localSessionData = await LocalSessionsManager.TryAddOrUpdateLocalSessionAsync(null);
-                NavigateToLocalSessionId(localSessionData.LocalSessionGuid, true);
+                NavigateToLocalSessionId(localSessionData.Data.LocalSessionGuid, true);
             }
         }
 

@@ -22,7 +22,6 @@ namespace Turmerik.Blazor.OpenId.Pages.Shared
         protected async override Task OnAfterRenderAsync(bool firstRender)
         {
             await base.OnAfterRenderAsync(firstRender);
-            await UserSessionsManager.TryAddOrUpdateUserSessionAsync();
         }
 
         protected async override Task OnInitializedAsync()
@@ -34,6 +33,10 @@ namespace Turmerik.Blazor.OpenId.Pages.Shared
             {
                 NavManager.Manager.NavigateTo(
                     $"{AppSettings.LoginRelUrl}?{QsKeys.RET_URL}={Uri.EscapeDataString(NavManager.Manager.Uri)}");
+            }
+            else
+            {
+                await UserSessionsManager.TryAddOrUpdateUserSessionAsync(LocalSessionGuid.Value);
             }
         }
     }

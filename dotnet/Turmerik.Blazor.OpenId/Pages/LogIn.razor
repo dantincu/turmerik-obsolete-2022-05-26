@@ -1,10 +1,10 @@
 ﻿@using Turmerik.AspNetCore.OpenId.Services
 @inject IAuthService AuthSvc
 
-<h3>LogIn</h3>
+<h5><a @onmouseup=@OnLogInClickAsync href="javascript:void();">LogIn</a></h5>
 
 @code {
-    protected override async Task OnInitializedAsync()
+    private async Task OnLogInClickAsync()
     {
         await AuthSvc.LogIn();
     }

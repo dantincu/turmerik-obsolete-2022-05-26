@@ -28,6 +28,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using System;
 using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.AspNetCore.Authorization;
+using Turmerik.AspNetCore.Authentication;
 
 namespace Turmerik.AspNetCore.MsIdentity.AppStartup
 {
@@ -161,6 +163,9 @@ namespace Turmerik.AspNetCore.MsIdentity.AppStartup
             IConfiguration config,
             IAppCoreServiceCollection appSvcs)
         {
+            /* services.AddAuthentication().AddScheme<AuthenticationSchemeOptions, AnonymousAuthenticationHandler>(
+                AnonymousAuthenticationHandler.SCHEME, null); */
+
             services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
                 .AddMicrosoftIdentityWebApp(options =>
                 {
@@ -172,7 +177,15 @@ namespace Turmerik.AspNetCore.MsIdentity.AppStartup
 
                     options.Events.OnAuthenticationFailed = OnAuthenticationFailed;
                     options.Events.OnRemoteFailure = OnRemoteFailure;
-                })
+                }/* ,
+                options =>
+                {
+                    options.AccessDeniedPath = $"/{appSvcs.TrmrkAppSettings.LoginRelUrl}";
+                    options.LoginPath = $"/{appSvcs.TrmrkAppSettings.LoginRelUrl}";
+                },
+                OpenIdConnectDefaults.AuthenticationScheme,
+                "Cookies",
+                true */)
 
                 // Add ability to call web API (Graph)
                 // and get access tokens
@@ -193,11 +206,25 @@ namespace Turmerik.AspNetCore.MsIdentity.AppStartup
 
             services.AddAuthorization(options =>
             {
+                /* var publicPolicyRequirements = new IAuthorizationRequirement[] { new AnonymousAuthorizationRequirement() };
+                var publicPolicySchemes = new string[] { AnonymousAuthenticationHandler.SCHEME };
+
+                var publicPolicy = new Microsoft.AspNetCore.Authorization.AuthorizationPolicy(
+                        publicPolicyRequirements,
+                        publicPolicySchemes);
+
+                options.AddPolicy(
+                    AnonymousAuthenticationHandler.POLICY,
+                    publicPolicy); */
                 // By default, all incoming requests will be authorized according to the default policy
+                // options.FallbackPolicy = publicPolicy;
                 options.FallbackPolicy = options.DefaultPolicy;
             });
 
-            services.AddRazorPages();
+            services.AddRazorPages(/* options =>
+            {
+                // options.Conventions.AllowAnonymousToPage("/LogIn");
+            }*/);
 
             services.AddServerSideBlazor()
                 .AddMicrosoftIdentityConsentHandler();
