@@ -16,7 +16,7 @@
 
 <PageTitle>Turmerik Musical Keyboard</PageTitle>
 
-<div class="page">
+<div class="page @PageCssClass">
     <div class="sidebar trmrk-app-sidebar @SideBarSizeCssClass">
         <NavMenu MenuItems=@MenuItems HasDefaultMenuItem="true" SizeChangedCallback="@SizeChangedCallback" Title="Turmerik Musical Keyboard" />
     </div>
@@ -31,11 +31,6 @@
 <UIBlockingOverlay></UIBlockingOverlay>
 
 @code {
-    private Dictionary<string, string> MenuItems { get; } = new Dictionary<string, string>
-    {
-        { "play", "Play" }
-    };
-
     protected override Task OnInitializedAsync()
     {
         this.LocalSessionsManager = localSessionsManager;
@@ -48,4 +43,9 @@
         AssignMainLayoutService(mainLayoutService);
         return base.OnInitializedAsync();
     }
+
+    private Dictionary<string, string> MenuItems { get; } = new Dictionary<string, string>
+    {
+        { "play", "Play" }
+    };
 }

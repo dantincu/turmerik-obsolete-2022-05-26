@@ -5,27 +5,28 @@
 
 @inject IMainLayoutService mainLayoutService;
 
-<div id="@DomIds.UI_BLOCKING_OVERLAY" class="@CssClassH.UIBlockingOverlay @OverlayCssClass">
-    @if (ErrorViewModel != null)
-    {
-        <ErrorView ViewModel=@ErrorViewModel ViewSize=@ErrorViewSize.Large></ErrorView>
-    }
+<div>
+    <div id="@DomIds.UI_BLOCKING_OVERLAY" class="@CssClassH.UIBlockingOverlay @OverlayCssClass">
+        @if (ViewModel.Error != null)
+        {
+            <ErrorView ViewModel=@ViewModel.Error ViewSize=@ErrorViewSize.Large></ErrorView>
 
-    @if (ShowBackBtn)
-    {
-        <button type="button" class="btn btn-dark" @onmouseup=@OnBtnBackClickAsync>Back</button>
-    }
+            @if (ViewModel.ShowBackBtnOnErr)
+            {
+                <button type="button" class="btn btn-dark" @onmouseup=@OnBtnBackClickAsync>Back</button>
+            }
+        }
+    </div>
 </div>
 
 @code {
-    [Parameter]
-    public ErrorViewModel ErrorViewModel { get; set; }
+    private UIBlockingOverlayViewModel ViewModel => mainLayoutService.UIBlockingOverlayViewModel;
 
-    [Parameter]
-    public bool OverlayEnabled { get; set; }
-
-    [Parameter]
-    public bool ShowBackBtn { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        mainLayoutService.OnUIBlockingOverlayChanged += OnUIBlockingOverlayChanged;
+    }
 
     private string OverlayCssClass
     {
@@ -33,11 +34,11 @@
         {
             string cssClass = string.Empty;
 
-            if (!OverlayEnabled)
+            if (!ViewModel.Enabled)
             {
                 cssClass = @CssClassH.Hidden;
             }
-            else if (ErrorViewModel != null)
+            else if (ViewModel.Error != null)
             {
                 cssClass = CssClassH.Opaque;
             }
@@ -46,8 +47,14 @@
         }
     }
 
+    private void OnUIBlockingOverlayChanged()
+    {
+        StateHasChanged();
+    }
+
     private async Task OnBtnBackClickAsync()
     {
-        mainLayoutService.HideOverlay();
+        ViewModel.Enabled = false;
+        StateHasChanged();
     }
 }

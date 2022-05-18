@@ -38,7 +38,7 @@
 
 <PageTitle>Turmerik OneDrive Explorer</PageTitle>
 
-<div class="page">
+<div class="page @PageCssClass">
     <div class="top-row px-4 auth">
         <LoginDisplay />
     </div>
@@ -56,11 +56,6 @@
 <UIBlockingOverlay></UIBlockingOverlay>
 
 @code {
-    private Dictionary<string, string> MenuItems { get; } = new Dictionary<string, string>
-    {
-        { "files", "Files" }
-    };
-
     protected override Task OnInitializedAsync()
     {
         this.LocalSessionsManager = localSessionsManager;
@@ -74,4 +69,9 @@
         AssignMainLayoutService(mainLayoutService);
         return base.OnInitializedAsync();
     }
+    
+    private Dictionary<string, string> MenuItems { get; } = new Dictionary<string, string>
+    {
+        { "files", "Files" }
+    };
 }

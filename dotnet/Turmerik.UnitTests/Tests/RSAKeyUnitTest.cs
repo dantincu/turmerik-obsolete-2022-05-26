@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
@@ -14,14 +15,23 @@ namespace Turmerik.UnitTests.Tests
         [Fact]
         public void MainTest()
         {
-            //Generate a public/private key pair.  
+            // RSACryptoServiceProvider provider = new RSACryptoServiceProvider();
+
             RSA rsa = RSA.Create();
-            //Save the public key information to an RSAParameters structure.  
-            var publicKey = rsa.ExportRSAPublicKey();
-            var privateKey = rsa.ExportRSAPrivateKey();
+            var parameters = rsa.ExportParameters(true);
+
+            string json = JsonConvert.SerializeObject(parameters);
+            parameters = JsonConvert.DeserializeObject<RSAParameters>(json);
+
+            RSA rsa2 = RSA.Create(parameters);
 
             string testStr = "some.user@some.domain.com";
             var testBytes = EncodeH.EncodeSha1(testStr);
+
+            var encrypted = rsa.Encrypt(testBytes, RSAEncryptionPadding.OaepSHA512);
+            var decrypted = rsa2.Decrypt(encrypted, RSAEncryptionPadding.OaepSHA512);
+
+            AssertSequenceEqual(testBytes, decrypted);
         }
     }
 }

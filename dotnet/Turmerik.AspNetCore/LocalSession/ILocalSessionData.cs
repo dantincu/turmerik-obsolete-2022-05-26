@@ -11,31 +11,19 @@ namespace Turmerik.AspNetCore.LocalSession
 {
     public class LocalSessionData
     {
-        public LocalSessionData(
-            ILocalSessionData data,
-            ReadOnlyCollection<byte> publicKey)
+        public LocalSessionData(ILocalSessionData data)
         {
             Data = data ?? throw new ArgumentNullException(nameof(data));
-            PublicKey = publicKey ?? throw new ArgumentNullException(nameof(publicKey));
         }
 
         public ILocalSessionData Data { get; }
-        public ReadOnlyCollection<byte> PublicKey { get; }
     }
 
     public class ExtendedLocalSessionData : LocalSessionData
     {
-        public ExtendedLocalSessionData(
-            ILocalSessionData data,
-            ReadOnlyCollection<byte> publicKey,
-            ReadOnlyCollection<byte> privateKey) : base(
-                data,
-                publicKey)
+        public ExtendedLocalSessionData(ILocalSessionData data) : base(data)
         {
-            PrivateKey = privateKey ?? throw new ArgumentNullException(nameof(privateKey));
         }
-
-        public ReadOnlyCollection<byte> PrivateKey { get; }
     }
 
     public interface ILocalSessionData : ICloneableObject

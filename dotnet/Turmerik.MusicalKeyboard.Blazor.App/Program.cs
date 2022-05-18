@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.ResponseCompression;
-using Turmerik.Blazor.Core.Hubs;
 using Turmerik.MusicalKeyboard.Blazor.App.AppStartup;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -36,7 +35,6 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.MapBlazorHub();
-app.MapHub<TrmrkAppHub>(appSvcs.TrmrkAppSettings.TrmrkAppHubRelUrl);
 app.MapFallbackToPage("/_Host");
 
 app.Run();

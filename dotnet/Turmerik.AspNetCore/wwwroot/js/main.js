@@ -3,6 +3,6 @@ import { EdtblRdnlTextBoxWrapper } from './EdtblRdnlTextBoxWrapper.js';
 import { WebStorage } from './webStorage.js';
 import './domUtils.js';
 
-trmrk.isLoggingEnabled = true;
+trmrk.isLoggingEnabled = false;
 
 export const Trmrk = trmrk;

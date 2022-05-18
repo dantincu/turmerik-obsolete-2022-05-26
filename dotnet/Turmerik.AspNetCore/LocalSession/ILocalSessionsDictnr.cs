@@ -65,20 +65,13 @@ namespace Turmerik.AspNetCore.LocalSession
                 localSessionGuid.Value,
                 key =>
                 {
-                    //Generate a public/private key pair.  
-                    RSA rsa = RSA.Create();
-
-                    //Save the public key information to an RSAParameters structure.  
-                    var publicKey = rsa.ExportRSAPublicKey().RdnlC();
-                    var privateKey = rsa.ExportRSAPrivateKey().RdnlC();
-
                     var mtbl = new LocalSessionDataMtbl
                     {
                         LocalSessionGuid = localSessionGuid.Value
                     };
 
                     var immtbl = new LocalSessionDataImmtbl(mapper, mtbl);
-                    var retObj = new ExtendedLocalSessionData(immtbl, publicKey, privateKey);
+                    var retObj = new ExtendedLocalSessionData(immtbl);
 
                     return retObj;
                 });
@@ -121,7 +114,7 @@ namespace Turmerik.AspNetCore.LocalSession
             }
             else if (data != null)
             {
-                retData = new LocalSessionData(data.Data, data.PublicKey);
+                retData = new LocalSessionData(data.Data);
             }
             else
             {

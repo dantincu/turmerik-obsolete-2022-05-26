@@ -43,5 +43,16 @@ namespace Turmerik.Testing.Core.Tests
                 Assert.Null(actual);
             }
         }
+
+        protected void AssertSequenceEqual<T>(
+            IEnumerable<T> expectedSequence,
+            IEnumerable<T> actualSequence,
+            IEqualityComparer<T> comparer = null)
+        {
+            comparer = comparer ?? EqualityComparer<T>.Default;
+            bool isValid = expectedSequence.SequenceEqual(actualSequence, comparer);
+
+            Assert.True(isValid);
+        }
     }
 }

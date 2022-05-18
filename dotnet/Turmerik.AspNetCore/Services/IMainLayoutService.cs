@@ -9,27 +9,26 @@ namespace Turmerik.AspNetCore.Services
 {
     public interface IMainLayoutService
     {
-        bool OverlayEnabled { get; }
-        ErrorViewModel ErrorViewModel { get; }
+        UIBlockingOverlayViewModel UIBlockingOverlayViewModel { get; }
 
         event Action<bool> OnSideBarSizeChanged;
-        event Action<bool> OnOverlayEnabledChanged;
-        event Action<ErrorViewModel> OnErrorViewModelChanged;
+        event Action OnUIBlockingOverlayChanged;
 
         void SideBarSizeChanged(bool sideBarLarge);
-        Task ExecuteWithUIBlockingOverlay(Func<Task<ErrorViewModel>> action);
-        void HideOverlay();
+        Task ExecuteWithUIBlockingOverlay(Func<UIBlockingOverlayViewModel, Task> action);
     }
 
     public class MainLayoutService : IMainLayoutService
     {
         private Action<bool>? onSideBarSizeChanged;
-        private Action<bool>? onOverlayEnabledChanged;
-        private Action<ErrorViewModel>? onErrorViewModelChanged;
+        private Action onUIBlockingOverlayChanged;
 
-        public bool OverlayEnabled { get; private set; }
-        public ErrorViewModel ErrorViewModel { get; private set; }
+        public MainLayoutService()
+        {
+            UIBlockingOverlayViewModel = new UIBlockingOverlayViewModel();
+        }
 
+        public UIBlockingOverlayViewModel UIBlockingOverlayViewModel { get; set; }
 
         public event Action<bool> OnSideBarSizeChanged
         {
@@ -44,29 +43,16 @@ namespace Turmerik.AspNetCore.Services
             }
         }
 
-        public event Action<bool> OnOverlayEnabledChanged
+        public event Action OnUIBlockingOverlayChanged
         {
             add
             {
-                onOverlayEnabledChanged += value;
+                onUIBlockingOverlayChanged += value;
             }
 
             remove
             {
-                onOverlayEnabledChanged -= value;
-            }
-        }
-
-        public event Action<ErrorViewModel> OnErrorViewModelChanged
-        {
-            add
-            {
-                onErrorViewModelChanged += value;
-            }
-
-            remove
-            {
-                onErrorViewModelChanged -= value;
+                onUIBlockingOverlayChanged -= value;
             }
         }
 
@@ -75,36 +61,24 @@ namespace Turmerik.AspNetCore.Services
             onSideBarSizeChanged?.Invoke(sideBarLarge);
         }
 
-        public void HideOverlay()
+        public async Task ExecuteWithUIBlockingOverlay(Func<UIBlockingOverlayViewModel, Task> action)
         {
-            ErrorViewModel = null;
-            onErrorViewModelChanged?.Invoke(ErrorViewModel);
+            UIBlockingOverlayViewModel.Enabled = true;
+            UIBlockingOverlayViewModel.Error = null;
 
-            OverlayEnabled = false;
-            onOverlayEnabledChanged?.Invoke(OverlayEnabled);
-        }
-
-        public async Task ExecuteWithUIBlockingOverlay(Func<Task<ErrorViewModel>> action)
-        {
-            OverlayEnabled = true;
-            onOverlayEnabledChanged?.Invoke(OverlayEnabled);
-
-            ErrorViewModel errorViewModel;
+            onUIBlockingOverlayChanged?.Invoke();
 
             try
             {
-                errorViewModel = await action();
-
-                OverlayEnabled = errorViewModel != null;
-                onOverlayEnabledChanged?.Invoke(OverlayEnabled);
+                await action(UIBlockingOverlayViewModel);
             }
             catch (Exception exc)
             {
-                errorViewModel = new ErrorViewModel("An unhandled error ocurred", exc);
+                UIBlockingOverlayViewModel.Enabled = true;
+                UIBlockingOverlayViewModel.Error = new ErrorViewModel("An unhandled error ocurred", exc);
             }
 
-            ErrorViewModel = errorViewModel;
-            onErrorViewModelChanged?.Invoke(errorViewModel);
+            onUIBlockingOverlayChanged?.Invoke();
         }
     }
 }

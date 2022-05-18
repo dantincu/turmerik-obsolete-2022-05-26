@@ -30,10 +30,7 @@
     </main>
 </div>
 
-<UIBlockingOverlay
-    OverlayEnabled=@OverlayEnabled
-    ErrorViewModel=@ErrorViewModel
-    ShowBackBtn="true"></UIBlockingOverlay>
+<UIBlockingOverlay></UIBlockingOverlay>
 
 @code {
     protected override Task OnInitializedAsync()
@@ -53,8 +50,4 @@
     {
         { "files", "Files" }
     };
-
-    private bool OverlayEnabled => MainLayoutService?.OverlayEnabled ?? false;
-    private ErrorViewModel? ErrorViewModel => MainLayoutService?.ErrorViewModel;
-    private string PageCssClass => (OverlayEnabled && ErrorViewModel != null) ? CssClassH.Hidden : string.Empty;
 }

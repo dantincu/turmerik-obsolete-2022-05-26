@@ -294,7 +294,7 @@ namespace Turmerik.Blazor.Core.Pages.Components
             await IfLocalSessionGuidHasValueAsync(async localSessionGuid =>
             {
                 await MainLayoutService.ExecuteWithUIBlockingOverlay(
-                    async () =>
+                    async (uiOverlayVM) =>
                     {
                         var serviceArgs = new DriveExplorerServiceArgs
                         {
@@ -346,8 +346,7 @@ namespace Turmerik.Blazor.Core.Pages.Components
                             });
                         }
 
-                        ErrorViewModel errorViewModel = null;
-                        return errorViewModel;
+                        uiOverlayVM.Enabled = false;
                     });
                 });
         }

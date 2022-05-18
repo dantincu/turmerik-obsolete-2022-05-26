@@ -6,7 +6,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Linq;
 using Turmerik.AspNetCore.Services;
-using Turmerik.Blazor.Core.Hubs;
 
 namespace Turmerik.OneDriveExplorer.Blazor.App.AppStartup
 {
@@ -66,7 +65,6 @@ namespace Turmerik.OneDriveExplorer.Blazor.App.AppStartup
             {
                 endpoints.MapControllers();
                 endpoints.MapBlazorHub();
-                endpoints.MapHub<TrmrkAppHub>(AppSvcs.TrmrkAppSettings.TrmrkAppHubRelUrl);
                 endpoints.MapFallbackToPage("/_Host");
             });
         }

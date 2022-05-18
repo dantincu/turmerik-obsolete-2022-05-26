@@ -23,6 +23,9 @@ namespace Turmerik.Blazor.Core.Pages.Shared
         protected bool SideBarLarge { get; set; } = false;
         protected string? SideBarSizeCssClass => SideBarLarge ? CssClassH.Large : CssClassH.Small;
         protected Guid? LocalSessionGuid { get; set; }
+        protected bool OverlayEnabled => MainLayoutService?.UIBlockingOverlayViewModel?.Enabled ?? false;
+        protected ErrorViewModel? ErrorViewModel => MainLayoutService?.UIBlockingOverlayViewModel.Error;
+        protected string PageCssClass => (OverlayEnabled && ErrorViewModel != null) ? CssClassH.Hidden : string.Empty;
 
         protected async override Task OnAfterRenderAsync(bool firstRender)
         {
@@ -70,9 +73,6 @@ namespace Turmerik.Blazor.Core.Pages.Shared
         protected void AssignMainLayoutService(IMainLayoutService mainLayoutService)
         {
             MainLayoutService = mainLayoutService;
-
-            mainLayoutService.OnErrorViewModelChanged += ErrorViewModelChanged;
-            mainLayoutService.OnOverlayEnabledChanged += OverlayEnabledChanged;
         }
     }
 }
