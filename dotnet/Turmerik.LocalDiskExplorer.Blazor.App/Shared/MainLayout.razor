@@ -1,4 +1,5 @@
-﻿@using Turmerik.AspNetCore.LocalSession
+﻿@using Turmerik.AspNetCore.Infrastructure
+@using Turmerik.AspNetCore.LocalSession
 @using Turmerik.AspNetCore.Services
 @using Turmerik.AspNetCore.Services.LocalSessionStorage
 @using Turmerik.AspNetCore.Settings
@@ -17,7 +18,7 @@
 
 <PageTitle>Turmerik Local Disk Explorer</PageTitle>
 
-<div class="page">
+<div class="page @PageCssClass">
     <div class="sidebar trmrk-app-sidebar @SideBarSizeCssClass">
         <NavMenu MenuItems=@MenuItems HasDefaultMenuItem="true" SizeChangedCallback="@SizeChangedCallback" Title="Turmerik Local Disk Explorer" />
     </div>
@@ -31,7 +32,8 @@
 
 <UIBlockingOverlay
     OverlayEnabled=@OverlayEnabled
-    ErrorViewModel=@ErrorViewModel></UIBlockingOverlay>
+    ErrorViewModel=@ErrorViewModel
+    ShowBackBtn="true"></UIBlockingOverlay>
 
 @code {
     protected override Task OnInitializedAsync()
@@ -54,4 +56,5 @@
 
     private bool OverlayEnabled => MainLayoutService?.OverlayEnabled ?? false;
     private ErrorViewModel? ErrorViewModel => MainLayoutService?.ErrorViewModel;
+    private string PageCssClass => (OverlayEnabled && ErrorViewModel != null) ? CssClassH.Hidden : string.Empty;
 }

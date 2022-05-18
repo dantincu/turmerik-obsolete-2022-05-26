@@ -1,5 +1,6 @@
 ﻿.trmrk-ui-blocking-overlay {
     display: flex;
+    flex-flow: column;
     z-index: 1000;
     background-color: #0000;
     position: absolute;

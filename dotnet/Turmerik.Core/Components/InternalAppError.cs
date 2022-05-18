@@ -1,11 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using System.Text;
 
 namespace Turmerik.Core.Components
 {
     public class InternalAppError : Exception
     {
+        public InternalAppError()
+        {
+        }
+
+        public InternalAppError(string message) : base(message)
+        {
+        }
+
+        public InternalAppError(string message, Exception innerException) : base(message, innerException)
+        {
+        }
+
+        protected InternalAppError(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+        }
     }
 
     public class ErrorViewModel

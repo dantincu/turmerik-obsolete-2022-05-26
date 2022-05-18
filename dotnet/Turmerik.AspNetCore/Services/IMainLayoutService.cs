@@ -18,6 +18,7 @@ namespace Turmerik.AspNetCore.Services
 
         void SideBarSizeChanged(bool sideBarLarge);
         Task ExecuteWithUIBlockingOverlay(Func<Task<ErrorViewModel>> action);
+        void HideOverlay();
     }
 
     public class MainLayoutService : IMainLayoutService
@@ -74,6 +75,15 @@ namespace Turmerik.AspNetCore.Services
             onSideBarSizeChanged?.Invoke(sideBarLarge);
         }
 
+        public void HideOverlay()
+        {
+            ErrorViewModel = null;
+            onErrorViewModelChanged?.Invoke(ErrorViewModel);
+
+            OverlayEnabled = false;
+            onOverlayEnabledChanged?.Invoke(OverlayEnabled);
+        }
+
         public async Task ExecuteWithUIBlockingOverlay(Func<Task<ErrorViewModel>> action)
         {
             OverlayEnabled = true;
@@ -85,7 +95,7 @@ namespace Turmerik.AspNetCore.Services
             {
                 errorViewModel = await action();
 
-                OverlayEnabled = false;
+                OverlayEnabled = errorViewModel != null;
                 onOverlayEnabledChanged?.Invoke(OverlayEnabled);
             }
             catch (Exception exc)
