@@ -1,4 +1,5 @@
 ﻿const trmrk = {
+    uiBlockingOverlayId: "ui-blocking-overlay",
     throw: (err) => {
         if (typeof (err) !== "object") {
             err = new Error(err);
@@ -18,6 +19,12 @@
         if (trmrk.isLoggingEnabled) {
             console.log.apply(window, arguments);
         }
+    },
+    showUIBlockingOverlay: () => {
+        trmrk.addCssClass(trmrk.uiBlockingOverlayId, null, "trmrk-hidden");
+    },
+    hideUIBlockingOverlay: () => {
+        trmrk.removeCssClass(trmrk.uiBlockingOverlayId, null, "trmrk-hidden");
     }
 }
 

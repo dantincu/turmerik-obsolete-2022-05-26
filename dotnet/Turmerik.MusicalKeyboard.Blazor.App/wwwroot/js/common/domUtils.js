@@ -1,5 +1,6 @@
 import { Trmrk as trmrk } from './core.js';
 import { DomHelper } from './DomHelper.js';
+import { EdtblRdnlTextBoxWrapper } from './EdtblRdnlTextBoxWrapper.js';
 
 trmrk.selectDomEl = (domElId, selector) => {
     let helper = new DomHelper(domElId, selector);

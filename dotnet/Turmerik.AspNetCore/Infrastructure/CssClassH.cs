@@ -68,6 +68,10 @@ namespace Turmerik.AspNetCore.Infrastructure
         public const string ADDRESS = "address";
 
         public const string ROTATE90DEG = "rotate90deg";
+        public const string OPAQUE = "opaque";
+        public const string UI = "ui";
+        public const string BLOCKING = "blocking";
+        public const string OVERLAY = "overlay";
 
         public static readonly string Hidden = Class(HIDDEN);
         public static readonly string Current = Class(CURRENT);
@@ -125,6 +129,8 @@ namespace Turmerik.AspNetCore.Infrastructure
         public static readonly string AddressBarReadonly = Class(ADDRESS, BAR, READONLY);
 
         public static readonly string Rotate90Deg = Class(ROTATE90DEG);
+        public static readonly string Opaque = Class(OPAQUE);
+        public static readonly string UIBlockingOverlay = Class(UI, BLOCKING, OVERLAY);
 
         public static string CssClsSel(this string cssClass)
         {

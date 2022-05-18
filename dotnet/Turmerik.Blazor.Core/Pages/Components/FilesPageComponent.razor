@@ -18,8 +18,9 @@
 @inject ILocalStorageWrapper localStorage;
 @inject ISessionStorageWrapper sessionStorage;
 @inject IDriveExplorerService driveFolderService;
-@inject IJSRuntime jsRuntime;
 @inject ITrmrkAppSettings appSettings;
+@inject IJSRuntime jsRuntime;
+@inject IMainLayoutService mainLayoutService;
 @inject ITimeStampHelper timeStampH;
 
 <div class="@CssClassH.Container">
@@ -209,6 +210,8 @@
         AppSettings = appSettings;
 
         JSRuntime = jsRuntime;
+        MainLayoutService = mainLayoutService;
+
         await base.OnInitializedAsync();
     }
 }

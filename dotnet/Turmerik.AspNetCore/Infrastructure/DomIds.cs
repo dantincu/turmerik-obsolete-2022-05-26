@@ -8,5 +8,6 @@ namespace Turmerik.AspNetCore.Infrastructure
 {
     public static class DomIds
     {
+        public const string UI_BLOCKING_OVERLAY = "ui-blocking-overlay";
     }
 }

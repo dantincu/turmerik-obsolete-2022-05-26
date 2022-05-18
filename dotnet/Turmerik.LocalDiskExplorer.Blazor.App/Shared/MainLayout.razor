@@ -2,7 +2,9 @@
 @using Turmerik.AspNetCore.Services
 @using Turmerik.AspNetCore.Services.LocalSessionStorage
 @using Turmerik.AspNetCore.Settings
+@using Turmerik.Blazor.Core.Pages.Components
 @using Turmerik.Blazor.Core.Pages.Shared
+@using Turmerik.Core.Components
 @inherits MainLayoutComponentBase
 
 @inject INavManager navManager;
@@ -27,12 +29,11 @@
     </main>
 </div>
 
-@code {
-    private Dictionary<string, string> MenuItems { get; } = new Dictionary<string, string>
-    {
-        { "files", "Files" }
-    };
+<UIBlockingOverlay
+    OverlayEnabled=@OverlayEnabled
+    ErrorViewModel=@ErrorViewModel></UIBlockingOverlay>
 
+@code {
     protected override Task OnInitializedAsync()
     {
         this.LocalSessionsManager = localSessionsManager;
@@ -41,8 +42,16 @@
         this.HttpContextAccessor = httpContextAccessor;
         this.LocalStorage = localStorage;
         this.SessionStorage = sessionStorage;
-        this.MainLayoutService = mainLayoutService;
 
+        AssignMainLayoutService(mainLayoutService);
         return base.OnInitializedAsync();
     }
+
+    private Dictionary<string, string> MenuItems { get; } = new Dictionary<string, string>
+    {
+        { "files", "Files" }
+    };
+
+    private bool OverlayEnabled => MainLayoutService?.OverlayEnabled ?? false;
+    private ErrorViewModel? ErrorViewModel => MainLayoutService?.ErrorViewModel;
 }

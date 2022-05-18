@@ -2,6 +2,7 @@
 @using Turmerik.AspNetCore.Services
 @using Turmerik.AspNetCore.Services.LocalSessionStorage
 @using Turmerik.AspNetCore.Settings
+@using Turmerik.Blazor.Core.Pages.Components
 @using Turmerik.Blazor.Core.Pages.Shared
 @inherits MainLayoutComponentBase
 
@@ -27,6 +28,8 @@
     </main>
 </div>
 
+<UIBlockingOverlay></UIBlockingOverlay>
+
 @code {
     private Dictionary<string, string> MenuItems { get; } = new Dictionary<string, string>
     {
@@ -41,8 +44,8 @@
         this.HttpContextAccessor = httpContextAccessor;
         this.LocalStorage = localStorage;
         this.SessionStorage = sessionStorage;
-        this.MainLayoutService = mainLayoutService;
 
+        AssignMainLayoutService(mainLayoutService);
         return base.OnInitializedAsync();
     }
 }

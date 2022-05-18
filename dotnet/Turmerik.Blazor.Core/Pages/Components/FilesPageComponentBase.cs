@@ -9,6 +9,8 @@ using System.Collections.Concurrent;
 using Turmerik.Core.Data;
 using Turmerik.Core.Services;
 using Microsoft.JSInterop;
+using Turmerik.Core.Components;
+using Turmerik.AspNetCore.Services;
 
 namespace Turmerik.Blazor.Core.Pages.Components
 {
@@ -25,6 +27,7 @@ namespace Turmerik.Blazor.Core.Pages.Components
         protected ISessionStorageWrapper SessionStorage { get; set; }
         protected IDriveExplorerService DriveFolderService { get; set; }
         protected IJSRuntime JSRuntime { get; set; }
+        protected IMainLayoutService MainLayoutService { get; set; }
         protected ErrorViewModel ErrorViewModel { get; set; }
         protected DriveExplorerServiceArgs ServiceArgs { get; set; }
         protected bool FoldersGridCollapsed { get; set; }
@@ -290,56 +293,63 @@ namespace Turmerik.Blazor.Core.Pages.Components
         {
             await IfLocalSessionGuidHasValueAsync(async localSessionGuid =>
             {
-                var serviceArgs = new DriveExplorerServiceArgs
-                {
-                    CacheKeyGuid = localSessionGuid,
-                    TabPageUuid = tabPageUuid,
-                    Data = ServiceArgs?.Data,
-                };
-
-                if (ErrorViewModel != null && !string.IsNullOrWhiteSpace(ServiceArgs.FolderIdentifier?.Address))
-                {
-                    serviceArgs.FolderIdentifier = new DriveItemIdentifier
+                await MainLayoutService.ExecuteWithUIBlockingOverlay(
+                    async () =>
                     {
-                        Address = ServiceArgs.FolderIdentifier.Address
-                    };
-                }
-
-                try
-                {
-                    argsCallback(serviceArgs);
-                    await DriveFolderService.NavigateAsync(serviceArgs);
-
-                    serviceArgs.FolderIdentifier = serviceArgs.FolderIdentifier ?? ServiceArgs?.FolderIdentifier;
-
-                    if (ServiceArgs != null)
-                    {
-                        needsRedirect = needsRedirect || ServiceArgs.TabPageUuid != serviceArgs.TabPageUuid;
-                    }
-
-                    ServiceArgs = serviceArgs;
-                    ClearError();
-                }
-                catch (Exception ex)
-                {
-                    SetError("An unhandled error ocurred", ex);
-                }
-
-                if (ErrorViewModel != null && ServiceArgs != null)
-                {
-                    ServiceArgs.FolderIdentifier = serviceArgs.FolderIdentifier;
-                }
-
-                StateHasChanged();
-
-                if (needsRedirect)
-                {
-                    NavManager.NavigateTo("files", false, new Dictionary<string, string>
+                        var serviceArgs = new DriveExplorerServiceArgs
                         {
-                            { QsKeys.TAB_PAGE_UUID, serviceArgs.TabPageUuid.Value.ToString("N") }
-                        });
-                }
-            });
+                            CacheKeyGuid = localSessionGuid,
+                            TabPageUuid = tabPageUuid,
+                            Data = ServiceArgs?.Data,
+                        };
+
+                        if (ErrorViewModel != null && !string.IsNullOrWhiteSpace(ServiceArgs.FolderIdentifier?.Address))
+                        {
+                            serviceArgs.FolderIdentifier = new DriveItemIdentifier
+                            {
+                                Address = ServiceArgs.FolderIdentifier.Address
+                            };
+                        }
+
+                        try
+                        {
+                            argsCallback(serviceArgs);
+                            await DriveFolderService.NavigateAsync(serviceArgs);
+
+                            serviceArgs.FolderIdentifier = serviceArgs.FolderIdentifier ?? ServiceArgs?.FolderIdentifier;
+
+                            if (ServiceArgs != null)
+                            {
+                                needsRedirect = needsRedirect || ServiceArgs.TabPageUuid != serviceArgs.TabPageUuid;
+                            }
+
+                            ServiceArgs = serviceArgs;
+                            ClearError();
+                        }
+                        catch (Exception ex)
+                        {
+                            SetError("An unhandled error ocurred", ex);
+                        }
+
+                        if (ErrorViewModel != null && ServiceArgs != null)
+                        {
+                            ServiceArgs.FolderIdentifier = serviceArgs.FolderIdentifier;
+                        }
+
+                        StateHasChanged();
+
+                        if (needsRedirect)
+                        {
+                            NavManager.NavigateTo("files", false, new Dictionary<string, string>
+                            {
+                                { QsKeys.TAB_PAGE_UUID, serviceArgs.TabPageUuid.Value.ToString("N") }
+                            });
+                        }
+
+                        ErrorViewModel errorViewModel = null;
+                        return errorViewModel;
+                    });
+                });
         }
 
         private void ClearError()

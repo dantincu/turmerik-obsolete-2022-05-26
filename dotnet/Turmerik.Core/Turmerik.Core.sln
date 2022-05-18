@@ -44,7 +44,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MusicalKeyboard", "MusicalK
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turmerik.MusicalKeyboard.Blazor.App", "..\Turmerik.MusicalKeyboard.Blazor.App\Turmerik.MusicalKeyboard.Blazor.App.csproj", "{BC90162A-BC3B-4D71-B6C8-AE705C3CF061}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Turmerik.LocalDiskExplorer.WinForms.App", "..\Turmerik.LocalDiskExplorer.WinForms.App\Turmerik.LocalDiskExplorer.WinForms.App.csproj", "{835F7540-A04F-495C-A111-2CCA547435AF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turmerik.LocalDiskExplorer.WinForms.App", "..\Turmerik.LocalDiskExplorer.WinForms.App\Turmerik.LocalDiskExplorer.WinForms.App.csproj", "{835F7540-A04F-495C-A111-2CCA547435AF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

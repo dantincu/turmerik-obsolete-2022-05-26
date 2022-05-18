@@ -111,6 +111,7 @@ main {
     background-color: #201810;
 }
 
+.trmrk-hidden,
 ::deep .trmrk-hidden {
     display: none;
 }

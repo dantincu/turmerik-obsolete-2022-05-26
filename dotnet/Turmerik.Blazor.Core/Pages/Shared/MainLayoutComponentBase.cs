@@ -6,6 +6,7 @@ using Turmerik.AspNetCore.LocalSession;
 using Turmerik.AspNetCore.Services;
 using Turmerik.AspNetCore.Services.LocalSessionStorage;
 using Turmerik.AspNetCore.Settings;
+using Turmerik.Core.Components;
 using Turmerik.Core.Data;
 
 namespace Turmerik.Blazor.Core.Pages.Shared
@@ -18,7 +19,7 @@ namespace Turmerik.Blazor.Core.Pages.Shared
         protected IHttpContextAccessor HttpContextAccessor { get; set; }
         protected ILocalStorageWrapper LocalStorage { get; set; }
         protected ISessionStorageWrapper SessionStorage { get; set; }
-        protected IMainLayoutService MainLayoutService { get; set; }
+        protected IMainLayoutService MainLayoutService { get; private set; }
         protected bool SideBarLarge { get; set; } = false;
         protected string? SideBarSizeCssClass => SideBarLarge ? CssClassH.Large : CssClassH.Small;
         protected Guid? LocalSessionGuid { get; set; }
@@ -54,6 +55,24 @@ namespace Turmerik.Blazor.Core.Pages.Shared
                 localSessionGuid.ToString("N"));
 
             NavManager.Manager.NavigateTo(targetUrl, forceLoad);
+        }
+
+        protected void OverlayEnabledChanged(bool overlayEnabled)
+        {
+            StateHasChanged();
+        }
+
+        protected void ErrorViewModelChanged(ErrorViewModel errorViewModel)
+        {
+            StateHasChanged();
+        }
+
+        protected void AssignMainLayoutService(IMainLayoutService mainLayoutService)
+        {
+            MainLayoutService = mainLayoutService;
+
+            mainLayoutService.OnErrorViewModelChanged += ErrorViewModelChanged;
+            mainLayoutService.OnOverlayEnabledChanged += OverlayEnabledChanged;
         }
     }
 }

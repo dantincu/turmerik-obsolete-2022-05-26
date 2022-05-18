@@ -27,6 +27,8 @@ namespace Turmerik.AspNetCore.Infrastructure
         public static readonly string HidePopover;
         public static readonly string ReadFromClipboardAsync;
         public static readonly string WriteToClipboardAsync;
+        public static readonly string ShowUIBlockingOverlay;
+        public static readonly string HideUIBlockingOverlay;
 
         static JsH()
         {
@@ -45,6 +47,8 @@ namespace Turmerik.AspNetCore.Infrastructure
             HidePopover = nameof(HidePopover).DecapitalizeFirstLetter();
             ReadFromClipboardAsync = nameof(ReadFromClipboardAsync).DecapitalizeFirstLetter();
             WriteToClipboardAsync = nameof(WriteToClipboardAsync).DecapitalizeFirstLetter();
+            ShowUIBlockingOverlay = nameof(ShowUIBlockingOverlay).DecapitalizeFirstLetter();
+            HideUIBlockingOverlay = nameof(HideUIBlockingOverlay).DecapitalizeFirstLetter();
         }
 
         public static string Get(params string[] segments)

@@ -12,6 +12,8 @@
 @using Turmerik.Core.Cloneable.Nested
 @using Turmerik.Core.Helpers;
 @using Turmerik.AspNetCore.OpenId.UserSession;
+@using Turmerik.Blazor.Core.Pages.Components;
+
 @inherits OpenIdMainLayoutComponentBase
 
 @inject INavManager navManager;
@@ -51,6 +53,8 @@
     </main>
 </div>
 
+<UIBlockingOverlay></UIBlockingOverlay>
+
 @code {
     private Dictionary<string, string> MenuItems { get; } = new Dictionary<string, string>
     {
@@ -66,8 +70,8 @@
         this.LocalStorage = localStorage;
         this.SessionStorage = sessionStorage;
         this.UserSessionsManager = userSessionsManager;
-        this.MainLayoutService = mainLayoutService;
 
+        AssignMainLayoutService(mainLayoutService);
         return base.OnInitializedAsync();
     }
 }

@@ -1,0 +1,23 @@
+﻿.trmrk-ui-blocking-overlay {
+    display: flex;
+    z-index: 1000;
+    background-color: #0000;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    border-top: 1px solid #ff6a00;
+}
+
+.trmrk-ui-blocking-overlay.trmrk-opaque {
+    background-color: #111;
+}
+
+.trmrk-ui-blocking-overlay.trmrk-hidden {
+    display: none;
+}
