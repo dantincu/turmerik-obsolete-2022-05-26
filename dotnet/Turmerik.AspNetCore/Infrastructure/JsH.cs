@@ -12,6 +12,8 @@ namespace Turmerik.AspNetCore.Infrastructure
         public const string WINDOW = "window";
         public const string TRMRK = "Trmrk";
 
+        public const string LOCAL_DISK_EXPLORER_BACKGROUND_API_KEY = "local-disk-explorer-background-api";
+
         public static readonly string SelectDomEl;
         public static readonly string AddCssClass;
         public static readonly string RemoveCssClass;
@@ -86,6 +88,28 @@ namespace Turmerik.AspNetCore.Infrastructure
                 GetBigItemChunksCount = GetMethodName(nameof(GetBigItemChunksCount).DecapitalizeFirstLetter());
                 GetBigItemChunk = GetMethodName(nameof(GetBigItemChunk).DecapitalizeFirstLetter());
                 ClearBigItemChunks = GetMethodName(nameof(ClearBigItemChunks).DecapitalizeFirstLetter());
+            }
+
+            private static string GetMethodName(string methodName)
+            {
+                string jsMethodName = string.Join(".", BasePrefix, methodName);
+                return jsMethodName;
+            }
+        }
+
+        public static class Api
+        {
+            public static readonly string BasePrefix = typeof(Api).Name.DecapitalizeFirstLetter();
+
+            public static readonly string SetBaseUrisMap;
+            public static readonly string AddBaseUri;
+            public static readonly string AddBaseUrisMap;
+
+            static Api()
+            {
+                SetBaseUrisMap = GetMethodName(nameof(SetBaseUrisMap).DecapitalizeFirstLetter());
+                AddBaseUri = GetMethodName(nameof(AddBaseUri).DecapitalizeFirstLetter());
+                AddBaseUrisMap = GetMethodName(nameof(AddBaseUrisMap).DecapitalizeFirstLetter());
             }
 
             private static string GetMethodName(string methodName)

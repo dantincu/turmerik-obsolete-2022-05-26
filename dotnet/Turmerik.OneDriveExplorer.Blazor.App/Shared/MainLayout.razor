@@ -10,12 +10,15 @@
 @using Turmerik.Blazor.OpenId.Pages.Shared
 @using Turmerik.Core.Cloneable
 @using Turmerik.Core.Cloneable.Nested
+@using Turmerik.Core.Components
 @using Turmerik.Core.Helpers;
 @using Turmerik.AspNetCore.OpenId.UserSession;
 @using Turmerik.Blazor.Core.Pages.Components;
 
 @inherits OpenIdMainLayoutComponentBase
 
+@inject ICloneableMapper mapper;
+@inject ITypesStaticDataCache typesStaticDataCache;
 @inject INavManager navManager;
 @inject ILocalSessionsManager localSessionsManager;
 @inject ITrmrkAppSettings appSettings;
@@ -24,6 +27,7 @@
 @inject ISessionStorageWrapper sessionStorage
 @inject IUserSessionsManager userSessionsManager;
 @inject IMainLayoutService mainLayoutService;
+@inject IJSRuntime jsRuntime;
 
 <style>
     main .content {
@@ -43,7 +47,11 @@
         <LoginDisplay />
     </div>
     <div class="sidebar trmrk-app-sidebar @SideBarSizeCssClass">
-        <NavMenu MenuItems=@MenuItems HasDefaultMenuItem="true" SizeChangedCallback="@SizeChangedCallback" Title="Turmerik OneDrive Explorer" />
+        <NavMenu
+            MenuItems=@MenuItems
+            HasDefaultMenuItem="true"
+            SizeChangedCallback="@SizeChangedCallback"
+            Title="Turmerik OneDrive Explorer" />
     </div>
 
     <main>
@@ -58,6 +66,8 @@
 @code {
     protected override Task OnInitializedAsync()
     {
+        this.Mapper = mapper;
+        this.TypesStaticDataCache = typesStaticDataCache;
         this.LocalSessionsManager = localSessionsManager;
         this.NavManager = navManager;
         this.AppSettings = appSettings;
@@ -65,13 +75,14 @@
         this.LocalStorage = localStorage;
         this.SessionStorage = sessionStorage;
         this.UserSessionsManager = userSessionsManager;
+        this.JSRuntime = jsRuntime;
+
+        ApiBaseUriKeysToAddOnPageLoad = new Dictionary<string, string>
+        {
+            { JsH.LOCAL_DISK_EXPLORER_BACKGROUND_API_KEY, nameof(appSettings.LocalDiskExplorerBackgroundAppBaseUrl) }
+        };
 
         AssignMainLayoutService(mainLayoutService);
         return base.OnInitializedAsync();
     }
-    
-    private Dictionary<string, string> MenuItems { get; } = new Dictionary<string, string>
-    {
-        { "files", "Files" }
-    };
 }

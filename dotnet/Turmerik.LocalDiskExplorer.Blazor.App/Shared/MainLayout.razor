@@ -5,9 +5,12 @@
 @using Turmerik.AspNetCore.Settings
 @using Turmerik.Blazor.Core.Pages.Components
 @using Turmerik.Blazor.Core.Pages.Shared
+@using Turmerik.Core.Cloneable
 @using Turmerik.Core.Components
 @inherits MainLayoutComponentBase
 
+@inject ICloneableMapper mapper;
+@inject ITypesStaticDataCache typesStaticDataCache;
 @inject INavManager navManager;
 @inject ILocalSessionsManager localSessionsManager;
 @inject ITrmrkAppSettings appSettings;
@@ -15,12 +18,17 @@
 @inject ILocalStorageWrapper localStorage;
 @inject ISessionStorageWrapper sessionStorage
 @inject IMainLayoutService mainLayoutService;
+@inject IJSRuntime jsRuntime;
 
 <PageTitle>Turmerik Local Disk Explorer</PageTitle>
 
 <div class="page @PageCssClass">
     <div class="sidebar trmrk-app-sidebar @SideBarSizeCssClass">
-        <NavMenu MenuItems=@MenuItems HasDefaultMenuItem="true" SizeChangedCallback="@SizeChangedCallback" Title="Turmerik Local Disk Explorer" />
+        <NavMenu
+            MenuItems=@MenuItems
+            HasDefaultMenuItem="true"
+            SizeChangedCallback="@SizeChangedCallback"
+            Title="Turmerik Local Disk Explorer" />
     </div>
 
     <main>
@@ -33,21 +41,24 @@
 <UIBlockingOverlay></UIBlockingOverlay>
 
 @code {
-    protected override Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
+        this.Mapper = mapper;
+        this.TypesStaticDataCache = typesStaticDataCache;
         this.LocalSessionsManager = localSessionsManager;
         this.NavManager = navManager;
         this.AppSettings = appSettings;
         this.HttpContextAccessor = httpContextAccessor;
         this.LocalStorage = localStorage;
         this.SessionStorage = sessionStorage;
+        this.JSRuntime = jsRuntime;
+
+        ApiBaseUriKeysToAddOnPageLoad = new Dictionary<string, string>
+        {
+            { JsH.LOCAL_DISK_EXPLORER_BACKGROUND_API_KEY, nameof(appSettings.LocalDiskExplorerBackgroundAppBaseUrl) }
+        };
 
         AssignMainLayoutService(mainLayoutService);
-        return base.OnInitializedAsync();
+        await base.OnInitializedAsync();
     }
-
-    private Dictionary<string, string> MenuItems { get; } = new Dictionary<string, string>
-    {
-        { "files", "Files" }
-    };
 }

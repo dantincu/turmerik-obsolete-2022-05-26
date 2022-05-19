@@ -4,7 +4,7 @@ using Turmerik.Core.Services.DriveItems;
 
 namespace Turmerik.MusicalKeyboard.Blazor.App.AppStartup
 {
-    public class StartupHelper : StartupHelperBase
+    public class StartupHelper : StartupHelperCoreBase
     {
         public override void RegisterServices(
             IServiceCollection services,

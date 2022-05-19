@@ -13,7 +13,7 @@ using Turmerik.Core.Infrastucture;
 
 namespace Turmerik.AspNetCore.OpenId.AppStartup
 {
-    public abstract class OpenIdConnectStartupHelperBase : StartupHelperBase
+    public abstract class OpenIdConnectStartupHelperBase : StartupHelperCoreBase
     {
         public override void RegisterServices(IServiceCollection services, bool useMockData)
         {

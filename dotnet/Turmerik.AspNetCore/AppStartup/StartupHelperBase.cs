@@ -9,38 +9,8 @@ using Turmerik.Core.Infrastucture;
 
 namespace Turmerik.AspNetCore.AppStartup
 {
-    public abstract class StartupHelperBase
+    public abstract class StartupHelperCoreBase : StartupHelperCore
     {
-        public virtual IAppCoreServiceCollection RegisterCoreServices(
-            IServiceCollection services, IConfiguration config)
-        {
-            var coreSvcs = TrmrkCoreServiceCollectionBuilder.RegisterAll(services);
-            var typesCache = coreSvcs.TypesStaticDataCache;
-
-            var trmrkAppSettingsMtbl = config.GetObject<TrmrkAppSettingsMtbl>(
-                typesCache,
-                ConfigKeys.TRMRK,
-                typeof(TrmrkAppSettingsCoreMtbl),
-                s =>
-                {
-                    s.LoginUrl = $"{s.AppBaseUrl}/{s.LoginRelUrl}";
-                    s.LogoutUrl = $"{s.AppBaseUrl}/{s.LogoutRelUrl}";
-                });
-
-            var trmrkAppSettings = new TrmrkAppSettingsImmtbl(
-                trmrkAppSettingsMtbl);
-
-            var appSvcsMtbl = new AppCoreServiceCollectionMtbl(coreSvcs)
-            {
-                TrmrkAppSettings = trmrkAppSettingsMtbl
-            };
-
-            var appSvcsImmtbl = new AppCoreServiceCollectionImmtbl(appSvcsMtbl);
-            services.AddSingleton<ITrmrkAppSettings>(provider => trmrkAppSettings);
-
-            return appSvcsImmtbl;
-        }
-
         public virtual void RegisterServices(IServiceCollection services, bool useMockData)
         {
             services.AddHttpContextAccessor();

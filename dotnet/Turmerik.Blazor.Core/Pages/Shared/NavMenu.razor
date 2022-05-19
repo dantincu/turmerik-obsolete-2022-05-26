@@ -35,15 +35,18 @@
             </div>
         }
 
-        @foreach (var kvp in MenuItems)
+        @if (MenuItems != null)
         {
-            <div class="nav-item px-3">
-                <NavLink class="@GetNavLinkCssClass(kvp)" href="@kvp.Key"
-                    @onmouseup="@OnAnchorClick(kvp.Key)"
-                    @onclick:preventDefault="true">
-                    <span class="oi oi-browser" aria-hidden="true"></span> @kvp.Value
-                </NavLink>
-            </div>
+            @foreach (var kvp in MenuItems.NavMenuItemsDictnr.Immtbl)
+            {
+                <div class="nav-item px-3">
+                    <NavLink class="@GetNavLinkCssClass(kvp.Key)" href="@kvp.Value.Url"
+                        @onmouseup="@OnAnchorClick(kvp.Value.Url)"
+                        @onclick:preventDefault="true">
+                        <span class="@kvp.Value.IconCssClass" aria-hidden="true"></span> @kvp.Value.Title
+                    </NavLink>
+                </div>
+            }
         }
     </nav>
 </div>
@@ -62,7 +65,7 @@
     public EventCallback<MouseEventArgs> SizeChangedCallback { get; set; }
 
     [Parameter]
-    public Dictionary<string, string> MenuItems { get; set; }
+    public INavMenuItemsViewModel MenuItems { get; set; }
 
     [Parameter]
     public bool HasDefaultMenuItem { get; set; }
@@ -109,9 +112,9 @@
         return action;
     }
 
-    private string GetNavLinkCssClass(KeyValuePair<string, string> kvp)
+    private string GetNavLinkCssClass(string key)
     {
-        string cssClass = $"nav-link trmrk-link-{kvp.Key}";
+        string cssClass = $"nav-link trmrk-link-{key}";
         return cssClass;
     }
 }

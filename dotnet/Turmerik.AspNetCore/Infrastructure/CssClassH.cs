@@ -22,6 +22,10 @@ namespace Turmerik.AspNetCore.Infrastructure
         public const string DEFAULT = "default";
         public const string DARK = "dark";
         public const string OPTIONS = "options";
+        public const string SETTINGS = "settings";
+        public const string PREFERENCES = "preferences";
+        public const string PROFILE = "profile";
+        public const string USER = "user";
 
         public const string LINK = "link";
         public const string BLOCK = "block";
@@ -35,6 +39,7 @@ namespace Turmerik.AspNetCore.Infrastructure
         public const string ITEM = "item";
         public const string ITEMS = "items";
         public const string KEYBOARD = "keyboard";
+        public const string TEXT = "text";
 
         public const string LARGE = "large";
         public const string MEDIUM = "medium";
@@ -45,6 +50,7 @@ namespace Turmerik.AspNetCore.Infrastructure
         public const string CELL = "cell";
         public const string TABLE = "table";
         public const string CONTAINER = "container";
+        public const string WRAPPER = "wrapper";
         public const string SPACER = "spacer";
         public const string SHRINK = "shrink";
         public const string ENLARGE = "enlarge";
@@ -56,6 +62,7 @@ namespace Turmerik.AspNetCore.Infrastructure
         public const string GRID = "grid";
         public const string MODAL = "modal";
         public const string CONTENT = "content";
+        public const string TEXTBOX = "textbox";
 
         public const string NAVBAR = "navbar";
         public const string GREET = "greet";
@@ -86,6 +93,9 @@ namespace Turmerik.AspNetCore.Infrastructure
         public static readonly string ErrorDetails = Class(ERROR, DETAILS);
         public static readonly string Dark = Class(DARK);
         public static readonly string Options = Class(OPTIONS);
+        public static readonly string Preferences = Class(PREFERENCES);
+        public static readonly string Settings = Class(SETTINGS);
+        public static readonly string UserProfile = Class(USER, PROFILE);
 
         public static readonly string DefaultLink = Class(DEFAULT, LINK);
         public static readonly string Btn = Class(BTN);
@@ -101,6 +111,7 @@ namespace Turmerik.AspNetCore.Infrastructure
         public static readonly string CellName = Class(CELL, NAME);
         public static readonly string CellLabel = Class(CELL, LABEL);
         public static readonly string Container = Class(CONTAINER);
+        public static readonly string Wrapper = Class(WRAPPER);
         public static readonly string Spacer = Class(SPACER);
         public static readonly string ModalContent = Class(MODAL, CONTENT);
 
@@ -125,8 +136,13 @@ namespace Turmerik.AspNetCore.Infrastructure
 
         public static readonly string Address = Class(ADDRESS);
         public static readonly string AddressBar = Class(ADDRESS, BAR);
+        public static readonly string AddressBarWrapper = Class(ADDRESS, BAR, WRAPPER);
         public static readonly string AddressBarContainer = Class(ADDRESS, BAR, CONTAINER);
         public static readonly string AddressBarReadonly = Class(ADDRESS, BAR, READONLY);
+
+        public static readonly string Textbox = Class(TEXTBOX);
+        public static readonly string TextboxWrapper = Class(TEXTBOX, WRAPPER);
+        public static readonly string TextboxReadonly = Class(TEXTBOX, READONLY);
 
         public static readonly string Rotate90Deg = Class(ROTATE90DEG);
         public static readonly string Opaque = Class(OPAQUE);

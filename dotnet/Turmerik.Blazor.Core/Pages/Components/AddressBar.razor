@@ -13,8 +13,12 @@
 
     <IconButton IsDisabled=@AddressGoForwardBtnDisabled CssClass="oi oi-arrow-circle-right" Title="Go Forward" OnMouseUp=@OnGoForwardMouseUpAsyncEventHandler></IconButton>
 
-    <input type="text" value="@InitialAddressStrValue" class="@CssClassH.AddressBar @CssClassH.Hidden" @onfocus=@OnAddressBarFocusAsync @onkeydown=@OnAddressBarKeyDownAsyncEventHandler />
-    <input type="text" readonly value="@InitialAddressStrValue" class="@CssClassH.AddressBarReadonly" @onclick=@OnAddressBarReadonlyClickAsyncEventHandler></input>
+    <TrmrkTextBox
+        ComponentCssClass="@CssClassH.AddressBarWrapper"
+        TextValue="@AddressStrValue"
+        OnCancelTextBox=OnCancelAddress
+        OnSubmitTextBox=OnSubmitAddress>
+    </TrmrkTextBox>
 
     <IconButton IsDisabled=@OptionsBtnDisabled CssClass="oi oi-ellipses trmrk-rotate90deg" Title="Options" OnMouseUp=@OnOptionsMouseUpAsyncEventHandler></IconButton>
     
@@ -24,7 +28,7 @@
 
 @code {
     [Parameter]
-    public string InitialAddressStrValue { get; set; }
+    public string AddressStrValue { get; set; }
 
     [Parameter]
     public Func<MouseEventArgs, Task> OnGoBackClick { get; set; }
@@ -59,28 +63,7 @@
     [Parameter]
     public bool OptionsBtnDisabled { get; set; }
 
-    protected string AddressStrValue { get; set; }
-
-    protected async Task OnAddressBarFocusAsync(FocusEventArgs args)
-    {
-        AddressStrValue = await JSRuntime.InvokeAsync<string>(
-            JsH.Get(JsH.SelectDomEl),
-            UuidStr,
-            CssClassH.AddressBar.CssClsSel());
-    }
-
-    protected async Task OnAddressBarKeyDownAsyncEventHandler(KeyboardEventArgs args)
-    {
-        switch (args.Code)
-        {
-            case KeyboardKeyCodes.ENTER:
-                await SubmitAddress(args);
-                break;
-            case KeyboardKeyCodes.ESCAPE:
-                await CancelAddress(args);
-                break;
-        }
-    }
+    protected bool IsEditable { get; set; }
 
     protected async Task OnGoBackMouseUpAsyncEventHandler(MouseEventArgs args)
     {
@@ -109,66 +92,13 @@
     {
         if (args.Button.IsLeftMouseButton())
         {
-            await SubmitAddress(args);
+            var textArgs = new TextEventArgsWrapper(args, AddressStrValue);
+            await OnSubmitAddress(textArgs);
         }
     }
 
     protected async Task OnReloadMouseUpAsyncEventHandler(MouseEventArgs args)
     {
         await OnReloadClick.InvokeMouseClickAsyncIfLeftBtn(args);
-    }
-
-    protected async Task OnAddressBarReadonlyClickAsyncEventHandler(MouseEventArgs args)
-    {
-        await SetEditable(true);
-    }
-
-    protected async Task<string> RefreshAddressStrValue()
-    {
-        AddressStrValue = await JSRuntime.InvokeAsync<string>(
-            JsH.Get(JsH.GetDomElValue),
-            UuidStr,
-            CssClassH.AddressBar.CssClsSel());
-
-        return AddressStrValue;
-    }
-
-    protected async Task<string> SetEditable(bool editable, bool revertChanges = false)
-    {
-        AddressStrValue = await JSRuntime.InvokeAsync<string>(
-            JsH.Get(JsH.TextBoxWrapperSetEditable),
-            UuidStr,
-            CssClassH.AddressBar.CssClsSel(),
-            CssClassH.AddressBarReadonly.CssClsSel(),
-            editable,
-            revertChanges);
-
-        return AddressStrValue;
-    }
-
-    protected async Task<string> SubmitAddress(EventArgs args)
-    {
-        await SetEditable(false);
-
-        if (OnSubmitAddress != null)
-        {
-            var eventArgs = new TextEventArgsWrapper(args, AddressStrValue);
-            await OnSubmitAddress.Invoke(eventArgs);
-        }
-
-        return AddressStrValue;
-    }
-
-    protected async Task<string> CancelAddress(EventArgs args)
-    {
-        await SetEditable(false, true);
-
-        if (OnCancelAddress != null)
-        {
-            var eventArgs = new TextEventArgsWrapper(args, AddressStrValue);
-            await OnCancelAddress.Invoke(eventArgs);
-        }
-
-        return AddressStrValue;
     }
 }

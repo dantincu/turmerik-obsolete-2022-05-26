@@ -1,0 +1,29 @@
+﻿@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.JSInterop
+@using Turmerik.AspNetCore.Infrastructure
+@using System.Web;
+@using Turmerik.Core.Helpers;
+
+<h3>Settings</h3>
+
+@inherits SettingsPageComponentBase
+
+<div class="@CssClassH.Settings">
+    <h5>Local Disk Explorer Background App Uri</h5>
+
+    <input
+        type="text"
+        value="@LocalDiskExplorerBackgroundAppUri"
+        class="@CssClassH.AddressBar @CssClassH.Hidden"
+        @onfocus=@OnLocalDiskExplorerBackgroundAppUriBarFocus
+        @onkeydown=@OnLocalDiskExplorerBackgroundAppUriBarKeyDown />
+
+    <input
+        type="text"
+        readonly value="@LocalDiskExplorerBackgroundAppUri"
+        class="@CssClassH.AddressBarReadonly"
+        @onclick=@OnLocalDiskExplorerBackgroundAppUriBarReadonlyClick></input>
+</div>
+
+@code {
+}

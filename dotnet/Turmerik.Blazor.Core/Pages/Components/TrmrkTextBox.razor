@@ -1,0 +1,99 @@
+﻿@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.JSInterop
+@using Turmerik.AspNetCore.Infrastructure
+
+@inherits ComponentCoreBase
+
+@inject IJSRuntime JSRuntime;
+
+<div id="@UuidStr" class="@CssClassH.TextboxWrapper @ComponentCssClass">
+    <input type="text" value="@EditableTextValue" class="@CssClassH.Textbox @CssClassH.Hidden" @onfocus=@OnTextboxFocusAsync @onkeydown=@OnTextboxKeyDownAsync />
+    <input type="text" readonly value="@TextValue" class="@CssClassH.TextboxReadonly" @onclick=@OnTextboxReadonlyClickAsync />
+</div>
+
+@code {
+    [Parameter]
+    public string ComponentCssClass { get; set; }
+
+    [Parameter]
+    public string TextValue { get; set; }
+
+    [Parameter]
+    public Func<TextEventArgsWrapper, Task> OnSubmitTextBox { get; set; }
+
+    [Parameter]
+    public Func<TextEventArgsWrapper, Task> OnCancelTextBox { get; set; }
+
+    private string EditableTextValue { get; set; }
+
+    private async Task OnTextboxFocusAsync(FocusEventArgs args)
+    {
+        await JSRuntime.InvokeAsync<string>(
+            JsH.Get(JsH.SelectDomEl),
+            UuidStr,
+            CssClassH.Textbox.CssClsSel());
+    }
+
+    private async Task OnTextboxKeyDownAsync(KeyboardEventArgs args)
+    {
+        switch (args.Code)
+        {
+            case KeyboardKeyCodes.ENTER:
+                await SubmitTextbox(args);
+                break;
+            case KeyboardKeyCodes.ESCAPE:
+                await CancelTextbox(args);
+                break;
+        }
+    }
+
+    private async Task OnTextboxReadonlyClickAsync(MouseEventArgs args)
+    {
+        await SetEditable(true);
+    }
+
+    private async Task SetEditable(bool editable, bool revertChanges = false)
+    {
+        if (editable)
+        {
+            EditableTextValue = TextValue;
+            StateHasChanged();
+        }
+
+        string editableTextValue = await JSRuntime.InvokeAsync<string>(
+            JsH.Get(JsH.TextBoxWrapperSetEditable),
+            UuidStr,
+            CssClassH.Textbox.CssClsSel(),
+            CssClassH.TextboxReadonly.CssClsSel(),
+            editable,
+            revertChanges);
+
+        if (!editable)
+        {
+            EditableTextValue = editableTextValue;
+        }
+    }
+
+    private async Task SubmitTextbox(EventArgs args)
+    {
+        await SetEditable(false);
+        TextValue = EditableTextValue;
+
+        if (OnSubmitTextBox != null)
+        {
+            var eventArgs = new TextEventArgsWrapper(args, TextValue);
+            await OnSubmitTextBox.Invoke(eventArgs);
+        }
+    }
+
+    private async Task CancelTextbox(EventArgs args)
+    {
+        await SetEditable(false, true);
+
+        if (OnCancelTextBox != null)
+        {
+            var eventArgs = new TextEventArgsWrapper(args, TextValue);
+            await OnCancelTextBox.Invoke(eventArgs);
+        }
+    }
+}
