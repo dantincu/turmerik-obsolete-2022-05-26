@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Turmerik.AspNetCore.Infrastructure;
 
 namespace Turmerik.Blazor.Core.Pages.Components.DriveItems
 {
@@ -11,17 +12,7 @@ namespace Turmerik.Blazor.Core.Pages.Components.DriveItems
     {
         protected string LocalDiskExplorerBackgroundAppUri { get; set; }
 
-        protected async Task OnLocalDiskExplorerBackgroundAppUriBarFocus(FocusEventArgs args)
-        {
-
-        }
-
-        protected async Task OnLocalDiskExplorerBackgroundAppUriBarKeyDown(KeyboardEventArgs args)
-        {
-
-        }
-
-        protected async Task OnLocalDiskExplorerBackgroundAppUriBarReadonlyClick(MouseEventArgs args)
+        protected async Task OnSubmitLocalDiskExplorerBackgroundAppUri(TextEventArgsWrapper args)
         {
 
         }

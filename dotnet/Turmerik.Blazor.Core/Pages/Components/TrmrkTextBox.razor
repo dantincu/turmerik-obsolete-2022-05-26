@@ -7,8 +7,18 @@
 @inject IJSRuntime JSRuntime;
 
 <div id="@UuidStr" class="@CssClassH.TextboxWrapper @ComponentCssClass">
+    @if (IsEditingText)
+    {
+        <span class="oi oi-arrow-left" @onmouseup=OnCancelTextboxBtnClickAsync></span>
+    }
+    
     <input type="text" value="@EditableTextValue" class="@CssClassH.Textbox @CssClassH.Hidden" @onfocus=@OnTextboxFocusAsync @onkeydown=@OnTextboxKeyDownAsync />
     <input type="text" readonly value="@TextValue" class="@CssClassH.TextboxReadonly" @onclick=@OnTextboxReadonlyClickAsync />
+
+    @if (IsEditingText)
+    {
+        <span class="oi oi-x" @onmouseup=OnClearTextboxBtnClickAsync></span>
+    }
 </div>
 
 @code {
@@ -19,12 +29,33 @@
     public string TextValue { get; set; }
 
     [Parameter]
+    public Func<TextEventArgsWrapper, Task> OnEnterTextBox { get; set; }
+
+    [Parameter]
     public Func<TextEventArgsWrapper, Task> OnSubmitTextBox { get; set; }
 
     [Parameter]
     public Func<TextEventArgsWrapper, Task> OnCancelTextBox { get; set; }
 
+    [Parameter]
+    public bool IsEditingText { get; set; }
+
     private string EditableTextValue { get; set; }
+
+    private async Task OnCancelTextboxBtnClickAsync(MouseEventArgs args)
+    {
+        await SetEditable(false, true);
+
+        await OnCancelTextBox.InvokeTextEventAsyncIfReq(
+            TextValue,
+            args);
+    }
+
+    private async Task OnClearTextboxBtnClickAsync(MouseEventArgs args)
+    {
+        EditableTextValue = string.Empty;
+        StateHasChanged();
+    }
 
     private async Task OnTextboxFocusAsync(FocusEventArgs args)
     {
@@ -50,16 +81,15 @@
     private async Task OnTextboxReadonlyClickAsync(MouseEventArgs args)
     {
         await SetEditable(true);
+
+        await OnEnterTextBox.InvokeTextEventAsyncIfReq(
+            TextValue,
+            args,
+            args.Button.IsLeftMouseButton());
     }
 
     private async Task SetEditable(bool editable, bool revertChanges = false)
     {
-        if (editable)
-        {
-            EditableTextValue = TextValue;
-            StateHasChanged();
-        }
-
         string editableTextValue = await JSRuntime.InvokeAsync<string>(
             JsH.Get(JsH.TextBoxWrapperSetEditable),
             UuidStr,
@@ -67,33 +97,36 @@
             CssClassH.TextboxReadonly.CssClsSel(),
             editable,
             revertChanges);
-
-        if (!editable)
+            
+        if (editable)
+        {
+            EditableTextValue = TextValue;
+        }
+        else
         {
             EditableTextValue = editableTextValue;
         }
+
+        IsEditingText = editable;
+        StateHasChanged();
     }
 
     private async Task SubmitTextbox(EventArgs args)
     {
         await SetEditable(false);
         TextValue = EditableTextValue;
-
-        if (OnSubmitTextBox != null)
-        {
-            var eventArgs = new TextEventArgsWrapper(args, TextValue);
-            await OnSubmitTextBox.Invoke(eventArgs);
-        }
+        
+        await OnSubmitTextBox.InvokeTextEventAsyncIfReq(
+            TextValue,
+            args);
     }
 
     private async Task CancelTextbox(EventArgs args)
     {
         await SetEditable(false, true);
-
-        if (OnCancelTextBox != null)
-        {
-            var eventArgs = new TextEventArgsWrapper(args, TextValue);
-            await OnCancelTextBox.Invoke(eventArgs);
-        }
+        
+        await OnCancelTextBox.InvokeTextEventAsyncIfReq(
+            TextValue,
+            args);
     }
 }

@@ -11,18 +11,10 @@
 <div class="@CssClassH.Settings">
     <h5>Local Disk Explorer Background App Uri</h5>
 
-    <input
-        type="text"
-        value="@LocalDiskExplorerBackgroundAppUri"
-        class="@CssClassH.AddressBar @CssClassH.Hidden"
-        @onfocus=@OnLocalDiskExplorerBackgroundAppUriBarFocus
-        @onkeydown=@OnLocalDiskExplorerBackgroundAppUriBarKeyDown />
-
-    <input
-        type="text"
-        readonly value="@LocalDiskExplorerBackgroundAppUri"
-        class="@CssClassH.AddressBarReadonly"
-        @onclick=@OnLocalDiskExplorerBackgroundAppUriBarReadonlyClick></input>
+    <TrmrkTextBox
+        TextValue="@LocalDiskExplorerBackgroundAppUri"
+        OnSubmitTextBox=OnSubmitLocalDiskExplorerBackgroundAppUri>
+    </TrmrkTextBox>
 </div>
 
 @code {
