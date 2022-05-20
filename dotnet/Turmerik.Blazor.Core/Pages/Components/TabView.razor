@@ -20,13 +20,13 @@
             {
                 var tabPageHead = TabHeaderViewState.TabPageHeads[i];
 
-                <div class="@GetTabPageHeadCssClass(tabPageHead)" data-trmrk-idx="">
+                <div class="@GetTabPageHeadCssClass(tabPageHead)">
                     <span class="@CssClassH.Name" @onmouseup=@OnTabPageHeadClickEventHandler(i)>@tabPageHead.Name</span>
-                    <span class="oi oi-x" aria-hidden="true" @onmouseup=@OnCloseTabPageClickEventHandler(i)></span>
+                    <span class="@CssClassH.Icon" @onmouseup=@OnCloseTabPageClickEventHandler(i)>&times;</span>
                 </div>
             }
 
-            <span class="oi oi-plus" aria-hidden="true" @onmouseup=@OnNewTabPageClick></span>
+            <span class="@CssClassH.Icon" @onmouseup=@OnNewTabPageClick>+</span>
         </div>
         
         <div class="@CssClassH.TabPage">

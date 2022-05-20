@@ -13,11 +13,11 @@
     margin: 0;
     padding: 0;
 }
-    .trmrk-tab-view-header > .oi,
-    .trmrk-tab-page-head > .oi,
+    .trmrk-tab-view-header > .trmrk-icon,
+    .trmrk-tab-page-head > .trmrk-icon,
     .trmrk-tab-page-head > .trmrk-name,
     .trmrk-tab-page-head.trmrk-current > .trmrk-name,
-    .trmrk-tab-page-head.trmrk-current > .oi {
+    .trmrk-tab-page-head.trmrk-current > .trmrk-icon {
         cursor: pointer;
         display: inline-flex;
         border: 1px solid #404040;
@@ -30,28 +30,35 @@
         overflow-wrap: anywhere;
     }
 
-    .trmrk-tab-view-header > .oi,
-    .trmrk-tab-page-head > .oi,
-    .trmrk-tab-page-head.trmrk-current > .oi {
+    .trmrk-tab-view-header > .trmrk-icon,
+    .trmrk-tab-page-head > .trmrk-icon,
+    .trmrk-tab-page-head.trmrk-current > .trmrk-icon {
         position: relative;
         top: 0px;
-        padding: 5px 5px 5px 5px;
+        padding: 7px 5px 3px 5px;
         margin: 0;
         font-weight: normal;
-        font-size: 0.7rem;
+        font-size: 1.5rem;
         line-height: 0.8rem;
         color: #FFD0A0;
     }
 
-        .trmrk-tab-view-header > .oi{
+        .trmrk-tab-view-header > .trmrk-icon{
             padding-top: 5px;
         }
 
-            .trmrk-tab-view-header > .oi:hover,
-            .trmrk-tab-page-head > .oi:hover,
-            .trmrk-tab-page-head.trmrk-current > .oi:hover {
+            .trmrk-tab-view-header > .trmrk-icon:hover,
+            .trmrk-tab-page-head > .trmrk-icon:hover,
+            .trmrk-tab-page-head.trmrk-current > .trmrk-icon:hover {
                 color: darkorange;
             }
+
+.trmrk-tab-page-head.trmrk-current > .trmrk-name,
+.trmrk-tab-page-head.trmrk-current > .trmrk-icon {
+    background-color: #403020;
+    border: 1px solid #606060;
+    margin: 0;
+}
 
 .trmrk-tab-page-head > .trmrk-name,
 .trmrk-tab-page-head.trmrk-current > .trmrk-name {
@@ -62,24 +69,16 @@
     margin-right: 0px;
 }
 
-.trmrk-tab-page-head.trmrk-current > .trmrk-name,
-.trmrk-tab-page-head.trmrk-current > .oi {
-    background-color: #403020;
-    border: 1px solid #606060;
-    margin: 0;
-}
-
-
 .trmrk-tab-page-head.trmrk-current > .trmrk-name {
     color: white;
     font-weight: bold;
 }
 
-.trmrk-tab-page-head > .oi,
-.trmrk-tab-page-head.trmrk-current > .oi {
+.trmrk-tab-page-head > .trmrk-icon,
+.trmrk-tab-page-head.trmrk-current > .trmrk-icon {
     border-left: none;
     border-left-width: 0px;
-    margin-left: 0px;
+    margin-left: -2px;
 }
 
     .trmrk-tab-view {

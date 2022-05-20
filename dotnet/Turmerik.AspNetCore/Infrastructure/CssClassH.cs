@@ -27,6 +27,7 @@ namespace Turmerik.AspNetCore.Infrastructure
         public const string PROFILE = "profile";
         public const string USER = "user";
 
+        public const string ICON = "icon";
         public const string LINK = "link";
         public const string BLOCK = "block";
         public const string TOP = "top";
@@ -98,6 +99,7 @@ namespace Turmerik.AspNetCore.Infrastructure
         public static readonly string Settings = Class(SETTINGS);
         public static readonly string UserProfile = Class(USER, PROFILE);
 
+        public static readonly string Icon = Class(ICON);
         public static readonly string DefaultLink = Class(DEFAULT, LINK);
         public static readonly string Btn = Class(BTN);
         public static readonly string Table = Class(TABLE);
