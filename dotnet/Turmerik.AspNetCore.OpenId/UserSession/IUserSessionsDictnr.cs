@@ -32,7 +32,8 @@ namespace Turmerik.AspNetCore.OpenId.UserSession
         private readonly ConcurrentDictionary<IReadOnlyCollection<byte>, IAppUserData> usersDataDictnr;
         private readonly ConcurrentDictionary<IReadOnlyCollection<byte>, ConcurrentDictionary<Guid, IAppUserSessionData>> userSessionsDictnr;
 
-        public UserSessionsDictnr(ICloneableMapper mapper)
+        public UserSessionsDictnr(
+            ICloneableMapper mapper)
         {
             this.mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             usersDataDictnr = new ConcurrentDictionary<IReadOnlyCollection<byte>, IAppUserData>();
@@ -52,19 +53,16 @@ namespace Turmerik.AspNetCore.OpenId.UserSession
 
             if (sessionProps != null)
             {
-                var utcNow = DateTime.UtcNow;
-                var usernameHash = sessionProps.Item2;
-
-                var usernameHashBytes = sessionProps.Item3.RdnlC();
-                var usernameHashBytesList = sessionProps.Item3.ToList();
-
                 var userSessionGuid = sessionProps.Item1;
+                var usernameHashBytes = sessionProps.Item2;
+
+                var usernameHashBytesList = usernameHashBytes.ToList();
+                var utcNow = DateTime.UtcNow;
 
                 usersDataDictnr.GetOrAdd(
-                    usernameHashBytes,
+                    sessionProps.Item2,
                     key => SetAppUserDataProps(
                         new AppUserDataMtbl(),
-                        usernameHash,
                         usernameHashBytesList));
 
                 userSessionsDictnr.AddOrUpdateValue(
@@ -82,7 +80,6 @@ namespace Turmerik.AspNetCore.OpenId.UserSession
                                 LoginDateTimeUtc = utcNow,
                                 LocalSessionGuids = new NestedObjNmrbl<Guid>(null, new List<Guid>())
                             },
-                        usernameHash,
                         usernameHashBytesList),
                         (k, isUpdate, data) =>
                         {
@@ -114,11 +111,13 @@ namespace Turmerik.AspNetCore.OpenId.UserSession
             ILocalStorageWrapper localStorage,
             ISessionStorageWrapper sessionStorage)
         {
-            var sessionProps = GetSessionProps(httpContextAccessor);
+            var sessionProps = GetSessionProps(
+                httpContextAccessor);
+
             IAppUserSessionData immtbl = null;
 
-            var usernameHashBytes = sessionProps.Item3.RdnlC();
             var userSessionGuid = sessionProps.Item1;
+            var usernameHashBytes = sessionProps.Item2.RdnlC();
 
             if (sessionProps != null)
             {
@@ -166,12 +165,9 @@ namespace Turmerik.AspNetCore.OpenId.UserSession
 
         private TMtbl SetAppUserDataProps<TMtbl>(
             TMtbl mtbl,
-            string usernameHash,
             List<byte> usernameHashBytesList)
             where TMtbl : AppUserDataCoreMtbl
         {
-            mtbl.UsernameHash = usernameHash;
-
             mtbl.UsernameHashBytes = new NestedObjNmrbl<byte>(
                 null,
                 usernameHashBytesList);
@@ -179,28 +175,36 @@ namespace Turmerik.AspNetCore.OpenId.UserSession
             return mtbl;
         }
 
-        private Tuple<Guid, string, byte[]> GetSessionProps(
+        private Tuple<Guid, byte[]> GetSessionProps(
             IHttpContextAccessor httpContextAccessor)
         {
             var httpContext = httpContextAccessor.HttpContext;
+            var username = httpContext.User.Identity.Name;
+
+            var userSessionGuid = GetUserSessionGuid(httpContext);
+            byte[] usernameHashBytes = EncodeH.EncodeSha1(username);
+
+            Tuple<Guid, byte[]> retTuple = null;
+
+            if (userSessionGuid.HasValue)
+            {
+                retTuple = new Tuple<Guid, byte[]>(
+                    userSessionGuid.Value, usernameHashBytes);
+            }
+
+            return retTuple;
+        }
+
+        private Guid? GetUserSessionGuid(
+            HttpContext httpContext)
+        {
             var cookies = httpContext.Request.Cookies;
 
             var userSessionGuid = cookies.GetNullableValue<Guid>(
                 SessionKeys.UserSessionGuid,
                 Guid.TryParse);
 
-            var usernameHash = cookies.GetStr(SessionKeys.UserName);
-            byte[] usernameHashBytes = usernameHash.TryDecodeFromBase64();
-
-            Tuple<Guid, string, byte[]> retTuple = null;
-
-            if (userSessionGuid.HasValue && usernameHash != null && usernameHashBytes != null)
-            {
-                retTuple = new Tuple<Guid, string, byte[]>(
-                    userSessionGuid.Value, usernameHash, usernameHashBytes);
-            }
-
-            return retTuple;
+            return userSessionGuid;
         }
     }
 }

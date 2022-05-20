@@ -14,6 +14,8 @@ namespace Turmerik.AspNetCore.AppStartup
 {
     public class StartupHelperCore
     {
+        public IAppCoreServiceCollection AppCoreServiceCollection { get; private set; }
+
         public virtual IAppCoreServiceCollection RegisterCoreServices(
             IServiceCollection services, IConfiguration config)
         {
@@ -33,15 +35,19 @@ namespace Turmerik.AspNetCore.AppStartup
             var trmrkAppSettings = new TrmrkAppSettingsImmtbl(
                 trmrkAppSettingsMtbl);
 
+            var rsaComponent = new RSAComponent();
+
             var appSvcsMtbl = new AppCoreServiceCollectionMtbl(coreSvcs)
             {
-                TrmrkAppSettings = trmrkAppSettingsMtbl
+                TrmrkAppSettings = trmrkAppSettingsMtbl,
+                RSAComponent = rsaComponent,
             };
 
-            var appSvcsImmtbl = new AppCoreServiceCollectionImmtbl(appSvcsMtbl);
             services.AddSingleton<ITrmrkAppSettings>(provider => trmrkAppSettings);
+            services.AddSingleton<IRSAComponent>(provider => rsaComponent);
 
-            return appSvcsImmtbl;
+            AppCoreServiceCollection = new AppCoreServiceCollectionImmtbl(appSvcsMtbl);
+            return AppCoreServiceCollection;
         }
     }
 }

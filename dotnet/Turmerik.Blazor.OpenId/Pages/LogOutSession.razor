@@ -1,4 +1,5 @@
-﻿@using Microsoft.AspNetCore.Http
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Http
 @using Microsoft.Extensions.Primitives
 @using Turmerik.AspNetCore.OpenId.UserSession
 @using Turmerik.AspNetCore.Services
@@ -19,7 +20,7 @@
 @code {
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        var userSession = await UserSessionsManager.TryRemoveUserSessionAsync();
+        await UserSessionsManager.TryRemoveUserSessionAsync();
         NavManager.NavigateTo(AppSettings.LogoutRelUrl);
     }
 }

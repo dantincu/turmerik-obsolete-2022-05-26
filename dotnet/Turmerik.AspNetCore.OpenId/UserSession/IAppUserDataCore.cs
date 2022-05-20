@@ -10,7 +10,6 @@ namespace Turmerik.AspNetCore.OpenId.UserSession
 {
     public interface IAppUserDataCore : ICloneableObject
     {
-        string UsernameHash { get; }
         NestedObjNmrbl<byte> UsernameHashBytes { get; }
     }
 
@@ -24,7 +23,6 @@ namespace Turmerik.AspNetCore.OpenId.UserSession
         {
         }
 
-        public string UsernameHash { get; protected set; }
         public NestedObjNmrbl<byte> UsernameHashBytes { get; protected set; }
     }
 
@@ -42,7 +40,6 @@ namespace Turmerik.AspNetCore.OpenId.UserSession
         {
         }
 
-        public string UsernameHash { get; set; }
         public NestedObjNmrbl<byte> UsernameHashBytes { get; set; }
     }
 }

@@ -117,15 +117,6 @@ namespace Turmerik.AspNetCore.MsIdentity.AppStartup
 
             var userSessionGuid = Guid.NewGuid();
 
-            var usernameHashBytes = EncodeH.EncodeSha1(
-                user.UserPrincipalName);
-
-            var userNameHash = Convert.ToBase64String(usernameHashBytes);
-
-            context.Response.Cookies.Append(
-                SessionKeys.UserName,
-                userNameHash);
-
             context.Response.Cookies.AddValue(
                 SessionKeys.UserSessionGuid,
                 userSessionGuid);

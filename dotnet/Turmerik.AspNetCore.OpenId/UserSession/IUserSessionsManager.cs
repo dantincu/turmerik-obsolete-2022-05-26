@@ -6,9 +6,7 @@ namespace Turmerik.AspNetCore.OpenId.UserSession
 {
     public interface IUserSessionsManager
     {
-        Task<IAppUserSessionData> TryAddOrUpdateUserSessionAsync(
-            Guid localSessionGuid);
-
+        Task<IAppUserSessionData> TryAddOrUpdateUserSessionAsync(Guid localSessionGuid);
         Task<IAppUserSessionData> TryRemoveUserSessionAsync();
     }
 
@@ -32,8 +30,7 @@ namespace Turmerik.AspNetCore.OpenId.UserSession
             this.sessionStorage = sessionStorage ?? throw new ArgumentNullException(nameof(sessionStorage));
         }
 
-        public async Task<IAppUserSessionData> TryAddOrUpdateUserSessionAsync(
-            Guid localSessionGuid)
+        public async Task<IAppUserSessionData> TryAddOrUpdateUserSessionAsync(Guid localSessionGuid)
         {
             var appUserSessionData = await userSessionsDictnr.TryAddOrUpdateUserSessionAsync(
                 httpContextAccessor,
