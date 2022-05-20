@@ -82,6 +82,6 @@
 
     private async Task OnCloseModalClickAsync(MouseEventArgs args)
     {
-        await jsRuntime.InvokeVoidAsync(JsH.Get(JsH.CloseModal), ModalId);
+        await jsRuntime.InvokeVoidAsync(TrmrkJsH.Get(TrmrkJsH.CloseModal), ModalId);
     }
 }

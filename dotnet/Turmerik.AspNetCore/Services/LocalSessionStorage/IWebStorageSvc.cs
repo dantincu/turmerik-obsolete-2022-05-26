@@ -66,7 +66,7 @@ namespace Turmerik.AspNetCore.Services.LocalSessionStorage
             else
             {
                 retVal = await JSRuntime.InvokeAsync<string>(
-                    JsH.Get(JsH.WebStorage.GetItem),
+                    TrmrkJsH.Get(TrmrkJsH.WebStorage.GetItem),
                     key, IsPersistent);
             }
 
@@ -82,21 +82,21 @@ namespace Turmerik.AspNetCore.Services.LocalSessionStorage
             });
 
             await JSRuntime.InvokeVoidAsync(
-                JsH.Get(JsH.WebStorage.SetItem),
+                TrmrkJsH.Get(TrmrkJsH.WebStorage.SetItem),
                 key, json, IsPersistent);
         }
 
         public async ValueTask ClearAsync(CancellationToken? cancellationToken = null)
         {
             await JSRuntime.InvokeVoidAsync(
-                JsH.Get(JsH.WebStorage.Clear),
+                TrmrkJsH.Get(TrmrkJsH.WebStorage.Clear),
                 IsPersistent);
         }
 
         public async ValueTask<bool> ContainKeyAsync(string key, CancellationToken? cancellationToken = null)
         {
             bool retVal = await JSRuntime.InvokeAsync<bool>(
-                JsH.Get(JsH.WebStorage.ContainsKey),
+                TrmrkJsH.Get(TrmrkJsH.WebStorage.ContainsKey),
                 key, IsPersistent).AsTask();
 
             return retVal;
@@ -105,14 +105,14 @@ namespace Turmerik.AspNetCore.Services.LocalSessionStorage
         public async ValueTask RemoveItemAsync(string key, CancellationToken? cancellationToken = null)
         {
             await JSRuntime.InvokeVoidAsync(
-                JsH.Get(JsH.WebStorage.RemoveItem),
+                TrmrkJsH.Get(TrmrkJsH.WebStorage.RemoveItem),
                 key, IsPersistent);
         }
 
         public async ValueTask SetItemAsStringAsync(string key, string data, CancellationToken? cancellationToken = null)
         {
             await JSRuntime.InvokeVoidAsync(
-                JsH.Get(JsH.WebStorage.SetItem),
+                TrmrkJsH.Get(TrmrkJsH.WebStorage.SetItem),
                 key, data, IsPersistent);
         }
 
@@ -124,7 +124,7 @@ namespace Turmerik.AspNetCore.Services.LocalSessionStorage
             int maxChunkLength = AppSettings.JsInteropTextChunkMaxCharsCount;
 
             int chunksCount = await JSRuntime.InvokeAsync<int>(
-                JsH.Get(JsH.WebStorage.GetBigItemChunksCount),
+                TrmrkJsH.Get(TrmrkJsH.WebStorage.GetBigItemChunksCount),
                 key, guidStr, maxChunkLength, IsPersistent);
 
             string[] chunksArr = new string[chunksCount];
@@ -132,13 +132,13 @@ namespace Turmerik.AspNetCore.Services.LocalSessionStorage
             for (int i = 0; i < chunksCount; i++)
             {
                 string textChunk = await JSRuntime.InvokeAsync<string>(
-                    JsH.Get(JsH.WebStorage.GetBigItemChunk), guidStr, i);
+                    TrmrkJsH.Get(TrmrkJsH.WebStorage.GetBigItemChunk), guidStr, i);
 
                 chunksArr[i] = textChunk;
             }
 
             await JSRuntime.InvokeVoidAsync(
-                JsH.Get(JsH.WebStorage.ClearBigItemChunks), guidStr);
+                TrmrkJsH.Get(TrmrkJsH.WebStorage.ClearBigItemChunks), guidStr);
 
             string bigText = string.Concat(chunksArr);
             return bigText;
@@ -147,14 +147,14 @@ namespace Turmerik.AspNetCore.Services.LocalSessionStorage
         public async ValueTask RemoveItemsAsync(string[] keysArr, CancellationToken? cancellationToken = null)
         {
             await JSRuntime.InvokeVoidAsync(
-                JsH.Get(JsH.WebStorage.RemoveItems),
+                TrmrkJsH.Get(TrmrkJsH.WebStorage.RemoveItems),
                 keysArr, IsPersistent);
         }
 
         public async ValueTask<string[]> KeysAsync(CancellationToken? cancellationToken = null)
         {
             var keysArr = await JSRuntime.InvokeAsync<string[]>(
-                JsH.Get(JsH.WebStorage.Keys),
+                TrmrkJsH.Get(TrmrkJsH.WebStorage.Keys),
                 IsPersistent);
 
             return keysArr;

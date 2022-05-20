@@ -66,7 +66,7 @@ namespace Turmerik.Blazor.Core.Pages.Shared
 
                 if (map.Any())
                 {
-                    await JSRuntime.InvokeVoidAsync(JsH.Get(JsH.Api.AddBaseUrisMap), map);
+                    await JSRuntime.InvokeVoidAsync(TrmrkJsH.Get(TrmrkJsH.Api.AddBaseUrisMap), map);
                 }
             }
         }

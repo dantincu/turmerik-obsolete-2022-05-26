@@ -79,6 +79,7 @@ namespace Turmerik.AspNetCore.Infrastructure
         public const string UI = "ui";
         public const string BLOCKING = "blocking";
         public const string OVERLAY = "overlay";
+        public const string POPOVER = "popover";
 
         public static readonly string Hidden = Class(HIDDEN);
         public static readonly string Current = Class(CURRENT);
@@ -147,6 +148,7 @@ namespace Turmerik.AspNetCore.Infrastructure
         public static readonly string Rotate90Deg = Class(ROTATE90DEG);
         public static readonly string Opaque = Class(OPAQUE);
         public static readonly string UIBlockingOverlay = Class(UI, BLOCKING, OVERLAY);
+        public static readonly string Popover = Class(POPOVER);
 
         public static string CssClsSel(this string cssClass)
         {

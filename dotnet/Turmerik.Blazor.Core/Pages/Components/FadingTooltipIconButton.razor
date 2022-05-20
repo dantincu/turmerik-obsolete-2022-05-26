@@ -13,7 +13,13 @@
     IsDisabled=@IsDisabled
     OnMouseUp=@OnMouseUpAsync>
     <InnerTemplate>
-        <span tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="@ClickMessage" data-bs-animation="true">
+        <span
+            tabindex="0"
+            data-bs-toggle="popover"
+            data-bs-trigger="hover focus"
+            data-bs-content="@ClickMessage"
+            data-bs-animation="true"
+            data-bs-customClass="@CssClassH.Popover">
         </span>
     </InnerTemplate>
 </IconButton>
@@ -40,10 +46,11 @@
                 await OnClick(args);
             }
 
-            await JSRuntime.InvokeVoidAsync(
-                JsH.Get(JsH.ShowPopover),
+            await JSRuntime.InvokeAsync<int>(
+                TrmrkJsH.Get(TrmrkJsH.ShowPopover),
                 UuidStr,
-                "[data-bs-toggle='popover']");
-            }
+                "[data-bs-toggle='popover']",
+                3000);
+        }
     }
 }

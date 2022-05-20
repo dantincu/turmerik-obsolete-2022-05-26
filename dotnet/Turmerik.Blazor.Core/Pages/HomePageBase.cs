@@ -17,7 +17,7 @@ namespace Turmerik.Blazor.Core.Pages
             await base.OnAfterRenderAsync(firstRender);
 
             await JSRuntime.InvokeVoidAsync(
-                JsH.Get(JsH.AddCssClass),
+                TrmrkJsH.Get(TrmrkJsH.AddCssClass),
                 null, CssClassH.CssClsSel(
                     CssClassH.DefaultLink), "active");
         }

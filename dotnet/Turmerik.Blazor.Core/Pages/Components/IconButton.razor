@@ -47,7 +47,7 @@
         if (!IsDisabled)
         {
             await JSRuntime.InvokeAsync<string>(
-                JsH.Get(JsH.AddCssClass), UuidStr, null, "trmrk-pressed");
+                TrmrkJsH.Get(TrmrkJsH.AddCssClass), UuidStr, null, "trmrk-pressed");
 
             await OnMouseDown.InvokeAsyncIfReq(args);
         }
@@ -58,7 +58,7 @@
         if (!IsDisabled)
         {
             await JSRuntime.InvokeAsync<string>(
-                JsH.Get(JsH.RemoveCssClass), UuidStr, null, "trmrk-pressed");
+                TrmrkJsH.Get(TrmrkJsH.RemoveCssClass), UuidStr, null, "trmrk-pressed");
 
             await OnMouseUp.InvokeAsyncIfReq(args);
         }

@@ -120,17 +120,25 @@ trmrk.closeModal = modalId => {
     modal.hide();
 }
 
-trmrk.showPopover = (domElId, selector) => {
+trmrk.showPopover = (domElId, selector, autohideMillis) => {
     let helper = new DomHelper(domElId, selector);
     var popover = bootstrap.Popover.getOrCreateInstance(helper.DomEl);
 
     popover.show();
-    trmrk.log("Shown popover for", domElId, selector);
+    let retVal = -1;
+
+    if (typeof (autohideMillis) == "number") {
+        retVal = setTimeout(() => {
+            popover.hide();
+        }, autohideMillis);
+    }
+
+    return retVal;
 }
 
 trmrk.hidePopover = (domElId, selector) => {
     let helper = new DomHelper(domElId, selector);
     var popover = bootstrap.Popover.getInstance(helper.DomEl);
 
-    popover.show();
+    popover.hide();
 }

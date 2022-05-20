@@ -1,1 +1,43 @@
-﻿
+﻿.trmrk-grid-keyboard-grid {
+    width: 24rem;
+}
+
+.trmrk-table.trmrk-grid-keyboard-grid > tbody > tr {
+    margin: 0 0 0 0;
+    border: none;
+    border-collapse: collapse;
+}
+
+    .trmrk-table.trmrk-grid-keyboard-grid > tbody > tr > td {
+        padding: 0;
+        margin: 0 0 0 0;
+        width: 2rem;
+        border: 1px solid #D0A080;
+        overflow-x: hidden;
+        border-collapse: collapse;
+    }
+
+        .trmrk-table.trmrk-grid-keyboard-grid > tbody > tr > td > button {
+            display: inline-block;
+            width: 100%;
+            padding: 0;
+            margin: 0;
+            height: 2rem;
+            cursor: pointer;
+            color: #DDA040;
+            font-size: 14px;
+            font-weight: bold;
+            text-align: center;
+            background-color: #403020;
+        }
+
+        .trmrk-table.trmrk-grid-keyboard-grid > tbody > tr > td > button {
+        }
+
+            .trmrk-table.trmrk-grid-keyboard-grid > tbody > tr > td > button.trmrk-dark {
+                background-color: #302010;
+            }
+
+            .trmrk-table.trmrk-grid-keyboard-grid > tbody > tr > td > button:active {
+                background-color: black;
+            }

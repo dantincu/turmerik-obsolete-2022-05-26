@@ -32,7 +32,7 @@ namespace Turmerik.Blazor.Core.Pages.Components
             await base.OnAfterRenderAsync(firstRender);
 
             await JSRuntime.InvokeVoidAsync(
-                JsH.Get(JsH.InitDateTimeUserFriendlyLabels),
+                TrmrkJsH.Get(TrmrkJsH.InitDateTimeUserFriendlyLabels),
                 this.UuidStr);
         }
 

@@ -55,4 +55,17 @@
         AssignMainLayoutService(mainLayoutService);
         return base.OnInitializedAsync();
     }
+
+    protected override async Task<INavMenuItemsViewModel> GetMenuItemsAsync()
+    {
+        var menuItems = GetMenuItemsCore(
+            new NavMenuItemMtbl
+            {
+                Title = "Play",
+                Url = "play",
+                IconCssClass = "oi oi-musical-note"
+            });
+
+        return menuItems;
+    }
 }

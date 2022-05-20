@@ -210,7 +210,7 @@ namespace Turmerik.Blazor.Core.Pages.Components
         protected async Task OnCurrentlyOpenDriveFolderOptionsClickAsync()
         {
             await JSRuntime.InvokeVoidAsync(
-                JsH.Get(JsH.OpenModal),
+                TrmrkJsH.Get(TrmrkJsH.OpenModal),
                 ModalIds.CURRENTLY_OPEN_DRIVE_FOLDER_OPTIONS);
         }
 
@@ -232,7 +232,7 @@ namespace Turmerik.Blazor.Core.Pages.Components
             StateHasChanged();
 
             await JSRuntime.InvokeVoidAsync(
-                JsH.Get(JsH.OpenModal),
+                TrmrkJsH.Get(TrmrkJsH.OpenModal),
                 ModalIds.DRIVE_FOLDER_OPTIONS);
         }
 
@@ -254,7 +254,7 @@ namespace Turmerik.Blazor.Core.Pages.Components
             StateHasChanged();
 
             await JSRuntime.InvokeVoidAsync(
-                JsH.Get(JsH.OpenModal),
+                TrmrkJsH.Get(TrmrkJsH.OpenModal),
                 ModalIds.DRIVE_ITEM_OPTIONS);
         }
 

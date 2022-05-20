@@ -67,7 +67,7 @@
         StateHasChanged();
 
         await JSRuntime.InvokeVoidAsync(
-            JsH.Get(JsH.SetDomElValue),
+            TrmrkJsH.Get(TrmrkJsH.SetDomElValue),
             UuidStr,
             CssClassH.Textbox.CssClsSel(),
             EditableTextValue);
@@ -76,7 +76,7 @@
     private async Task OnTextboxFocusAsync(FocusEventArgs args)
     {
         await JSRuntime.InvokeAsync<string>(
-            JsH.Get(JsH.SelectDomEl),
+            TrmrkJsH.Get(TrmrkJsH.SelectDomEl),
             UuidStr,
             CssClassH.Textbox.CssClsSel());
     }
@@ -113,7 +113,7 @@
     private async Task SetEditableCore(bool editable, bool revertChanges = false)
     {
         string editableTextValue = await JSRuntime.InvokeAsync<string>(
-            JsH.Get(JsH.TextBoxWrapperSetEditable),
+            TrmrkJsH.Get(TrmrkJsH.TextBoxWrapperSetEditable),
             UuidStr,
             CssClassH.Textbox.CssClsSel(),
             CssClassH.TextboxReadonly.CssClsSel(),
