@@ -18,6 +18,7 @@ namespace Turmerik.AspNetCore.Infrastructure
         public static readonly string AddCssClass;
         public static readonly string RemoveCssClass;
         public static readonly string GetDomElValue;
+        public static readonly string SetDomElValue;
         public static readonly string GetDomElInnerText;
         public static readonly string GetDomElInnerHTML;
         public static readonly string GetDomElOuterHTML;
@@ -38,6 +39,7 @@ namespace Turmerik.AspNetCore.Infrastructure
             AddCssClass = nameof(AddCssClass).DecapitalizeFirstLetter();
             RemoveCssClass = nameof(RemoveCssClass).DecapitalizeFirstLetter();
             GetDomElValue = nameof(GetDomElValue).DecapitalizeFirstLetter();
+            SetDomElValue = nameof(SetDomElValue).DecapitalizeFirstLetter();
             GetDomElInnerText = nameof(GetDomElInnerText).DecapitalizeFirstLetter();
             GetDomElInnerHTML = nameof(GetDomElInnerHTML).DecapitalizeFirstLetter();
             GetDomElOuterHTML = nameof(GetDomElOuterHTML).DecapitalizeFirstLetter();

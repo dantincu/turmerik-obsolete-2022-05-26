@@ -36,6 +36,7 @@ namespace Turmerik.Blazor.Core.Pages.Components
         protected string ExpandFoldersGridBtnCssClass => FoldersGridCollapsed ? string.Empty : CssClassH.Hidden;
         protected string CollapseFilesGridBtnCssClass => FilesGridCollapsed ? CssClassH.Hidden : string.Empty;
         protected string ExpandFilesGridBtnCssClass => FilesGridCollapsed ? string.Empty : CssClassH.Hidden;
+        protected bool IsEditingAddressBar { get; set; }
 
         protected DriveItem SelectedDriveFolder { get; set; }
         protected string SelectedDriveFolderId { get; set; }
@@ -336,6 +337,7 @@ namespace Turmerik.Blazor.Core.Pages.Components
                             ServiceArgs.FolderIdentifier = serviceArgs.FolderIdentifier;
                         }
 
+                        IsEditingAddressBar = false;
                         StateHasChanged();
 
                         if (needsRedirect)

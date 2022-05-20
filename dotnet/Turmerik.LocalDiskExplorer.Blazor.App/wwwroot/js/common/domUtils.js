@@ -55,6 +55,11 @@ trmrk.getDomElValue = (domElId, selector) => {
     return helper.DomEl.value;
 };
 
+trmrk.setDomElValue = (domElId, selector, value) => {
+    let helper = new DomHelper(domElId, selector);
+    helper.DomEl.value = value;
+};
+
 trmrk.getDomElInnerText = (domElId, selector) => {
     let helper = new DomHelper(domElId, selector);
     return helper.DomEl.innerText;
@@ -120,6 +125,7 @@ trmrk.showPopover = (domElId, selector) => {
     var popover = bootstrap.Popover.getOrCreateInstance(helper.DomEl);
 
     popover.show();
+    trmrk.log("Shown popover for", domElId, selector);
 }
 
 trmrk.hidePopover = (domElId, selector) => {

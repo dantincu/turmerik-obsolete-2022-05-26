@@ -7,7 +7,7 @@
 @inject IJSRuntime JSRuntime;
 
 <span
-    id="@UuidStr"
+    id="@(Id ?? UuidStr)"
     class="@CssClass @CssClassH.Btn"
     aria-hidden="true"
     title="@Title"
@@ -21,6 +21,9 @@
 </span>
 
 @code {
+    [Parameter]
+    public string Id { get; set; }
+
     [Parameter]
     public string CssClass { get; set; }
 

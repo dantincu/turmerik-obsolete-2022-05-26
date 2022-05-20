@@ -38,7 +38,17 @@
     public Func<TextEventArgsWrapper, Task> OnCancelTextBox { get; set; }
 
     [Parameter]
-    public bool IsEditingText { get; set; }
+    public bool IsEditingText
+    {
+        get => IsEditingTextCore;
+
+        set
+        {
+            SetEditable(value);
+        }
+    }
+
+    private bool IsEditingTextCore { get; set; }
 
     private string EditableTextValue { get; set; }
 
@@ -55,6 +65,12 @@
     {
         EditableTextValue = string.Empty;
         StateHasChanged();
+
+        await JSRuntime.InvokeVoidAsync(
+            JsH.Get(JsH.SetDomElValue),
+            UuidStr,
+            CssClassH.Textbox.CssClsSel(),
+            EditableTextValue);
     }
 
     private async Task OnTextboxFocusAsync(FocusEventArgs args)
@@ -90,6 +106,12 @@
 
     private async Task SetEditable(bool editable, bool revertChanges = false)
     {
+        await SetEditableCore(editable, revertChanges);
+        IsEditingTextCore = editable;
+    }
+
+    private async Task SetEditableCore(bool editable, bool revertChanges = false)
+    {
         string editableTextValue = await JSRuntime.InvokeAsync<string>(
             JsH.Get(JsH.TextBoxWrapperSetEditable),
             UuidStr,
@@ -107,7 +129,6 @@
             EditableTextValue = editableTextValue;
         }
 
-        IsEditingText = editable;
         StateHasChanged();
     }
 

@@ -3,13 +3,11 @@ import { Trmrk as trmrk } from './core.js';
 const webStorage = {
     bigItems: {},
     clear: (isPersistent) => {
-        trmrk.log("webStorage.clear(isPersistent)", isPersistent);
         let storage = trmrk.webStorage.getStorage(isPersistent);
 
         storage.clear();
     },
     containsKey: (key, isPersistent) => {
-        trmrk.log("webStorage.clear(key, isPersistent)", key, isPersistent);
         let storage = trmrk.webStorage.getStorage(isPersistent);
 
         let len = storage.length;
@@ -27,7 +25,6 @@ const webStorage = {
         return retVal;
     },
     keys: isPersistent => {
-        trmrk.log("webStorage.keys(isPersistent)", isPersistent);
         let storage = trmrk.webStorage.getStorage(isPersistent);
 
         let len = storage.length;
@@ -41,26 +38,22 @@ const webStorage = {
         return keysArr;
     },
     getItem: (key, isPersistent) => {
-        trmrk.log("webStorage.getItem(key, isPersistent)", key, isPersistent);
         let storage = trmrk.webStorage.getStorage(isPersistent);
 
         let retVal = storage.getItem(key);
         return retVal;
     },
     setItem: (key, value, isPersistent) => {
-        trmrk.log("webStorage.setItem(key, value, isPersistent)", key, value, isPersistent);
         let storage = trmrk.webStorage.getStorage(isPersistent);
 
         storage.setItem(key, value);
     },
     removeItem: (key, isPersistent) => {
-        trmrk.log("webStorage.removeItem(key, isPersistent)", key, isPersistent);
         let storage = trmrk.webStorage.getStorage(isPersistent);
 
         storage.removeItem(key);
     },
     removeItems: (keysArr, isPersistent) => {
-        trmrk.log("webStorage.removeItems(keysArr, isPersistent)", keysArr, isPersistent);
         let storage = trmrk.webStorage.getStorage(isPersistent);
 
         let len = keysArr.length;
@@ -71,7 +64,6 @@ const webStorage = {
         }
     },
     getStorage: (isPersistent) => {
-        trmrk.log("webStorage.getStorage(isPersistent)", isPersistent);
         let storage;
 
         if (isPersistent) {
@@ -83,7 +75,6 @@ const webStorage = {
         return storage;
     },
     getBigItemChunksCount: (key, guidStr, maxChunkLength, isPersistent) => {
-        trmrk.log("webStorage.getBigItemChunksCount(key, guidStr, maxChunkLength, isPersistent)", key, guidStr, maxChunkLength, isPersistent);
         let text = trmrk.webStorage.getItem(key, isPersistent);
 
         if (typeof (text) !== "string") {
@@ -101,7 +92,6 @@ const webStorage = {
         return textChunk;
     },
     clearBigItemChunks: guidStr => {
-        trmrk.log("webStorage.clearBigItemChunks(guidStr)", guidStr);
         delete Trmrk.webStorage.bigItems[guidStr];
     }
 }

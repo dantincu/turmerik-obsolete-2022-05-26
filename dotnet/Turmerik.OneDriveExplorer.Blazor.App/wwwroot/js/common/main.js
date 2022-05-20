@@ -4,6 +4,6 @@ import { WebStorage } from './webStorage.js';
 import './domUtils.js';
 import './api.js';
 
-trmrk.isLoggingEnabled = false;
+trmrk.isLoggingEnabled = true;
 
 export const Trmrk = trmrk;
