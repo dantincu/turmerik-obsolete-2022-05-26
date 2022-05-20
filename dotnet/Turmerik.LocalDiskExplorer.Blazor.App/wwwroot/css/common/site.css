@@ -100,9 +100,9 @@ app {
         background-color: #202020;
     }
 
-            .trmrk-options {
-                width: 1rem;
-            }
+.trmrk-options {
+    width: 1rem;
+}
 
 .trmrk-rotate90deg {
     transform: rotate(90deg);
@@ -111,3 +111,15 @@ app {
 .trmrk-hidden {
     display: none;
 }
+
+.trmrk-popover.popover,
+.trmrk-popover.popover .popover-body {
+    background-color: #000;
+    color: #d7d7d7;
+}
+
+    .trmrk-popover.popover .popover-arrow {
+        background-color: #000;
+        color: #000;
+        display: none;
+    }

@@ -8,7 +8,7 @@
 @inject IJSRuntime JSRuntime;
 
 <div id="@UuidStr" class="@CssClassH.AddressBarContainer">
-    @if (!IsEditingAddress)
+    @if (!IsEditingAddressCore)
     {
         <IconButton IsDisabled=@AddressGoBackBtnDisabled CssClass="oi oi-arrow-circle-left" Title="Go Back" OnMouseUp=@OnGoBackMouseUpAsyncEventHandler></IconButton>
         <IconButton IsDisabled=@AddressGoParentBtnDisabled CssClass="oi oi-arrow-circle-top" Title="Go Up" OnMouseUp=@OnGoUpMouseUpAsyncEventHandler></IconButton>
@@ -25,7 +25,7 @@
         OnSubmitTextBox=OnSubmitAddressAsync>
     </TrmrkTextBox>
     
-    @if (!IsEditingAddress)
+    @if (!IsEditingAddressCore)
     {
         <IconButton IsDisabled=@OptionsBtnDisabled CssClass="oi oi-ellipses trmrk-rotate90deg" Title="Options" OnMouseUp=@OnOptionsMouseUpAsyncEventHandler></IconButton>
     
@@ -72,7 +72,18 @@
     public bool OptionsBtnDisabled { get; set; }
 
     [Parameter]
-    public bool IsEditingAddress { get; set; }
+    public bool IsEditingAddress
+    {
+        get => IsEditingAddressCore;
+
+        set
+        {
+            IsEditingAddressCore = value;
+            StateHasChanged();
+        }
+    }
+
+    protected bool IsEditingAddressCore { get; set; }
 
     private async Task OnGoBackMouseUpAsyncEventHandler(MouseEventArgs args)
     {
@@ -110,22 +121,17 @@
     private async Task OnEnterAddressAsync(TextEventArgsWrapper args)
     {
         IsEditingAddress = true;
-        StateHasChanged();
     }
 
     private async Task OnSubmitAddressAsync(TextEventArgsWrapper args)
     {
         IsEditingAddress = false;
-        StateHasChanged();
-
         await OnSubmitAddress.InvokeTextEventAsyncIfReq(args);
     }
 
     private async Task OnCancelAddressAsync(TextEventArgsWrapper args)
     {
         IsEditingAddress = false;
-        StateHasChanged();
-
         await OnCancelAddress.InvokeTextEventAsyncIfReq(args);
     }
 }
