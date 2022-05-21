@@ -11,10 +11,11 @@ using Turmerik.Core.Services;
 using Microsoft.JSInterop;
 using Turmerik.Core.Components;
 using Turmerik.AspNetCore.Services;
+using Microsoft.AspNetCore.Components;
 
 namespace Turmerik.Blazor.Core.Pages.Components
 {
-    public abstract class FilesPageComponentBase : PageComponentBase
+    public abstract partial class FilesPageComponentBase : PageComponentBase
     {
         protected const string DEFAULT_ERR_MSG = "An unhandled error has occurred";
         protected const string INVALID_ADDRESS_ERR_MSG = "The provided address is invalid";
@@ -22,6 +23,9 @@ namespace Turmerik.Blazor.Core.Pages.Components
         protected FilesPageComponentBase()
         {
         }
+
+        [Parameter]
+        public bool IsLocalDiskExplorer { get; set; }
 
         protected ILocalStorageWrapper LocalStorage { get; set; }
         protected ISessionStorageWrapper SessionStorage { get; set; }
@@ -36,7 +40,15 @@ namespace Turmerik.Blazor.Core.Pages.Components
         protected string ExpandFoldersGridBtnCssClass => FoldersGridCollapsed ? string.Empty : CssClassH.Hidden;
         protected string CollapseFilesGridBtnCssClass => FilesGridCollapsed ? CssClassH.Hidden : string.Empty;
         protected string ExpandFilesGridBtnCssClass => FilesGridCollapsed ? string.Empty : CssClassH.Hidden;
+
         protected bool IsEditingAddressBar { get; set; }
+        protected bool CurrentlyOpenDriveFolderOptionsModelIsOpen { get; set; }
+        protected bool DriveFolderItemOptionsModelIsOpen { get; set; }
+        protected bool DriveItemOptionsModelIsOpen { get; set; }
+
+        protected List<List<IDriveItemCommand>> CurrentlyOpenDriveFolderCommandsMx { get; set; }
+        protected List<List<IDriveItemCommand>> SelectedDriveFolderCommandsMx { get; set; }
+        protected List<List<IDriveItemCommand>> SelectedDriveItemCommandsMx { get; set; }
 
         protected DriveItem SelectedDriveFolder { get; set; }
         protected string SelectedDriveFolderId { get; set; }
@@ -53,138 +65,67 @@ namespace Turmerik.Blazor.Core.Pages.Components
         protected Guid? TabPageUuid => NavManager.QueryStrings.GetNullableValue(
             QsKeys.TAB_PAGE_UUID, (StringValues str, out Guid value) => Guid.TryParse(str, out value));
 
-        protected async override Task OnAfterRenderAsync(bool firstRender)
+        protected override async Task OnInitializedAsync()
         {
-            await base.OnAfterRenderAsync(firstRender);
+            await base.OnInitializedAsync();
+            DriveItemIdentifier identifier = null;
+            Guid? tabPageUuid = TabPageUuid;
 
-            if (firstRender)
+            bool newTabPage = NavManager.QueryStrings.GetNullableValue(
+                QsKeys.NEW_TAB_PAGE,
+                (StringValues values,
+                    out bool val) => bool.TryParse(
+                        values,
+                        out val)) ?? false;
+
+            if (newTabPage)
             {
-                DriveItemIdentifier identifier = null;
-                Guid? tabPageUuid = TabPageUuid;
-
-                bool newTabPage = NavManager.QueryStrings.GetNullableValue(
-                    QsKeys.NEW_TAB_PAGE,
-                    (StringValues values,
-                        out bool val) => bool.TryParse(
-                            values,
-                            out val)) ?? false;
-
-                if (newTabPage)
+                if (!TabPageUuid.HasValue)
                 {
-                    if (!TabPageUuid.HasValue)
-                    {
-                        tabPageUuid = Guid.NewGuid();
-                    }
-                    else
-                    {
-                        throw new InvalidOperationException("When a new tab is required, the tab page uuid cannot also be set");
-                    }
+                    tabPageUuid = Guid.NewGuid();
                 }
-
-                bool needsRedirect = !TabPageUuid.HasValue;
-
-                string id = NavManager.QueryStrings.GetStringOrNull(QsKeys.DRIVE_ITEM_ID);
-                string path = NavManager.QueryStrings.GetStringOrNull(QsKeys.DRIVE_ITEM_PATH);
-
-                string uri = NavManager.QueryStrings.GetStringOrNull(QsKeys.DRIVE_ITEM_URI);
-                string address = NavManager.QueryStrings.GetStringOrNull(QsKeys.DRIVE_ITEM_ADDRESS);
-
-                if (new string[] { id, path, uri, address }.Any(str => !string.IsNullOrWhiteSpace(str)))
+                else
                 {
-                    needsRedirect = true;
-
-                    identifier = new DriveItemIdentifier
-                    {
-                        Id = id,
-                        Path = path,
-                        Uri = uri,
-                        Address = address
-                    };
+                    throw new InvalidOperationException("When a new tab is required, the tab page uuid cannot also be set");
                 }
-
-                await NavigateCore(serviceArgs =>
-                {
-                    serviceArgs.ActionType = DriveExplorerActionType.Initialize;
-                    serviceArgs.FolderIdentifier = identifier;
-                },
-                tabPageUuid,
-                needsRedirect);
             }
-        }
 
-        protected async Task OnAddressBarGoBackClick(MouseEventArgs args)
-        {
-            await NavigateCore(serviceArgs =>
+            bool needsRedirect = !TabPageUuid.HasValue;
+
+            string id = NavManager.QueryStrings.GetStringOrNull(QsKeys.DRIVE_ITEM_ID);
+            string path = NavManager.QueryStrings.GetStringOrNull(QsKeys.DRIVE_ITEM_PATH);
+
+            string uri = NavManager.QueryStrings.GetStringOrNull(QsKeys.DRIVE_ITEM_URI);
+            string address = NavManager.QueryStrings.GetStringOrNull(QsKeys.DRIVE_ITEM_ADDRESS);
+
+            if (new string[] { id, path, uri, address }.Any(str => !string.IsNullOrWhiteSpace(str)))
             {
-                serviceArgs.ActionType = DriveExplorerActionType.NavigateBack;
-                AssignFolderIdentifier(serviceArgs);
-            },
-            TabPageUuid);
-        }
+                needsRedirect = true;
 
-        protected async Task OnAddressBarGoForwardClick(MouseEventArgs args)
-        {
-            await NavigateCore(serviceArgs =>
-            {
-                serviceArgs.ActionType = DriveExplorerActionType.NavigateForward;
-                AssignFolderIdentifier(serviceArgs);
-            },
-            TabPageUuid);
-        }
-
-        protected async Task OnAddressBarGoUpClick(MouseEventArgs args)
-        {
-            await NavigateCore(serviceArgs =>
-            {
-                serviceArgs.ActionType = DriveExplorerActionType.Navigate;
-                AssignFolderIdentifier(serviceArgs);
-
-                AssignFolderNavigation(
-                    serviceArgs,
-                    null,
-                    null,
-                    true);
-            },
-            TabPageUuid);
-        }
-
-        protected async Task OnAddressBarReloadClick(MouseEventArgs args)
-        {
-            await NavigateCore(serviceArgs =>
-            {
-                serviceArgs.ActionType = DriveExplorerActionType.ReloadCurrentTab;
-            },
-            TabPageUuid);
-        }
-
-        protected async Task OnSubmitAddress(TextEventArgsWrapper args)
-        {
-            await SubmitAddressAsync(args.Value);
-        }
-
-        protected async Task SubmitAddressAsync(string address)
-        {
-            await NavigateCore(serviceArgs =>
-            {
-                serviceArgs.ActionType = DriveExplorerActionType.Navigate;
-
-                AssignFolderNavigation(
-                    serviceArgs,
-                    null,
-                    address);
-
-                if (string.IsNullOrWhiteSpace(address))
+                identifier = new DriveItemIdentifier
                 {
-                    serviceArgs.FolderIdentifier = new DriveItemIdentifier
-                    {
-                        IsRootFolder = true,
-                    };
-                }
+                    Id = id,
+                    Path = path,
+                    Uri = uri,
+                    Address = address
+                };
+            }
+
+            await NavigateCore(serviceArgs =>
+            {
+                serviceArgs.ActionType = DriveExplorerActionType.Initialize;
+                serviceArgs.FolderIdentifier = identifier;
             },
-            TabPageUuid);
+            tabPageUuid,
+            needsRedirect);
+
+            CurrentlyOpenDriveFolderCommandsMx = GetCurrentlyOpenDriveFolderCommandsMx();
+
+            SelectedDriveFolderCommandsMx = GetSelectedDriveFolderCommandsMx();
+            SelectedDriveItemCommandsMx = GetSelectedDriveItemCommandsMx();
         }
 
-        protected async Task OnDriveFolderClickAsync(DriveItem driveFolder)
+        protected async Task OpenDriveFolderAsync(DriveItem driveFolder)
         {
             await NavigateCore(serviceArgs =>
             {
@@ -203,88 +144,9 @@ namespace Turmerik.Blazor.Core.Pages.Components
             TabPageUuid);
         }
 
-        protected async Task OnDriveItemClickAsync(DriveItem driveItem)
+        protected async Task OpenDriveItemAsync(DriveItem driveItem)
         {
-        }
-
-        protected async Task OnCurrentlyOpenDriveFolderOptionsClickAsync()
-        {
-            await JSRuntime.InvokeVoidAsync(
-                TrmrkJsH.Get(TrmrkJsH.OpenModal),
-                ModalIds.CURRENTLY_OPEN_DRIVE_FOLDER_OPTIONS);
-        }
-
-        protected async Task OnDriveFolderOptionsClickAsync(DriveItem driveFolder)
-        {
-            var identifier = new DriveItemIdentifier
-            {
-                Id = driveFolder.Id,
-                Name = driveFolder.Name,
-                ParentId = ServiceArgs.Data.TabPageItems.CurrentlyOpenFolder.Id,
-            };
-
-            SelectedDriveFolder = driveFolder;
-            SelectedDriveFolderName = driveFolder.Name;
-            SelectedDriveFolderId = DriveFolderService.GetDriveItemId(identifier);
-            SelectedDriveFolderAddress = DriveFolderService.GetDriveItemAddress(identifier);
-            SelectedDriveFolderUri = DriveFolderService.GetDriveItemUri(identifier);
-
-            StateHasChanged();
-
-            await JSRuntime.InvokeVoidAsync(
-                TrmrkJsH.Get(TrmrkJsH.OpenModal),
-                ModalIds.DRIVE_FOLDER_OPTIONS);
-        }
-
-        protected async Task OnDriveItemOptionsClickAsync(DriveItem driveItem)
-        {
-            var identifier = new DriveItemIdentifier
-            {
-                Id = driveItem.Id,
-                Name = driveItem.Name,
-                ParentId = ServiceArgs.Data.TabPageItems.CurrentlyOpenFolder.Id,
-            };
-
-            SelectedDriveItem = driveItem;
-            SelectedDriveItemName = driveItem.Name;
-            SelectedDriveItemId = DriveFolderService.GetDriveItemId(identifier);
-            SelectedDriveItemAddress = DriveFolderService.GetDriveItemAddress(identifier);
-            SelectedDriveItemUri = DriveFolderService.GetDriveItemUri(identifier);
-
-            StateHasChanged();
-
-            await JSRuntime.InvokeVoidAsync(
-                TrmrkJsH.Get(TrmrkJsH.OpenModal),
-                ModalIds.DRIVE_ITEM_OPTIONS);
-        }
-
-        protected async Task OnTabPageHeadClickAsync(IntEventArgsWrapper args)
-        {
-            await NavigateCore(serviceArgs =>
-            {
-                serviceArgs.ActionType = DriveExplorerActionType.ChangeTab;
-                serviceArgs.TabPageUuid = ServiceArgs.Data.TabPageItems.Header.TabPageHeads[args.Value].Uuid;
-            },
-            TabPageUuid);
-        }
-
-        protected async Task OnNewTabPageClickAsync(MouseEventArgs args)
-        {
-            await NavigateCore(serviceArgs =>
-            {
-                serviceArgs.ActionType = DriveExplorerActionType.NewTab;
-            },
-            TabPageUuid);
-        }
-
-        protected async Task OnCloseTabPageClickAsync(IntEventArgsWrapper args)
-        {
-            await NavigateCore(serviceArgs =>
-            {
-                serviceArgs.ActionType = DriveExplorerActionType.CloseTab;
-                serviceArgs.TrgTabPageUuid = ServiceArgs.Data.TabPageItems.Header.TabPageHeads[args.Value].Uuid;
-            },
-            TabPageUuid);
+            await OpenFileInOSDefaultApp(driveItem);
         }
 
         private async Task NavigateCore(
@@ -297,6 +159,12 @@ namespace Turmerik.Blazor.Core.Pages.Components
                 await MainLayoutService.ExecuteWithUIBlockingOverlay(
                     async (uiOverlayVM) =>
                     {
+                        if (IsEditingAddressBar)
+                        {
+                            IsEditingAddressBar = false;
+                            StateHasChanged();
+                        }
+
                         var serviceArgs = new DriveExplorerServiceArgs
                         {
                             CacheKeyGuid = localSessionGuid,
@@ -314,6 +182,8 @@ namespace Turmerik.Blazor.Core.Pages.Components
 
                         try
                         {
+                            var task = AssureAllModalsAreClosedAsync();
+
                             argsCallback(serviceArgs);
                             await DriveFolderService.NavigateAsync(serviceArgs);
 
@@ -326,6 +196,8 @@ namespace Turmerik.Blazor.Core.Pages.Components
 
                             ServiceArgs = serviceArgs;
                             ClearError();
+                            
+                            await task;
                         }
                         catch (Exception ex)
                         {
@@ -337,7 +209,6 @@ namespace Turmerik.Blazor.Core.Pages.Components
                             ServiceArgs.FolderIdentifier = serviceArgs.FolderIdentifier;
                         }
 
-                        IsEditingAddressBar = false;
                         StateHasChanged();
 
                         if (needsRedirect)
@@ -350,7 +221,7 @@ namespace Turmerik.Blazor.Core.Pages.Components
 
                         uiOverlayVM.Enabled = false;
                     });
-                });
+            });
         }
 
         private void ClearError()

@@ -18,6 +18,8 @@ namespace Turmerik.AspNetCore.Services.DriveItems
         protected abstract Task RenameFileCoreAsync(string fileId, string newFileName);
         protected abstract Task MoveFolderCoreAsync(string folderId, string newParentFolderId, string newFolderName);
         protected abstract Task MoveFileCoreAsync(string fileId, string newParentFolderId, string newFileName);
+        protected abstract Task CopyFolderCoreAsync(string folderId, string newParentFolderId, string newFolderName);
+        protected abstract Task CopyFileCoreAsync(string fileId, string newParentFolderId, string newFileName);
 
         private async Task CreateNewFolderAsync(DriveExplorerServiceArgs args)
         {
@@ -60,6 +62,16 @@ namespace Turmerik.AspNetCore.Services.DriveItems
         }
 
         private async Task MoveFileAsync(DriveExplorerServiceArgs args)
+        {
+
+        }
+
+        private async Task CopyFolderAsync(DriveExplorerServiceArgs args)
+        {
+
+        }
+
+        private async Task CopyFileAsync(DriveExplorerServiceArgs args)
         {
 
         }

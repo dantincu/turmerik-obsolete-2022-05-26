@@ -186,6 +186,17 @@ namespace Turmerik.AspNetCore.Services.DriveItems
             File.Move(fileId, path);
         }
 
+        protected override async Task CopyFolderCoreAsync(string folderId, string newParentFolderId, string newFolderName)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override async Task CopyFileCoreAsync(string fileId, string newParentFolderId, string newFileName)
+        {
+            string newFilePath = Path.Combine(newParentFolderId, newFileName);
+            File.Copy(fileId, newFilePath);
+        }
+
         protected override async Task RenameFolderCoreAsync(string folderId, string newFolderName)
         {
             string path = Path.GetDirectoryName(folderId);

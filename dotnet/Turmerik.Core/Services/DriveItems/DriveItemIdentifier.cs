@@ -28,7 +28,9 @@ namespace Turmerik.Core.Services.DriveItems
         RenameFolder,
         RenameFile,
         MoveFolder,
-        MoveFile
+        MoveFile,
+        CopyFolder,
+        CopyFile
     }
 
     public enum MsOfficeFileType

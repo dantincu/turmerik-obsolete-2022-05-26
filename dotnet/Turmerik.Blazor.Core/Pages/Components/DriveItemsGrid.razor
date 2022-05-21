@@ -46,7 +46,9 @@
             var dvItem = driveItem as DriveItem;
 
             <tr>
-                <th scope="row"><span class="oi @IconCssClass" aria-hidden="true"></span></th>
+                <th scope="row" @onclick=@OnDriveItemClickEventHandler(dvItem)>
+                    <span class="oi @IconCssClass" aria-hidden="true"></span>
+                </th>
                 <td @onclick=@OnDriveItemClickEventHandler(dvItem)>
                     <span class="@CssClassH.CellName">@dvItem.Name</span>&nbsp;
                     @if (!string.IsNullOrWhiteSpace(dvItem.Label))

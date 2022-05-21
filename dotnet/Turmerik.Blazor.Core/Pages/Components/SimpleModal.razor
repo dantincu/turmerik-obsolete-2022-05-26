@@ -1,6 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Components.Web
 @using Microsoft.JSInterop
 @using Turmerik.AspNetCore.Infrastructure
+@using Turmerik.Core.Helpers;
 
 @inherits SimpleModalBase
 
@@ -80,8 +81,12 @@
     [Parameter]
     public RenderFragment<object> FooterTemplate { get; set; }
 
+    [Parameter]
+    public Func<Task> OnCloseModalAsync { get; set; }
+
     private async Task OnCloseModalClickAsync(MouseEventArgs args)
     {
         await jsRuntime.InvokeVoidAsync(TrmrkJsH.Get(TrmrkJsH.CloseModal), ModalId);
+        await OnCloseModalAsync.InvokeAsyncIfReq();
     }
 }

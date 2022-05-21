@@ -9,7 +9,9 @@
 
 @inject IJSRuntime jsRuntime;
 
-<SimpleModal ModalId="@ModalId">
+<SimpleModal
+    ModalId="@ModalId"
+    OnCloseModalAsync=OnCloseModalAsync>
     <HeaderTemplate>
         <IdentifierLabel
             IdentifierValue=@DriveItemName
@@ -53,8 +55,8 @@
                 {
                     foreach (var cmd in commandsList)
                     {
-                        <button type="button" class="btn btn-dark" @onmouseup=@cmd.Item2>
-                            @cmd.Item1
+                        <button type="button" class="btn btn-dark" @onmouseup=@cmd.Action>
+                            @cmd.CommandText
                         </button>
                     }
                 }
@@ -107,7 +109,10 @@
     public string DriveItemId { get; set; }
 
     [Parameter]
-    public List<List<Tuple<string, Func<MouseEventArgs, Task>>>> CommandsMx { get; set; }
+    public List<List<IDriveItemCommand>> CommandsMx { get; set; }
+
+    [Parameter]
+    public Func<Task> OnCloseModalAsync { get; set; }
 
     protected bool? DriveItemNameClipboardIconAfterTemplate => (AllowAllToClipboard || AllowDriveItemNameToClipboard) ? true : null;
     protected bool? DriveItemAddressClipboardIconAfterTemplate => (AllowAllToClipboard || ShowDriveItemAddress) ? true : null;

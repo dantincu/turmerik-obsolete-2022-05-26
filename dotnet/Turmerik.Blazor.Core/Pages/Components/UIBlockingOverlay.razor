@@ -5,8 +5,8 @@
 
 @inject IMainLayoutService mainLayoutService;
 
-<div>
-    <div id="@DomIds.UI_BLOCKING_OVERLAY" class="@CssClassH.UIBlockingOverlay @OverlayCssClass">
+<div id="@DomIds.UI_BLOCKING_OVERLAY_CONTAINER" class="@OverlayCssClass">
+    <div id="@DomIds.UI_BLOCKING_OVERLAY">
         @if (ViewModel.Error != null)
         {
             <ErrorView ViewModel=@ViewModel.Error ViewSize=@ErrorViewSize.Large></ErrorView>

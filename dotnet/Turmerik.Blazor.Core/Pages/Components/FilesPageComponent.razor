@@ -123,31 +123,37 @@
 
         <DriveItemOptionsModal
             ModalId="@ModalIds.CURRENTLY_OPEN_DRIVE_FOLDER_OPTIONS"
+            OnCloseModalAsync=OnCurrentlyOpenDriveFolderItemOptionsModalClosedAsync
             DriveItemName="@currentlyOpenFolder?.Name"
             AllowDriveItemNameToClipboard="@(!isRootFolder)"
             DriveItemAddress="@currentlyOpenIdentifier?.Address"
             ShowDriveItemAddress="@(!isRootFolder)"
             DriveItemUri="@currentlyOpenIdentifier?.Uri"
             ShowDriveItemUri="@(!isRootFolder)"
-            DriveItemId="@currentlyOpenFolder?.Id">
+            DriveItemId="@currentlyOpenFolder?.Id"
+            CommandsMx=CurrentlyOpenDriveFolderCommandsMx>
         </DriveItemOptionsModal>
 
         <DriveItemOptionsModal
             ModalId="@ModalIds.DRIVE_FOLDER_OPTIONS"
+            OnCloseModalAsync=OnDriveFolderItemOptionsModalClosedAsync
             DriveItemName="@SelectedDriveFolderName"
             DriveItemAddress="@SelectedDriveFolderAddress"
             DriveItemUri="@SelectedDriveFolderUri"
             DriveItemId="@SelectedDriveFolderId"
-            AllowAllToClipboard="true">
+            AllowAllToClipboard="true"
+            CommandsMx=SelectedDriveFolderCommandsMx>
         </DriveItemOptionsModal>
 
         <DriveItemOptionsModal
             ModalId="@ModalIds.DRIVE_ITEM_OPTIONS"
+            OnCloseModalAsync=OnDriveItemOptionsModalClosedAsync
             DriveItemName="@SelectedDriveItemName"
             DriveItemAddress="@SelectedDriveItemAddress"
             DriveItemUri="@SelectedDriveItemUri"
             DriveItemId="@SelectedDriveItemId"
-            AllowAllToClipboard="true">
+            AllowAllToClipboard="true"
+            CommandsMx=SelectedDriveItemCommandsMx>
         </DriveItemOptionsModal>
     }
     else
@@ -157,9 +163,6 @@
 </div>
 
 @code {
-    [Parameter]
-    public bool IsLocalDiskExplorer { get; set; }
-
     protected async Task OnCurrentlyOpenDriveFolderOptionsClick(MouseEventArgs args)
     {
         await OnCurrentlyOpenDriveFolderOptionsClickAsync();
@@ -197,6 +200,21 @@
     {
         FilesGridCollapsed = true;
         StateHasChanged();
+    }
+
+    protected async Task OnCurrentlyOpenDriveFolderItemOptionsModalClosedAsync()
+    {
+        CurrentlyOpenDriveFolderOptionsModelIsOpen = false;
+    }
+
+    protected async Task OnDriveFolderItemOptionsModalClosedAsync()
+    {
+        DriveFolderItemOptionsModelIsOpen = false;
+    }
+
+    protected async Task OnDriveItemOptionsModalClosedAsync()
+    {
+        DriveItemOptionsModelIsOpen = false;
     }
 
     protected override async Task OnInitializedAsync()

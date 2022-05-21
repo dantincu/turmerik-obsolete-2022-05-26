@@ -87,6 +87,16 @@ namespace Turmerik.AspNetCore.MsIdentity.Services.DriveItems
             throw new NotImplementedException();
         }
 
+        protected override Task CopyFolderCoreAsync(string folderId, string newParentFolderId, string newFolderName)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override Task CopyFileCoreAsync(string fileId, string newParentFolderId, string newFileName)
+        {
+            throw new NotImplementedException();
+        }
+
         protected override bool TryNormalizeDriveFolderIdentifiersCore(
             ref DriveItemIdentifier identifier,
             out string errorMessage)

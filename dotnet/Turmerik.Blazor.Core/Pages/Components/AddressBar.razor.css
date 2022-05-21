@@ -34,7 +34,7 @@
 
 .trmrk-address-bar-container ::deep .trmrk-btn {
     padding: 4px 6px 0px 6px;
-    cursor: grab;
+    cursor: pointer;
     font-size: 1.1rem;
 }
 

@@ -1,9 +1,10 @@
-﻿.trmrk-ui-blocking-overlay {
+﻿#ui-blocking-overlay-container,
+#ui-blocking-overlay {
     display: flex;
-    flex-flow: column;
-    z-index: 1000;
-    background-color: #0000;
     position: absolute;
+    flex-flow: column;
+    z-index: 2000;
+    background-color: #0000;
     top: 0px;
     left: 0px;
     margin: 0;
@@ -12,13 +13,20 @@
     height: 100%;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
+    flex-grow: 1;
+    min-height: 20rem;
+}
+
+#ui-blocking-overlay {
+    position: sticky;
     border-top: 1px solid #ff6a00;
 }
 
-.trmrk-ui-blocking-overlay.trmrk-opaque {
+#ui-blocking-overlay-container.trmrk-opaque {
     background-color: #111;
 }
 
-.trmrk-ui-blocking-overlay.trmrk-hidden {
+#ui-blocking-overlay-container.trmrk-hidden {
     display: none;
 }

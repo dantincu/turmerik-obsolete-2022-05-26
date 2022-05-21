@@ -162,6 +162,12 @@ namespace Turmerik.AspNetCore.Services.DriveItems
                 case DriveExplorerActionType.MoveFile:
                     await MoveFileAsync(args);
                     break;
+                case DriveExplorerActionType.CopyFolder:
+                    await CopyFolderAsync(args);
+                    break;
+                case DriveExplorerActionType.CopyFile:
+                    await CopyFileAsync(args);
+                    break;
                 default:
                     throw new NotSupportedException();
             }
