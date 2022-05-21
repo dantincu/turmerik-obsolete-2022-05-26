@@ -134,3 +134,8 @@ main {
     padding: 50px;
     font-size: 1rem;
 }
+
+::deep .trmrk-data-grid {
+    max-height: 100vh;
+    overflow-y: scroll;
+}

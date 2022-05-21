@@ -117,12 +117,14 @@ namespace Turmerik.Blazor.Core.Pages.Components
                 serviceArgs.FolderIdentifier = identifier;
             },
             tabPageUuid,
-            needsRedirect);
+            needsRedirect,
+            () =>
+            {
+                CurrentlyOpenDriveFolderCommandsMx = GetCurrentlyOpenDriveFolderCommandsMx();
 
-            CurrentlyOpenDriveFolderCommandsMx = GetCurrentlyOpenDriveFolderCommandsMx();
-
-            SelectedDriveFolderCommandsMx = GetSelectedDriveFolderCommandsMx();
-            SelectedDriveItemCommandsMx = GetSelectedDriveItemCommandsMx();
+                SelectedDriveFolderCommandsMx = GetSelectedDriveFolderCommandsMx();
+                SelectedDriveItemCommandsMx = GetSelectedDriveItemCommandsMx();
+            });
         }
 
         protected async Task OpenDriveFolderAsync(DriveItem driveFolder)
@@ -152,7 +154,8 @@ namespace Turmerik.Blazor.Core.Pages.Components
         private async Task NavigateCore(
             Action<DriveExplorerServiceArgs> argsCallback,
             Guid? tabPageUuid,
-            bool needsRedirect = false)
+            bool needsRedirect = false,
+            Action callback = null)
         {
             await IfLocalSessionGuidHasValueAsync(async localSessionGuid =>
             {
@@ -195,8 +198,9 @@ namespace Turmerik.Blazor.Core.Pages.Components
                             }
 
                             ServiceArgs = serviceArgs;
+                            callback?.Invoke();
+
                             ClearError();
-                            
                             await task;
                         }
                         catch (Exception ex)

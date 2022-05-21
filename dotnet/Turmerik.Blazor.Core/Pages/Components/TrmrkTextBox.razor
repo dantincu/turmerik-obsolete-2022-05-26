@@ -12,8 +12,8 @@
         <span class="oi oi-arrow-circle-left" @onmouseup=OnCancelTextboxBtnClickAsync></span>
     }
     
-    <input type="text" value="@EditableTextValue" class="@CssClassH.Textbox @CssClassH.Hidden" @onfocus=@OnTextboxFocusAsync @onkeydown=@OnTextboxKeyDownAsync />
-    <input type="text" readonly value="@TextValue" class="@CssClassH.TextboxReadonly" @onclick=@OnTextboxReadonlyClickAsync />
+    <input type="text" value="@EditableTextValue" class="@CssClassH.Textbox @EditableTextboxCssClass" @onfocus=@OnTextboxFocusAsync @onkeydown=@OnTextboxKeyDownAsync />
+    <input type="text" readonly value="@TextValue" class="@CssClassH.TextboxReadonly @ReadonlyTextboxCssClass" @onclick=@OnTextboxReadonlyClickAsync />
 
     @if (IsEditingText)
     {
@@ -39,23 +39,17 @@
     public Func<TextEventArgsWrapper, Task> OnCancelTextBox { get; set; }
 
     [Parameter]
-    public bool IsEditingText
-    {
-        get => IsEditingTextCore;
-
-        set
-        {
-            SetEditable(value);
-        }
-    }
-
-    private bool IsEditingTextCore { get; set; }
+    public bool IsEditingText { get; set; }
 
     private string EditableTextValue { get; set; }
 
+    private string ReadonlyTextboxCssClass => IsEditingText ? CssClassH.Hidden : string.Empty;
+    private string EditableTextboxCssClass => IsEditingText ? string.Empty : CssClassH.Hidden;
+
     private async Task OnCancelTextboxBtnClickAsync(MouseEventArgs args)
     {
-        await SetEditable(false, true);
+        EditableTextValue = TextValue;
+        IsEditingText = false;
 
         await OnCancelTextBox.InvokeTextEventAsyncIfReq(
             TextValue,
@@ -65,21 +59,11 @@
     private async Task OnClearTextboxBtnClickAsync(MouseEventArgs args)
     {
         EditableTextValue = string.Empty;
-        StateHasChanged();
-
-        await JSRuntime.InvokeVoidAsync(
-            TrmrkJsH.Get(TrmrkJsH.SetDomElValue),
-            UuidStr,
-            CssClassH.Textbox.CssClsSel(),
-            EditableTextValue);
     }
 
     private async Task OnTextboxFocusAsync(FocusEventArgs args)
     {
-        await JSRuntime.InvokeAsync<string>(
-            TrmrkJsH.Get(TrmrkJsH.SelectDomEl),
-            UuidStr,
-            CssClassH.Textbox.CssClsSel());
+        await SelectEditableTextBoxAsync();
     }
 
     private async Task OnTextboxKeyDownAsync(KeyboardEventArgs args)
@@ -97,7 +81,8 @@
 
     private async Task OnTextboxReadonlyClickAsync(MouseEventArgs args)
     {
-        await SetEditable(true);
+        EditableTextValue = TextValue;
+        IsEditingText = true;
 
         await OnEnterTextBox.InvokeTextEventAsyncIfReq(
             TextValue,
@@ -105,39 +90,15 @@
             args.Button.IsLeftMouseButton());
     }
 
-    private async Task SetEditable(bool editable, bool revertChanges = false)
-    {
-        IsEditingTextCore = editable;
-        await SetEditableCore(editable, revertChanges);
-    }
-
-    private async Task SetEditableCore(bool editable, bool revertChanges = false)
-    {
-        string editableTextValue = await JSRuntime.InvokeAsync<string>(
-            TrmrkJsH.Get(TrmrkJsH.TextBoxWrapperSetEditable),
-            UuidStr,
-            CssClassH.Textbox.CssClsSel(),
-            CssClassH.TextboxReadonly.CssClsSel(),
-            editable,
-            revertChanges);
-            
-        if (editable)
-        {
-            EditableTextValue = TextValue;
-        }
-        else
-        {
-            EditableTextValue = editableTextValue;
-        }
-
-        StateHasChanged();
-    }
-
     private async Task SubmitTextbox(EventArgs args)
     {
-        await SetEditable(false);
+        EditableTextValue = await JSRuntime.InvokeAsync<string>(
+            TrmrkJsH.Get(TrmrkJsH.GetDomElValue),
+            UuidStr, CssClassH.Textbox.CssClsSel());
+
         TextValue = EditableTextValue;
-        
+        IsEditingText = false;
+
         await OnSubmitTextBox.InvokeTextEventAsyncIfReq(
             TextValue,
             args);
@@ -145,10 +106,19 @@
 
     private async Task CancelTextbox(EventArgs args)
     {
-        await SetEditable(false, true);
-        
+        EditableTextValue = TextValue;
+        IsEditingText = true;
+
         await OnCancelTextBox.InvokeTextEventAsyncIfReq(
             TextValue,
             args);
+    }
+
+    private async Task SelectEditableTextBoxAsync()
+    {
+        await JSRuntime.InvokeAsync<string>(
+            TrmrkJsH.Get(TrmrkJsH.SelectDomEl),
+            UuidStr,
+            CssClassH.Textbox.CssClsSel());
     }
 }
