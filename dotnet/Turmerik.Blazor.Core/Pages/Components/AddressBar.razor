@@ -8,7 +8,7 @@
 @inject IJSRuntime JSRuntime;
 
 <div id="@UuidStr" class="@CssClassH.AddressBarContainer">
-    @if (!IsEditingAddressCore)
+    @if (!IsEditingAddress)
     {
         <IconButton IsDisabled=@AddressGoBackBtnDisabled CssClass="oi oi-arrow-circle-left" Title="Go Back" OnMouseUp=@OnGoBackMouseUpAsyncEventHandler></IconButton>
         <IconButton IsDisabled=@AddressGoParentBtnDisabled CssClass="oi oi-arrow-circle-top" Title="Go Up" OnMouseUp=@OnGoUpMouseUpAsyncEventHandler></IconButton>
@@ -17,7 +17,8 @@
     }
 
     <TrmrkTextBox
-        IsEditingText=@IsEditingAddress
+        IsEditing=IsEditingAddress
+        IsEditingEnabled=IsEditingEnabled
         ComponentCssClass="@CssClassH.AddressBarWrapper"
         TextValue="@AddressStrValue"
         OnEnterTextBox="OnEnterAddressAsync"
@@ -25,7 +26,7 @@
         OnSubmitTextBox=OnSubmitAddressAsync>
     </TrmrkTextBox>
     
-    @if (!IsEditingAddressCore)
+    @if (!IsEditingAddress)
     {
         <IconButton IsDisabled=@OptionsBtnDisabled CssClass="oi oi-ellipses trmrk-rotate90deg" Title="Options" OnMouseUp=@OnOptionsMouseUpAsyncEventHandler></IconButton>
     
@@ -72,18 +73,12 @@
     public bool OptionsBtnDisabled { get; set; }
 
     [Parameter]
-    public bool IsEditingAddress
-    {
-        get => IsEditingAddressCore;
+    public bool IsEditingAddress { get; set; }
 
-        set
-        {
-            IsEditingAddressCore = value;
-            StateHasChanged();
-        }
-    }
+    [Parameter]
+    public bool IsEditingEnabled { get; set; }
 
-    protected bool IsEditingAddressCore { get; set; }
+    public Func<bool, Task> OnAddressEditing { get; set; }
 
     private async Task OnGoBackMouseUpAsyncEventHandler(MouseEventArgs args)
     {
@@ -121,17 +116,26 @@
     private async Task OnEnterAddressAsync(TextEventArgsWrapper args)
     {
         IsEditingAddress = true;
+        StateHasChanged();
+
+        await OnAddressEditing.InvokeAsyncIfReq(true);
     }
 
     private async Task OnSubmitAddressAsync(TextEventArgsWrapper args)
     {
         IsEditingAddress = false;
+        StateHasChanged();
+
+        await OnAddressEditing.InvokeAsyncIfReq(false);
         await OnSubmitAddress.InvokeTextEventAsyncIfReq(args);
     }
 
     private async Task OnCancelAddressAsync(TextEventArgsWrapper args)
     {
         IsEditingAddress = false;
+        StateHasChanged();
+
+        await OnAddressEditing.InvokeAsyncIfReq(false);
         await OnCancelAddress.InvokeTextEventAsyncIfReq(args);
     }
 }

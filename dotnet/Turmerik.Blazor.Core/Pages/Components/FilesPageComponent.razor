@@ -37,9 +37,10 @@
             isRootFolder = currentlyOpenFolder.IsRootFolder ?? false;
         }
 
-        <AddressBar
+        <AddressBar @ref="AddressBar"
             AddressStrValue=@ServiceArgs.FolderIdentifier.Address
             IsEditingAddress=@IsEditingAddressBar
+            IsEditingEnabled="true"
             OnGoBackClick=@OnAddressBarGoBackClick
             OnGoUpClick=@OnAddressBarGoUpClick
             OnGoForwardClick=@OnAddressBarGoForwardClick
@@ -66,57 +67,43 @@
             OnCloseTabPageClick=@OnCloseTabPageClickAsync>
             <PageTemplate>
                 <div class="@CssClassH.DriveTabViewPage">
-                    <h6>
-                        Folders
-                        <span class="oi oi-caret-bottom @CollapseFoldersGridBtnCssClass" aria-hidden="true" @onmouseup=@OnCollapseFoldersGridClickAsync></span>
-                        <span class="oi oi-caret-right @ExpandFoldersGridBtnCssClass" aria-hidden="true" @onmouseup=@OnExpandFoldersGridClickAsync></span>
-                    </h6>
+                    <h6>Folders</h6>
 
-                    @if (!FoldersGridCollapsed)
-                    {
-                        <DriveItemsGrid
-                            DriveItemType=DriveItem
-                            DriveItems=context.FolderItems
-                            TableCssClass="@CssClassH.DriveFoldersGrid"
-                            IconCssClass="oi-folder"
-                            OnDriveItemClick="@OnDriveFolderClickAsync"
-                            OnDriveItemOptionsClick=@OnDriveFolderOptionsClick>
-                                <SpecificRowColumns Context="ctx">
+                    <DriveItemsGrid
+                        DriveItemType=DriveItem
+                        DriveItems=context.FolderItems
+                        TableCssClass="@CssClassH.DriveFoldersGrid"
+                        IconCssClass="oi-folder"
+                        OnDriveItemClick="@OnDriveFolderClickAsync"
+                        OnDriveItemOptionsClick=@OnDriveFolderOptionsClick>
+                            <SpecificRowColumns Context="ctx">
 
-                                </SpecificRowColumns>
-                                <SpecificRowCells Context="dvFolder">
+                            </SpecificRowColumns>
+                            <SpecificRowCells Context="dvFolder">
 
-                                </SpecificRowCells>
-                        </DriveItemsGrid>
-                    }
+                            </SpecificRowCells>
+                    </DriveItemsGrid>
 
-                    <h6>
-                        Files
-                        <span class="oi oi-caret-bottom @CollapseFilesGridBtnCssClass" aria-hidden="true" @onmouseup=@OnCollapseFilesGridClickAsync></span>
-                        <span class="oi oi-caret-right @ExpandFilesGridBtnCssClass" aria-hidden="true" @onmouseup=@OnExpandFilesGridClickAsync></span>
-                    </h6>
+                    <h6>Files</h6>
 
-                    @if (!FilesGridCollapsed)
-                    {
-                        <DriveItemsGrid
-                            DriveItemType=DriveItem
-                            DriveItems=@context.FileItems
-                            TableCssClass="@CssClassH.DriveItemsGrid"
-                            IconCssClass="oi-file"
-                            OnDriveItemClick="@OnDriveItemClickAsync"
-                            OnDriveItemOptionsClick=@OnDriveItemOptionsClick>
-                                <SpecificRowColumns Context="ctx">
-                                    <th class="@CssClassH.ColExt">Ext</th>
-                                </SpecificRowColumns>
-                                <SpecificRowCells Context="dvFile">
-                                    @{
-                                        string extension = Path.GetExtension(dvFile.Name);
-                                    }
+                    <DriveItemsGrid
+                        DriveItemType=DriveItem
+                        DriveItems=@context.FileItems
+                        TableCssClass="@CssClassH.DriveItemsGrid"
+                        IconCssClass="oi-file"
+                        OnDriveItemClick="@OnDriveItemClickAsync"
+                        OnDriveItemOptionsClick=@OnDriveItemOptionsClick>
+                            <SpecificRowColumns Context="ctx">
+                                <th class="@CssClassH.ColExt">Ext</th>
+                            </SpecificRowColumns>
+                            <SpecificRowCells Context="dvFile">
+                                @{
+                                    string extension = Path.GetExtension(dvFile.Name);
+                                }
 
-                                    <td>@extension</td>
-                                </SpecificRowCells>
-                        </DriveItemsGrid>
-                    }
+                                <td>@extension</td>
+                            </SpecificRowCells>
+                    </DriveItemsGrid>
                 </div>
             </PageTemplate>
         </TabView>
@@ -178,30 +165,6 @@
         await OnDriveItemOptionsClickAsync(driveItem);
     }
 
-    protected async Task OnExpandFoldersGridClickAsync(MouseEventArgs args)
-    {
-        FoldersGridCollapsed = false;
-        StateHasChanged();
-    }
-
-    protected async Task OnCollapseFoldersGridClickAsync(MouseEventArgs args)
-    {
-        FoldersGridCollapsed = true;
-        StateHasChanged();
-    }
-
-    protected async Task OnExpandFilesGridClickAsync(MouseEventArgs args)
-    {
-        FilesGridCollapsed = false;
-        StateHasChanged();
-    }
-
-    protected async Task OnCollapseFilesGridClickAsync(MouseEventArgs args)
-    {
-        FilesGridCollapsed = true;
-        StateHasChanged();
-    }
-
     protected async Task OnCurrentlyOpenDriveFolderItemOptionsModalClosedAsync()
     {
         CurrentlyOpenDriveFolderOptionsModelIsOpen = false;
@@ -215,6 +178,11 @@
     protected async Task OnDriveItemOptionsModalClosedAsync()
     {
         DriveItemOptionsModelIsOpen = false;
+    }
+
+    protected async Task OnAddressEditing(bool isAddressEditing)
+    {
+        
     }
 
     protected override async Task OnInitializedAsync()

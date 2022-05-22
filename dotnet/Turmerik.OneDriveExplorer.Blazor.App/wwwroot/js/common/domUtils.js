@@ -2,10 +2,15 @@ import { Trmrk as trmrk } from './core.js';
 import { DomHelper } from './DomHelper.js';
 import { EdtblRdnlTextBoxWrapper } from './EdtblRdnlTextBoxWrapper.js';
 
-trmrk.selectDomEl = (domElId, selector) => {
+trmrk.selectDomEl = async (domElId, selector, copyToClipboard) => {
     let helper = new DomHelper(domElId, selector);
-    helper.DomEl.select();
 
+    if (copyToClipboard) {
+        let value = helper.DomEl.value;
+        await trmrk.writeToClipboardAsync(value);
+    }
+
+    helper.DomEl.select();
     return helper.DomEl.value;
 };
 

@@ -7,7 +7,7 @@
 @inject IJSRuntime JSRuntime;
 
 <div id="@UuidStr" class="@CssClassH.TextboxWrapper @ComponentCssClass">
-    @if (IsEditingText)
+    @if (IsEditing)
     {
         <span class="oi oi-arrow-circle-left" @onmouseup=OnCancelTextboxBtnClickAsync></span>
     }
@@ -15,11 +15,17 @@
     <input type="text" value="@EditableTextValue" class="@CssClassH.Textbox @EditableTextboxCssClass" @onfocus=@OnTextboxFocusAsync @onkeydown=@OnTextboxKeyDownAsync />
     <input type="text" readonly value="@TextValue" class="@CssClassH.TextboxReadonly @ReadonlyTextboxCssClass" @onclick=@OnTextboxReadonlyClickAsync />
 
-    @if (IsEditingText)
+    @if (IsEditing)
     {
         <span class="oi oi-x" @onmouseup=OnClearTextboxBtnClickAsync></span>
         <span class="oi oi-arrow-circle-right" @onmouseup=SubmitTextbox></span>
     }
+    
+    <FadingTooltipIconButton
+        CssClass="oi oi-clipboard"
+        OnClick=CopyTextToClipboardAsync
+        ClickMessage="Copied">
+    </FadingTooltipIconButton>
 </div>
 
 @code {
@@ -39,17 +45,30 @@
     public Func<TextEventArgsWrapper, Task> OnCancelTextBox { get; set; }
 
     [Parameter]
-    public bool IsEditingText { get; set; }
+    public bool IsEditing { get; set; }
+
+    [Parameter]
+    public bool IsEditingEnabled { get; set; }
 
     private string EditableTextValue { get; set; }
 
-    private string ReadonlyTextboxCssClass => IsEditingText ? CssClassH.Hidden : string.Empty;
-    private string EditableTextboxCssClass => IsEditingText ? string.Empty : CssClassH.Hidden;
+    private string ReadonlyTextboxCssClass => IsEditing ? CssClassH.Hidden : string.Empty;
+    private string EditableTextboxCssClass => IsEditing ? string.Empty : CssClassH.Hidden;
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        if (IsEditing)
+        {
+            await SelectEditableTextBoxAsync();
+        }
+    }
 
     private async Task OnCancelTextboxBtnClickAsync(MouseEventArgs args)
     {
         EditableTextValue = TextValue;
-        IsEditingText = false;
+        IsEditing = false;
 
         await OnCancelTextBox.InvokeTextEventAsyncIfReq(
             TextValue,
@@ -81,13 +100,16 @@
 
     private async Task OnTextboxReadonlyClickAsync(MouseEventArgs args)
     {
-        EditableTextValue = TextValue;
-        IsEditingText = true;
+        if (IsEditingEnabled)
+        {
+            EditableTextValue = TextValue;
+            IsEditing = true;
 
-        await OnEnterTextBox.InvokeTextEventAsyncIfReq(
-            TextValue,
-            args,
-            args.Button.IsLeftMouseButton());
+            await OnEnterTextBox.InvokeTextEventAsyncIfReq(
+                TextValue,
+                args,
+                args.Button.IsLeftMouseButton());
+        }
     }
 
     private async Task SubmitTextbox(EventArgs args)
@@ -97,7 +119,7 @@
             UuidStr, CssClassH.Textbox.CssClsSel());
 
         TextValue = EditableTextValue;
-        IsEditingText = false;
+        IsEditing = false;
 
         await OnSubmitTextBox.InvokeTextEventAsyncIfReq(
             TextValue,
@@ -107,7 +129,7 @@
     private async Task CancelTextbox(EventArgs args)
     {
         EditableTextValue = TextValue;
-        IsEditingText = true;
+        IsEditing = true;
 
         await OnCancelTextBox.InvokeTextEventAsyncIfReq(
             TextValue,
@@ -120,5 +142,23 @@
             TrmrkJsH.Get(TrmrkJsH.SelectDomEl),
             UuidStr,
             CssClassH.Textbox.CssClsSel());
+    }
+
+    private async Task CopyTextToClipboardAsync(MouseEventArgs args)
+    {
+        if (IsEditing)
+        {
+            await JSRuntime.InvokeAsync<string>(
+                TrmrkJsH.Get(TrmrkJsH.SelectDomEl),
+                UuidStr,
+                CssClassH.Textbox.CssClsSel(),
+                true);
+        }
+        else
+        {
+            await JSRuntime.InvokeVoidAsync(
+                TrmrkJsH.Get(TrmrkJsH.WriteToClipboardAsync),
+                TextValue);
+        }
     }
 }

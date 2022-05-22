@@ -34,13 +34,8 @@ namespace Turmerik.Blazor.Core.Pages.Components
         protected IMainLayoutService MainLayoutService { get; set; }
         protected ErrorViewModel ErrorViewModel { get; set; }
         protected DriveExplorerServiceArgs ServiceArgs { get; set; }
-        protected bool FoldersGridCollapsed { get; set; }
-        protected bool FilesGridCollapsed { get; set; }
-        protected string CollapseFoldersGridBtnCssClass => FoldersGridCollapsed ? CssClassH.Hidden : string.Empty;
-        protected string ExpandFoldersGridBtnCssClass => FoldersGridCollapsed ? string.Empty : CssClassH.Hidden;
-        protected string CollapseFilesGridBtnCssClass => FilesGridCollapsed ? CssClassH.Hidden : string.Empty;
-        protected string ExpandFilesGridBtnCssClass => FilesGridCollapsed ? string.Empty : CssClassH.Hidden;
 
+        protected AddressBar AddressBar { get; set; }
         protected bool IsEditingAddressBar { get; set; }
         protected bool CurrentlyOpenDriveFolderOptionsModelIsOpen { get; set; }
         protected bool DriveFolderItemOptionsModelIsOpen { get; set; }
