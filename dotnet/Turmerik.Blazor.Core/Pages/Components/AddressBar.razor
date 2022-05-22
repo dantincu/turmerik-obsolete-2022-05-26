@@ -10,15 +10,15 @@
 <div id="@UuidStr" class="@CssClassH.AddressBarContainer">
     @if (!IsEditingAddress)
     {
-        <IconButton IsDisabled=@AddressGoBackBtnDisabled CssClass="oi oi-arrow-circle-left" Title="Go Back" OnMouseUp=@OnGoBackMouseUpAsyncEventHandler></IconButton>
-        <IconButton IsDisabled=@AddressGoParentBtnDisabled CssClass="oi oi-arrow-circle-top" Title="Go Up" OnMouseUp=@OnGoUpMouseUpAsyncEventHandler></IconButton>
+        <IconButton IsDisabled=@(!IsEnabled || AddressGoBackBtnDisabled) CssClass="oi oi-arrow-circle-left" Title="Go Back" OnMouseUp=@OnGoBackMouseUpAsyncEventHandler></IconButton>
+        <IconButton IsDisabled=@(!IsEnabled || AddressGoParentBtnDisabled) CssClass="oi oi-arrow-circle-top" Title="Go Up" OnMouseUp=@OnGoUpMouseUpAsyncEventHandler></IconButton>
 
-        <IconButton IsDisabled=@AddressGoForwardBtnDisabled CssClass="oi oi-arrow-circle-right" Title="Go Forward" OnMouseUp=@OnGoForwardMouseUpAsyncEventHandler></IconButton>
+        <IconButton IsDisabled=@(!IsEnabled || AddressGoForwardBtnDisabled) CssClass="oi oi-arrow-circle-right" Title="Go Forward" OnMouseUp=@OnGoForwardMouseUpAsyncEventHandler></IconButton>
     }
 
     <TrmrkTextBox
         IsEditing=IsEditingAddress
-        IsEditingEnabled=IsEditingEnabled
+        IsEditingEnabled=@(IsEnabled && IsEditingEnabled)
         ComponentCssClass="@CssClassH.AddressBarWrapper"
         TextValue="@AddressStrValue"
         OnEnterTextBox="OnEnterAddressAsync"
@@ -28,10 +28,10 @@
     
     @if (!IsEditingAddress)
     {
-        <IconButton IsDisabled=@OptionsBtnDisabled CssClass="oi oi-ellipses trmrk-rotate90deg" Title="Options" OnMouseUp=@OnOptionsMouseUpAsyncEventHandler></IconButton>
+        <IconButton IsDisabled=@(!IsEnabled || OptionsBtnDisabled) CssClass="oi oi-ellipses trmrk-rotate90deg" Title="Options" OnMouseUp=@OnOptionsMouseUpAsyncEventHandler></IconButton>
     
-        <IconButton CssClass="oi oi-arrow-circle-right" Title="Go to address" OnMouseUp=@OnGoToAddressMouseUpAsyncEventHandler></IconButton>
-        <IconButton CssClass="oi oi-reload" Title="Reload" OnMouseUp=@OnReloadMouseUpAsyncEventHandler></IconButton>
+        <IconButton IsDisabled=@(!IsEnabled) CssClass="oi oi-arrow-circle-right" Title="Go to address" OnMouseUp=@OnGoToAddressMouseUpAsyncEventHandler></IconButton>
+        <IconButton IsDisabled=@(!IsEnabled) CssClass="oi oi-reload" Title="Reload" OnMouseUp=@OnReloadMouseUpAsyncEventHandler></IconButton>
     }
 </div>
 
@@ -77,6 +77,9 @@
 
     [Parameter]
     public bool IsEditingEnabled { get; set; }
+
+    [Parameter]
+    public bool IsEnabled { get; set; }
 
     public Func<bool, Task> OnAddressEditing { get; set; }
 

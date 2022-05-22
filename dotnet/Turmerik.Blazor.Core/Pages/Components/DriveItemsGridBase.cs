@@ -16,6 +16,9 @@ namespace Turmerik.Blazor.Core.Pages.Components
 {
     public class DriveItemsGridBase : ComponentCoreBase
     {
+        [Parameter]
+        public bool IsNavigationEnabled { get; set; }
+
         protected IJSRuntime JSRuntime { get; set; }
         protected ITimeStampHelper TimeStampH { get; set; }
         protected IMainLayoutService MainLayoutService { get; set; }
@@ -63,7 +66,7 @@ namespace Turmerik.Blazor.Core.Pages.Components
         {
             Func<MouseEventArgs, Task> handler = async args =>
             {
-                if (OnDriveItemClickAsync != null)
+                if (IsNavigationEnabled && OnDriveItemClickAsync != null)
                 {
                     await OnDriveItemClickAsync(driveItem);
                 }
@@ -76,7 +79,7 @@ namespace Turmerik.Blazor.Core.Pages.Components
         {
             Func<MouseEventArgs, Task> handler = async args =>
             {
-                if (OnDriveItemOptionsClickAsync != null)
+                if (IsNavigationEnabled && OnDriveItemOptionsClickAsync != null)
                 {
                     await OnDriveItemOptionsClickAsync(driveItem);
                 }

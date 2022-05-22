@@ -20,13 +20,13 @@
             {
                 var tabPageHead = TabHeaderViewState.TabPageHeads[i];
 
-                <div class="@GetTabPageHeadCssClass(tabPageHead)">
+                <div class="@GetTabPageHeadCssClass(tabPageHead)" disabled=@(!IsNavigationEnabled)>
                     <span class="@CssClassH.Name" @onmouseup=@OnTabPageHeadClickEventHandler(i)>@tabPageHead.Name</span>
                     <span class="@CssClassH.Icon" @onmouseup=@OnCloseTabPageClickEventHandler(i)>&times;</span>
                 </div>
             }
 
-            <span class="@CssClassH.Icon" @onmouseup=@OnNewTabPageClick>+</span>
+            <span class="@CssClassH.Icon" @onmouseup=@OnNewTabPageClick disabled=@(!IsNavigationEnabled)>+</span>
         </div>
         
         <div class="@CssClassH.TabPage">
@@ -62,6 +62,9 @@
 </div>
 
 @code {
+    [Parameter]
+    public bool IsNavigationEnabled { get; set; }
+
     [Parameter]
     public RenderFragment<PageComponentType> PageTemplate { get; set; }
 

@@ -37,6 +37,7 @@ namespace Turmerik.Blazor.Core.Pages.Components
 
         protected AddressBar AddressBar { get; set; }
         protected bool IsEditingAddressBar { get; set; }
+        protected bool IsNavigationEnabled { get; set; }
         protected bool CurrentlyOpenDriveFolderOptionsModelIsOpen { get; set; }
         protected bool DriveFolderItemOptionsModelIsOpen { get; set; }
         protected bool DriveItemOptionsModelIsOpen { get; set; }
@@ -157,11 +158,10 @@ namespace Turmerik.Blazor.Core.Pages.Components
                 await MainLayoutService.ExecuteWithUIBlockingOverlay(
                     async (uiOverlayVM) =>
                     {
-                        if (IsEditingAddressBar)
-                        {
-                            IsEditingAddressBar = false;
-                            StateHasChanged();
-                        }
+                        IsEditingAddressBar = false;
+                        IsNavigationEnabled = false;
+
+                        StateHasChanged();
 
                         var serviceArgs = new DriveExplorerServiceArgs
                         {
@@ -208,6 +208,7 @@ namespace Turmerik.Blazor.Core.Pages.Components
                             ServiceArgs.FolderIdentifier = serviceArgs.FolderIdentifier;
                         }
 
+                        IsNavigationEnabled = true;
                         StateHasChanged();
 
                         if (needsRedirect)

@@ -39,14 +39,15 @@
 
         <AddressBar @ref="AddressBar"
             AddressStrValue=@ServiceArgs.FolderIdentifier.Address
-            IsEditingAddress=@IsEditingAddressBar
+            IsEditingAddress=IsEditingAddressBar
             IsEditingEnabled="true"
-            OnGoBackClick=@OnAddressBarGoBackClick
-            OnGoUpClick=@OnAddressBarGoUpClick
-            OnGoForwardClick=@OnAddressBarGoForwardClick
-            OnOptionsClick=@OnCurrentlyOpenDriveFolderOptionsClick
-            OnReloadClick=@OnAddressBarReloadClick
-            OnSubmitAddress=@OnSubmitAddress
+            IsEnabled=IsNavigationEnabled
+            OnGoBackClick=OnAddressBarGoBackClick
+            OnGoUpClick=OnAddressBarGoUpClick
+            OnGoForwardClick=OnAddressBarGoForwardClick
+            OnOptionsClick=OnCurrentlyOpenDriveFolderOptionsClick
+            OnReloadClick=OnAddressBarReloadClick
+            OnSubmitAddress=OnSubmitAddress
             AddressGoBackBtnDisabled=@(!tabPageItems.GoBackButtonEnabled)
             AddressGoForwardBtnDisabled=@(!tabPageItems.GoForwardButtonEnabled)
             AddressGoParentBtnDisabled=@(!tabPageItems.GoUpButtonEnabled)
@@ -59,23 +60,25 @@
         </label>
 
         <TabView
+            IsNavigationEnabled=IsNavigationEnabled
             PageItem=currentlyOpenFolder
             TabHeaderViewState=@tabPageItems.Header
             Error=ErrorViewModel
-            OnTabPageHeadClick=@OnTabPageHeadClickAsync
-            OnNewTabPageClick=@OnNewTabPageClickAsync
-            OnCloseTabPageClick=@OnCloseTabPageClickAsync>
+            OnTabPageHeadClick=OnTabPageHeadClickAsync
+            OnNewTabPageClick=OnNewTabPageClickAsync
+            OnCloseTabPageClick=OnCloseTabPageClickAsync>
             <PageTemplate>
                 <div class="@CssClassH.DriveTabViewPage">
                     <h6>Folders</h6>
 
                     <DriveItemsGrid
+                        IsNavigationEnabled=IsNavigationEnabled
                         DriveItemType=DriveItem
                         DriveItems=context.FolderItems
                         TableCssClass="@CssClassH.DriveFoldersGrid"
                         IconCssClass="oi-folder"
-                        OnDriveItemClick="@OnDriveFolderClickAsync"
-                        OnDriveItemOptionsClick=@OnDriveFolderOptionsClick>
+                        OnDriveItemClick=OnDriveFolderClickAsync
+                        OnDriveItemOptionsClick=OnDriveFolderOptionsClick>
                             <SpecificRowColumns Context="ctx">
 
                             </SpecificRowColumns>
@@ -87,12 +90,13 @@
                     <h6>Files</h6>
 
                     <DriveItemsGrid
+                        IsNavigationEnabled=IsNavigationEnabled
                         DriveItemType=DriveItem
                         DriveItems=@context.FileItems
                         TableCssClass="@CssClassH.DriveItemsGrid"
                         IconCssClass="oi-file"
-                        OnDriveItemClick="@OnDriveItemClickAsync"
-                        OnDriveItemOptionsClick=@OnDriveItemOptionsClick>
+                        OnDriveItemClick="OnDriveItemClickAsync"
+                        OnDriveItemOptionsClick=OnDriveItemOptionsClick>
                             <SpecificRowColumns Context="ctx">
                                 <th class="@CssClassH.ColExt">Ext</th>
                             </SpecificRowColumns>
