@@ -158,6 +158,19 @@ namespace Turmerik.Blazor.Core.Pages.Components
 
             AddDriveItemCommandsList(
                 commandsMx,
+                GetDriveItemCommandMtbl(CREATE_NEW_FOLDER,
+                    BeginCreateNewFolderInCurrentFromModalAsync),
+                GetDriveItemCommandMtbl(CREATE_NEW_TEXT_FILE,
+                    BeginCreateNewTextFileInCurrentFromModalAsync),
+                GetDriveItemCommandMtbl(CREATE_NEW_MS_OFFICE_WORD_FILE,
+                    BeginCreateNewMsOfficeWordFileInCurrentFromModalAsync),
+                GetDriveItemCommandMtbl(CREATE_NEW_MS_OFFICE_EXCEL_FILE,
+                    BeginCreateNewMsOfficeExcelFileInCurrentFromModalAsync),
+                GetDriveItemCommandMtbl(CREATE_NEW_MS_OFFICE_POWERPOINT_FILE,
+                    BeginCreateNewMsOfficePowerPointFileInCurrentFromModalAsync));
+
+            AddDriveItemCommandsList(
+                commandsMx,
                 firstMtblList.ToArray());
 
             return commandsMx;

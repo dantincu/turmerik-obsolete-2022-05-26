@@ -113,14 +113,7 @@ namespace Turmerik.Blazor.Core.Pages.Components
                 serviceArgs.FolderIdentifier = identifier;
             },
             tabPageUuid,
-            needsRedirect,
-            () =>
-            {
-                CurrentlyOpenDriveFolderCommandsMx = GetCurrentlyOpenDriveFolderCommandsMx();
-
-                SelectedDriveFolderCommandsMx = GetSelectedDriveFolderCommandsMx();
-                SelectedDriveItemCommandsMx = GetSelectedDriveItemCommandsMx();
-            });
+            needsRedirect);
         }
 
         protected async Task OpenDriveFolderAsync(DriveItem driveFolder)
@@ -197,6 +190,11 @@ namespace Turmerik.Blazor.Core.Pages.Components
 
                             ClearError();
                             await task;
+
+                            CurrentlyOpenDriveFolderCommandsMx = GetCurrentlyOpenDriveFolderCommandsMx();
+
+                            SelectedDriveFolderCommandsMx = GetSelectedDriveFolderCommandsMx();
+                            SelectedDriveItemCommandsMx = GetSelectedDriveItemCommandsMx();
                         }
                         catch (Exception ex)
                         {
