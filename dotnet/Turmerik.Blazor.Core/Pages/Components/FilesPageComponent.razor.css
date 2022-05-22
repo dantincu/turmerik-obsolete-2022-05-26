@@ -14,11 +14,6 @@
     margin-top: 10px;
 }
 
-::deep .trmrk-tab-page {
-    max-height: 100vh;
-    overflow-y: scroll;
-}
-
 ::deep .trmrk-drive-folders-grid,
 ::deep .trmrk-drive-items-grid {
     cursor: pointer;

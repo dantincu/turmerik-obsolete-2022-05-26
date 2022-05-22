@@ -221,6 +221,9 @@ namespace Turmerik.AspNetCore.Services.DriveItems
                 FolderItems = fsEntries.OfType<DirectoryInfo>().Select(GetDriveItem).ToList(),
             };
 
+            driveFolder.FolderItems.Sort((a, b) => a.Name.CompareTo(b.Name));
+            driveFolder.FileItems.Sort((a, b) => a.Name.CompareTo(b.Name));
+
             return driveFolder;
         }
 

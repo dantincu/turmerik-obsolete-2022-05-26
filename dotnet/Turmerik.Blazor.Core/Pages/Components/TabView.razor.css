@@ -92,11 +92,13 @@
     flex-flow: row wrap;
 }
 
-    .trmrk-tab-page {
-        display: block;
-        min-height: 100px;
-        padding: 5px;
-    }
+.trmrk-tab-page {
+    display: block;
+    min-height: 100px;
+    padding: 5px;
+    padding-right: 0;
+    padding-left: 2rem;
+}
 
 ::deep th[scope] {
     width: 25px;

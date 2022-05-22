@@ -10,7 +10,7 @@ main {
 
     main > article.content {
         padding-right: 1rem !important;
-        padding-left: 2rem !important;
+        padding-left: 1rem !important;
     }
 
 .sidebar {
