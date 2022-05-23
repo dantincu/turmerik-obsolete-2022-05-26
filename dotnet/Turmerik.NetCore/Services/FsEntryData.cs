@@ -1,4 +1,4 @@
-﻿namespace Turmerik.AspNetCore.Services
+﻿namespace Turmerik.NetCore.Services
 {
     public class FsEntryData
     {

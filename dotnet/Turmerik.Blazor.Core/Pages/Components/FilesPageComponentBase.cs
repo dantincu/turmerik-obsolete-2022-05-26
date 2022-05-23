@@ -12,6 +12,7 @@ using Microsoft.JSInterop;
 using Turmerik.Core.Components;
 using Turmerik.AspNetCore.Services;
 using Microsoft.AspNetCore.Components;
+using Turmerik.NetCore.Services;
 
 namespace Turmerik.Blazor.Core.Pages.Components
 {
@@ -32,7 +33,7 @@ namespace Turmerik.Blazor.Core.Pages.Components
         protected IDriveExplorerService DriveFolderService { get; set; }
         protected IJSRuntime JSRuntime { get; set; }
         protected IMainLayoutService MainLayoutService { get; set; }
-        protected ILocalDiskExplorerBackgroundApiMainRelUriRetriever LocalDiskExplorerBackgroundApiMainRelUriRetriever { get; set; }
+        protected ILocalDiskExplorerBackgroundApiRelUriRetriever LocalDiskExplorerBackgroundApiRelUriRetriever { get; set; }
         protected ErrorViewModel ErrorViewModel { get; set; }
         protected DriveExplorerServiceArgs ServiceArgs { get; set; }
 

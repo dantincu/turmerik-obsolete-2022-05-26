@@ -1,7 +1,8 @@
 using Turmerik.AspNetCore.AppStartup;
+using Turmerik.LocalDiskExplorer.Background.WebApi.App.Hubs;
+using Turmerik.NetCore.Services;
 
 string myAllowSpecificOrigins = "_myAllowSpecificOrigins";
-// string myAllowAllOrigins = "_myAllowAllOrigins";
 
 var builder = WebApplication.CreateBuilder(args);
 var helper = new StartupHelperCore();
@@ -10,11 +11,6 @@ var appSvcs = helper.RegisterCoreServices(builder.Services, builder.Configuratio
 
 builder.Services.AddCors(options =>
 {
-    /* options.AddPolicy(myAllowAllOrigins, builder =>
-          builder.AllowAnyOrigin()
-                       .AllowAnyMethod()
-                       .AllowAnyHeader()); */
-
     options.AddPolicy(name: myAllowSpecificOrigins,
         policy =>
         {
@@ -27,6 +23,8 @@ builder.Services.AddCors(options =>
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.AddSignalR();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -37,4 +35,5 @@ app.UseCors(myAllowSpecificOrigins);
 app.UseAuthorization();
 app.MapControllers().RequireCors(myAllowSpecificOrigins);
 
+app.MapHub<MainHub>($"/{LocalDiskExplorerBackgroundApiH.MAIN_HUB_NAME}");
 app.Run();

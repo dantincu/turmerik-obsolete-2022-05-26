@@ -6,6 +6,8 @@ using Turmerik.AspNetCore.Services;
 using Turmerik.AspNetCore.Services.LocalSessionStorage;
 using Turmerik.AspNetCore.Settings;
 using Turmerik.Core.Infrastucture;
+using Turmerik.Core.Services;
+using Turmerik.NetCore.Services;
 
 namespace Turmerik.AspNetCore.AppStartup
 {
@@ -26,7 +28,8 @@ namespace Turmerik.AspNetCore.AppStartup
             services.AddScoped<ISessionStorageWrapper, SessionStorageWrapper>();
 
             services.AddScoped<IMainLayoutService, MainLayoutService>();
-            services.AddSingleton<ILocalDiskExplorerBackgroundApiMainRelUriRetriever, LocalDiskExplorerBackgroundApiMainRelUriRetriever>();
+            services.AddSingleton<ILocalDiskExplorerBackgroundApiMethodNameRetriever, LocalDiskExplorerBackgroundApiMethodNameRetriever>();
+            services.AddSingleton<ILocalDiskExplorerBackgroundApiRelUriRetriever, LocalDiskExplorerBackgroundApiRelUriRetriever>();
         }
     }
 }

@@ -65,8 +65,8 @@ trmrk.api = {
             }
 
             responseWrapper = await fetch(apiUri, init);
-
             let response = await responseWrapper.json();
+
             responseWrapper.response = response;
         } else {
             responseWrapper.apiBaseUriNotSet = true;

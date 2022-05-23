@@ -5,7 +5,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Turmerik.AspNetCore.Services.Api
+namespace Turmerik.NetCore.Services
 {
     public class ApiResponseWrapper<TData>
     {

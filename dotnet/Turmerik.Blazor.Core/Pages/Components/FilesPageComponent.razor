@@ -10,6 +10,7 @@
 @using Turmerik.Core.Cloneable
 @using Turmerik.Core.Components
 @using Turmerik.Core.Services.DriveItems
+@using Turmerik.NetCore.Services
 
 @inherits FilesPageComponentBase
 
@@ -22,7 +23,7 @@
 @inject IJSRuntime jsRuntime;
 @inject IMainLayoutService mainLayoutService;
 @inject ITimeStampHelper timeStampH;
-@inject ILocalDiskExplorerBackgroundApiMainRelUriRetriever localDiskExplorerBackgroundApiMainRelUriRetriever;
+@inject ILocalDiskExplorerBackgroundApiRelUriRetriever localDiskExplorerBackgroundApiRelUriRetriever;
 
 <div class="@CssClassH.Container">
     @if (ServiceArgs != null)
@@ -156,31 +157,31 @@
     <ApiCallComponent @ref="OpenFolderInOSFileExplorerApiCall"
         DataType="object"
         ApiKey="@TrmrkJsH.Api.Background.LocalDiskExplorer.API_KEY"
-        ApiRelUri="@localDiskExplorerBackgroundApiMainRelUriRetriever.OpenFolderInOSFileExplorer.Value">
+        ApiRelUri="@localDiskExplorerBackgroundApiRelUriRetriever.OpenFolderInOSFileExplorer.Value">
     </ApiCallComponent>
 
     <ApiCallComponent @ref="OpenFolderInTrmrkFileExplorerApiCall"
         DataType="object"
         ApiKey="@TrmrkJsH.Api.Background.LocalDiskExplorer.API_KEY"
-        ApiRelUri="@localDiskExplorerBackgroundApiMainRelUriRetriever.OpenFolderInTrmrkFileExplorer.Value">
+        ApiRelUri="@localDiskExplorerBackgroundApiRelUriRetriever.OpenFolderInTrmrkFileExplorer.Value">
     </ApiCallComponent>
 
     <ApiCallComponent @ref="OpenFileInOSDefaultAppApiCall"
         DataType="object"
         ApiKey="@TrmrkJsH.Api.Background.LocalDiskExplorer.API_KEY"
-        ApiRelUri="@localDiskExplorerBackgroundApiMainRelUriRetriever.OpenFileInOSDefaultApp.Value">
+        ApiRelUri="@localDiskExplorerBackgroundApiRelUriRetriever.OpenFileInOSDefaultApp.Value">
     </ApiCallComponent>
 
     <ApiCallComponent @ref="OpenFileInOSDefaultTextEditorApiCall"
         DataType="object"
         ApiKey="@TrmrkJsH.Api.Background.LocalDiskExplorer.API_KEY"
-        ApiRelUri="@localDiskExplorerBackgroundApiMainRelUriRetriever.OpenFileInOSDefaultTextEditor.Value">
+        ApiRelUri="@localDiskExplorerBackgroundApiRelUriRetriever.OpenFileInOSDefaultTextEditor.Value">
     </ApiCallComponent>
 
     <ApiCallComponent @ref="OpenFileInTrmrkTextEditorApiCall"
         DataType="object"
         ApiKey="@TrmrkJsH.Api.Background.LocalDiskExplorer.API_KEY"
-        ApiRelUri="@localDiskExplorerBackgroundApiMainRelUriRetriever.OpenFileInOSTrmrkTextEditor.Value">
+        ApiRelUri="@localDiskExplorerBackgroundApiRelUriRetriever.OpenFileInOSTrmrkTextEditor.Value">
     </ApiCallComponent>
 </div>
 
@@ -234,7 +235,7 @@
         JSRuntime = jsRuntime;
         MainLayoutService = mainLayoutService;
 
-        LocalDiskExplorerBackgroundApiMainRelUriRetriever = localDiskExplorerBackgroundApiMainRelUriRetriever;
+        LocalDiskExplorerBackgroundApiRelUriRetriever = localDiskExplorerBackgroundApiRelUriRetriever;
         await base.OnInitializedAsync();
     }
 }
