@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Turmerik.AspNetCore.Infrastructure;
+using Turmerik.AspNetCore.Services;
 using Turmerik.Core.Services.DriveItems;
 
 namespace Turmerik.Blazor.Core.Pages.Components
@@ -15,26 +16,63 @@ namespace Turmerik.Blazor.Core.Pages.Components
         protected async Task OpenCurrentFolderInOSFileExplorerFromModalAsync(MouseEventArgs args)
         {
             await CloseCurrentFolderOptionsModalAsync();
+
+            var requestData = new FsEntryData
+            {
+                EntryPath = ServiceArgs.FolderIdentifier.Path
+            };
+
+            await OpenFolderInOSFileExplorerApiCall.CallApiAsync(requestData);
         }
 
         protected async Task OpenCurrentFolderInOSFileExplorerFromFileModalAsync(MouseEventArgs args)
         {
             await CloseDriveItemOptionsModalAsync();
+
+            var requestData = new FsEntryData
+            {
+                EntryPath = ServiceArgs.FolderIdentifier.Path
+            };
+
+            await OpenFolderInOSFileExplorerApiCall.CallApiAsync(requestData);
         }
 
         protected async Task OpenCurrentFolderInTrmrkFileExplorerFromModalAsync(MouseEventArgs args)
         {
             await CloseCurrentFolderOptionsModalAsync();
+
+            var requestData = new FsEntryData
+            {
+                EntryPath = ServiceArgs.FolderIdentifier.Path
+            };
+
+            await OpenFolderInTrmrkFileExplorerApiCall.CallApiAsync(requestData);
         }
 
         protected async Task OpenSelectedFolderInOSFileExplorerFromModalAsync(MouseEventArgs args)
         {
             await CloseDriveFolderItemOptionsModalAsync();
+
+            var requestData = new FsEntryData
+            {
+                ParentDirPath = ServiceArgs.FolderIdentifier.Path,
+                EntryName = SelectedDriveFolderName
+            };
+
+            await OpenFolderInOSFileExplorerApiCall.CallApiAsync(requestData);
         }
 
         protected async Task OpenSelectedFolderInTrmrkFileExplorerFromModalAsync(MouseEventArgs args)
         {
             await CloseDriveFolderItemOptionsModalAsync();
+
+            var requestData = new FsEntryData
+            {
+                ParentDirPath = ServiceArgs.FolderIdentifier.Path,
+                EntryName = SelectedDriveFolderName
+            };
+
+            await OpenFolderInTrmrkFileExplorerApiCall.CallApiAsync(requestData);
         }
 
         protected async Task OpenSelectedFolderFromModalAsync(MouseEventArgs args)
@@ -46,17 +84,40 @@ namespace Turmerik.Blazor.Core.Pages.Components
         protected async Task OpenSelectedDriveItemInOSDefaultAppFromModalAsync(MouseEventArgs args)
         {
             await CloseDriveItemOptionsModalAsync();
+
+            var requestData = new FsEntryData
+            {
+                ParentDirPath = ServiceArgs.FolderIdentifier.Path,
+                EntryName = SelectedDriveItemName
+            };
+
+            await OpenFileInOSDefaultAppApiCall.CallApiAsync(requestData);
         }
 
         protected async Task OpenSelectedDriveItemInOSDefaultTextEditorFromModalAsync(MouseEventArgs args)
         {
             await CloseDriveItemOptionsModalAsync();
-            await OpenDriveItemAsync(SelectedDriveItem);
+
+            var requestData = new FsEntryData
+            {
+                ParentDirPath = ServiceArgs.FolderIdentifier.Path,
+                EntryName = SelectedDriveItemName
+            };
+
+            await OpenFileInOSDefaultTextEditorApiCall.CallApiAsync(requestData);
         }
 
         protected async Task OpenSelectedDriveItemInTrmrkTextEditorFromModalAsync(MouseEventArgs args)
         {
             await CloseDriveItemOptionsModalAsync();
+
+            var requestData = new FsEntryData
+            {
+                ParentDirPath = ServiceArgs.FolderIdentifier.Path,
+                EntryName = SelectedDriveItemName
+            };
+
+            await OpenFileInTrmrkTextEditorApiCall.CallApiAsync(requestData);
         }
 
         protected async Task BeginCreateNewFolderInCurrentFromModalAsync(MouseEventArgs args)

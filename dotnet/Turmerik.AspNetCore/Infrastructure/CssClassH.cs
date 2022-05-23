@@ -64,6 +64,12 @@ namespace Turmerik.AspNetCore.Infrastructure
         public const string MODAL = "modal";
         public const string CONTENT = "content";
         public const string TEXTBOX = "textbox";
+        public const string SET = "set";
+        public const string API = "api";
+        public const string BASE = "base";
+        public const string URI = "uri";
+        public const string URIS = "uris";
+        public const string MAP = "map";
 
         public const string NAVBAR = "navbar";
         public const string GREET = "greet";
@@ -117,6 +123,7 @@ namespace Turmerik.AspNetCore.Infrastructure
         public static readonly string Wrapper = Class(WRAPPER);
         public static readonly string Spacer = Class(SPACER);
         public static readonly string ModalContent = Class(MODAL, CONTENT);
+        public static readonly string SetApiBaseUriView = Class(SET, API, BASE, URI, VIEW);
 
         public static readonly string Large = Class(LARGE);
         public static readonly string Small = Class(SMALL);

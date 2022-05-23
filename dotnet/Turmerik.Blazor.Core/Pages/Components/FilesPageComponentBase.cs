@@ -32,10 +32,16 @@ namespace Turmerik.Blazor.Core.Pages.Components
         protected IDriveExplorerService DriveFolderService { get; set; }
         protected IJSRuntime JSRuntime { get; set; }
         protected IMainLayoutService MainLayoutService { get; set; }
+        protected ILocalDiskExplorerBackgroundApiMainRelUriRetriever LocalDiskExplorerBackgroundApiMainRelUriRetriever { get; set; }
         protected ErrorViewModel ErrorViewModel { get; set; }
         protected DriveExplorerServiceArgs ServiceArgs { get; set; }
 
-        protected AddressBar AddressBar { get; set; }
+        protected ApiCallComponent<bool> OpenFolderInOSFileExplorerApiCall { get; set; }
+        protected ApiCallComponent<bool> OpenFolderInTrmrkFileExplorerApiCall { get; set; }
+        protected ApiCallComponent<bool> OpenFileInOSDefaultAppApiCall { get; set; }
+        protected ApiCallComponent<bool> OpenFileInOSDefaultTextEditorApiCall { get; set; }
+        protected ApiCallComponent<bool> OpenFileInTrmrkTextEditorApiCall { get; set; }
+
         protected bool IsEditingAddressBar { get; set; }
         protected bool IsNavigationEnabled { get; set; }
         protected bool CurrentlyOpenDriveFolderOptionsModelIsOpen { get; set; }

@@ -10,11 +10,15 @@
         @if (ViewModel.Error != null)
         {
             <ErrorView ViewModel=@ViewModel.Error ViewSize=@ErrorViewSize.Large></ErrorView>
+        }
+        else if (ViewModel.SetApiBaseUri != null)
+        {
+            <SetApiBaseUriView ViewModel=@ViewModel.SetApiBaseUri></SetApiBaseUriView>
+        }
 
-            @if (ViewModel.ShowBackBtnOnErr)
-            {
-                <button type="button" class="btn btn-dark" @onmouseup=@OnBtnBackClickAsync>Back</button>
-            }
+        @if (ViewModel.ShowBackBtn && ViewModel.Error != null || ViewModel.SetApiBaseUri != null)
+        {
+            <button type="button" class="btn btn-dark" @onmouseup=@OnBtnBackClickAsync>Back</button>
         }
     </div>
 </div>
@@ -38,7 +42,9 @@
             {
                 cssClass = @CssClassH.Hidden;
             }
-            else if (ViewModel.Error != null)
+            else if ((
+                ViewModel.Error != null) || (
+                ViewModel.SetApiBaseUri != null))
             {
                 cssClass = CssClassH.Opaque;
             }

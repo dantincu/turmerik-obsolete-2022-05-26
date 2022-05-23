@@ -26,6 +26,7 @@ namespace Turmerik.AspNetCore.AppStartup
             services.AddScoped<ISessionStorageWrapper, SessionStorageWrapper>();
 
             services.AddScoped<IMainLayoutService, MainLayoutService>();
+            services.AddSingleton<ILocalDiskExplorerBackgroundApiMainRelUriRetriever, LocalDiskExplorerBackgroundApiMainRelUriRetriever>();
         }
     }
 }

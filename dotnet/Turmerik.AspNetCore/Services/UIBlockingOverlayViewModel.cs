@@ -11,6 +11,13 @@ namespace Turmerik.AspNetCore.Services
     {
         public ErrorViewModel Error { get; set; }
         public bool Enabled { get; set; }
-        public bool ShowBackBtnOnErr { get; set; }
+        public bool ShowBackBtn { get; set; }
+        public SetApiBaseUriViewModel SetApiBaseUri { get; set; }
+    }
+
+    public class SetApiBaseUriViewModel
+    {
+        public string ApiKey { get; set; }
+        public string ApiBaseUri { get; set; }
     }
 }

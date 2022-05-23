@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using Turmerik.AspNetCore.Services;
+using Turmerik.Core.Components;
 using Turmerik.Core.Helpers;
 
 namespace Turmerik.AspNetCore.Infrastructure
@@ -11,8 +14,6 @@ namespace Turmerik.AspNetCore.Infrastructure
     {
         public const string WINDOW = "window";
         public const string TRMRK = "Trmrk";
-
-        public const string LOCAL_DISK_EXPLORER_BACKGROUND_API_KEY = "local-disk-explorer-background-api";
 
         public static readonly string SelectDomEl;
         public static readonly string AddCssClass;
@@ -103,21 +104,36 @@ namespace Turmerik.AspNetCore.Infrastructure
         {
             public static readonly string BasePrefix = typeof(Api).Name.DecapitalizeFirstLetter();
 
+            public static readonly string Init;
             public static readonly string SetBaseUrisMap;
             public static readonly string AddBaseUri;
             public static readonly string AddBaseUrisMap;
+            public static readonly string FetchGet;
+            public static readonly string FetchPost;
 
             static Api()
             {
+                Init = GetMethodName(nameof(Init).DecapitalizeFirstLetter());
                 SetBaseUrisMap = GetMethodName(nameof(SetBaseUrisMap).DecapitalizeFirstLetter());
                 AddBaseUri = GetMethodName(nameof(AddBaseUri).DecapitalizeFirstLetter());
                 AddBaseUrisMap = GetMethodName(nameof(AddBaseUrisMap).DecapitalizeFirstLetter());
+                FetchGet = GetMethodName(nameof(FetchGet).DecapitalizeFirstLetter());
+                FetchPost = GetMethodName(nameof(FetchPost).DecapitalizeFirstLetter());
             }
 
             private static string GetMethodName(string methodName)
             {
                 string jsMethodName = string.Join(".", BasePrefix, methodName);
                 return jsMethodName;
+            }
+
+            public static class Background
+            {
+                public static class LocalDiskExplorer
+                {
+                    public const string API_KEY = "local-disk-explorer-background-api";
+                    public const string MAIN_ROUTE_BASE = "api/main";
+                }
             }
         }
     }

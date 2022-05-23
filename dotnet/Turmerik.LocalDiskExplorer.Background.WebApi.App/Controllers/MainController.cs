@@ -1,14 +1,39 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Turmerik.AspNetCore.Services;
 
 namespace Turmerik.LocalDiskExplorer.Background.WebApi.App.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class MainController : ControllerBase
+    public class MainController : ControllerBase, ILocalDiskExplorerBackgroundApiMainController
     {
-        [HttpGet]
-        public bool Ping()
+        [HttpPost]
+        public bool OpenFolderInOSFileExplorer([FromBody]FsEntryData fsEntryData)
+        {
+            return true;
+        }
+
+        [HttpPost]
+        public bool OpenFolderInTrmrkFileExplorer([FromBody] FsEntryData fsEntryData)
+        {
+            return true;
+        }
+
+        [HttpPost]
+        public bool OpenFileInOSDefaultApp([FromBody] FsEntryData fsEntryData)
+        {
+            return true;
+        }
+
+        [HttpPost]
+        public bool OpenFileInOSDefaultTextEditor([FromBody] FsEntryData fsEntryData)
+        {
+            return true;
+        }
+
+        [HttpPost]
+        public bool OpenFileInOSTrmrkTextEditor([FromBody] FsEntryData fsEntryData)
         {
             return true;
         }

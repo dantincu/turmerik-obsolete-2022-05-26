@@ -1,0 +1,94 @@
+﻿@using Microsoft.JSInterop
+@using Newtonsoft.Json
+@using Turmerik.AspNetCore.Infrastructure
+@using Turmerik.AspNetCore.Services
+@using Turmerik.AspNetCore.Services.Api
+@using Turmerik.AspNetCore.Settings
+@using Turmerik.Core.Components
+@using Turmerik.Core.Data
+@using Turmerik.Core.Helpers;
+
+@inherits ComponentCoreBase
+@typeparam DataType
+
+@inject IJSRuntime jsRuntime;
+@inject IMainLayoutService mainLayoutService
+@inject ITrmrkAppSettings appSettings;
+
+@code {
+    [Parameter]
+    public string ApiKey { get; set; }
+
+    [Parameter]
+    public string ApiRelUri { get; set; }
+
+    [Parameter]
+    public Func<ApiResponse<DataType>, Task> OnApiResponse { get; set; }
+
+    private object RequestData { get; set; }
+
+    public async Task CallApiAsync(object requestData)
+    {
+        mainLayoutService.EnableUIBlockingOverlay();
+
+        RequestData = requestData;
+        var response = await CallApiCoreAsync();
+
+        if (response.Success)
+        {
+            mainLayoutService.DisableUIBlockingOverlay();
+            await OnApiResponse.InvokeAsyncIfReq(response);
+        }
+        else if (response.ApiBaseUriNotSet)
+        {
+            mainLayoutService.SetApiBaseUriView(
+                new SetApiBaseUriViewModel
+            {
+                ApiKey = ApiKey
+            });
+        }
+        else
+        {
+            mainLayoutService.SetError(
+                new ErrorViewModel(
+                    response.Error ?? "An unhandled error ocurred",
+                    response.Exception,
+                    appSettings.IsDevMode));
+        }
+    }
+
+    private async Task<ApiResponse<DataType>> CallApiCoreAsync()
+    {
+        var apiResponse = new ApiResponse<DataType>();
+
+        try
+        {
+            var paramsList = new List<string>
+            {
+                ApiKey,
+                ApiRelUri
+            };
+
+            string json = null;
+            var data = RequestData;
+
+            if (data != null)
+            {
+                json = JsonConvert.SerializeObject(data);
+                paramsList.Add(json);
+            }
+
+            apiResponse.Data = await jsRuntime.InvokeAsync<DataType>(
+                TrmrkJsH.Get(TrmrkJsH.Api.FetchPost),
+                paramsList.ToArray());
+
+            apiResponse.Success = true;
+        }
+        catch (Exception exc)
+        {
+            apiResponse.Exception = exc;
+        }
+
+        return apiResponse;
+    }
+}

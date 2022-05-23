@@ -55,9 +55,13 @@ namespace Turmerik.Blazor.Core.Pages.Shared
             }
             else if (ApiBaseUriKeysToAddOnPageLoad != null)
             {
+                var existingMap = await JSRuntime.InvokeAsync<Dictionary<string, string>>(
+                    TrmrkJsH.Get(TrmrkJsH.Api.Init));
+
                 var propInfosClctn = TypesStaticDataCache.Get(typeof(TrmrkAppSettingsImmtbl)).InstPubGetProps.Value;
 
-                var map = ApiBaseUriKeysToAddOnPageLoad.ToDictionary(
+                var map = ApiBaseUriKeysToAddOnPageLoad.Where(
+                    kvp => !existingMap.ContainsKey(kvp.Key)).ToDictionary(
                     kvp => kvp.Key,
                     kvp => propInfosClctn.SingleOrDefault(
                         wrppr => wrppr.Name == kvp.Value)?.Getter.Value.Data.Invoke(

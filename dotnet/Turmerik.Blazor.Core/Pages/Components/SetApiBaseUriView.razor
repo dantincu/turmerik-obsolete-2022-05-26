@@ -1,0 +1,72 @@
+﻿@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.JSInterop
+@using Turmerik.AspNetCore.Infrastructure
+@using Turmerik.Core.Components
+@using Turmerik.AspNetCore.Services;
+@using Turmerik.Core.Helpers;
+
+@inject IJSRuntime jsRuntime;
+
+<div class="@CssClassH.SetApiBaseUriView @CssClassH.Opaque">
+    <h5>Set api base uri for</h5>
+    <p>
+        <pre>
+            @ViewModel.ApiKey
+        </pre>
+    </p>
+
+    <TrmrkTextBox
+        IsEditingEnabled="true"
+        TextValue=@ViewModel.ApiBaseUri
+        IsEditing=IsEditing
+        OnSubmitTextBox=OnSubmitValue>
+    </TrmrkTextBox>
+
+    <div class="@CssClassH.ErrorBlock">@ValidationErrorMessage</div>
+
+    <button
+        type="button"
+        class="btn btn-dark"
+        @onmouseup=@OnSaveBtnClickAsync
+        disabled=@IsEditing>
+        Save
+    </button>
+</div>
+
+@code {
+    [Parameter]
+    public SetApiBaseUriViewModel ViewModel { get; set; }
+    public Func<TextEventArgsWrapper, Task> OnApiKeySet { get; set; }
+
+    private bool IsEditing { get; set; }
+    private string ValidationErrorMessage { get; set; }
+
+    private async Task OnSubmitValue(TextEventArgsWrapper args)
+    {
+        try
+        {
+            ValidationErrorMessage = null;
+            var uri = new Uri(args.Value);
+
+            if (!uri.IsAbsoluteUri)
+            {
+                ValidationErrorMessage = "Api base uri must be an absolute https uri (must begin with https://)";
+            }
+        }
+        catch (Exception exc)
+        {
+            ValidationErrorMessage = $"Invalid api base uri: {exc.Message}";
+        }
+    }
+
+    private async Task OnSaveBtnClickAsync(MouseEventArgs args)
+    {
+        if (!IsEditing && ValidationErrorMessage == null)
+        {
+            await jsRuntime.InvokeVoidAsync(TrmrkJsH.Get(TrmrkJsH.Api.AddBaseUri), ViewModel.ApiBaseUri);
+            var textArgs = new TextEventArgsWrapper(args, ViewModel.ApiBaseUri);
+
+            await OnApiKeySet.InvokeAsyncIfReq(textArgs);
+        }
+    }
+}

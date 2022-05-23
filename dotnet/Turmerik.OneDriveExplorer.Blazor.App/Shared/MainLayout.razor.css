@@ -10,7 +10,7 @@ main {
 
     main > article.content {
         padding-right: 1rem !important;
-        padding-left: 2rem !important;
+        padding-left: 1rem !important;
     }
 
 .sidebar {
@@ -133,4 +133,9 @@ main {
 ::deep .trmrk-error-block-large {
     padding: 50px;
     font-size: 1rem;
+}
+
+::deep .trmrk-data-grid {
+    max-height: 100vh;
+    overflow-y: scroll;
 }

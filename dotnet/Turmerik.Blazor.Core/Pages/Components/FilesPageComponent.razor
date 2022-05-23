@@ -22,6 +22,7 @@
 @inject IJSRuntime jsRuntime;
 @inject IMainLayoutService mainLayoutService;
 @inject ITimeStampHelper timeStampH;
+@inject ILocalDiskExplorerBackgroundApiMainRelUriRetriever localDiskExplorerBackgroundApiMainRelUriRetriever;
 
 <div class="@CssClassH.Container">
     @if (ServiceArgs != null)
@@ -37,7 +38,7 @@
             isRootFolder = currentlyOpenFolder.IsRootFolder ?? false;
         }
 
-        <AddressBar @ref="AddressBar"
+        <AddressBar
             AddressStrValue=@ServiceArgs.FolderIdentifier.Address
             IsEditingAddress=IsEditingAddressBar
             IsEditingEnabled="true"
@@ -151,6 +152,36 @@
     {
         <h6>LOADING...</h6>
     }
+
+    <ApiCallComponent @ref="OpenFolderInOSFileExplorerApiCall"
+        DataType="bool"
+        ApiKey="@TrmrkJsH.Api.Background.LocalDiskExplorer.API_KEY"
+        ApiRelUri="@localDiskExplorerBackgroundApiMainRelUriRetriever.OpenFolderInOSFileExplorer.Value">
+    </ApiCallComponent>
+
+    <ApiCallComponent @ref="OpenFolderInTrmrkFileExplorerApiCall"
+        DataType="bool"
+        ApiKey="@TrmrkJsH.Api.Background.LocalDiskExplorer.API_KEY"
+        ApiRelUri="@localDiskExplorerBackgroundApiMainRelUriRetriever.OpenFolderInTrmrkFileExplorer.Value">
+    </ApiCallComponent>
+
+    <ApiCallComponent @ref="OpenFileInOSDefaultAppApiCall"
+        DataType="bool"
+        ApiKey="@TrmrkJsH.Api.Background.LocalDiskExplorer.API_KEY"
+        ApiRelUri="@localDiskExplorerBackgroundApiMainRelUriRetriever.OpenFileInOSDefaultApp.Value">
+    </ApiCallComponent>
+
+    <ApiCallComponent @ref="OpenFileInOSDefaultTextEditorApiCall"
+        DataType="bool"
+        ApiKey="@TrmrkJsH.Api.Background.LocalDiskExplorer.API_KEY"
+        ApiRelUri="@localDiskExplorerBackgroundApiMainRelUriRetriever.OpenFileInOSDefaultTextEditor.Value">
+    </ApiCallComponent>
+
+    <ApiCallComponent @ref="OpenFileInTrmrkTextEditorApiCall"
+        DataType="bool"
+        ApiKey="@TrmrkJsH.Api.Background.LocalDiskExplorer.API_KEY"
+        ApiRelUri="@localDiskExplorerBackgroundApiMainRelUriRetriever.OpenFileInOSTrmrkTextEditor.Value">
+    </ApiCallComponent>
 </div>
 
 @code {
@@ -186,7 +217,7 @@
 
     protected async Task OnAddressEditing(bool isAddressEditing)
     {
-        
+
     }
 
     protected override async Task OnInitializedAsync()
@@ -203,6 +234,7 @@
         JSRuntime = jsRuntime;
         MainLayoutService = mainLayoutService;
 
+        LocalDiskExplorerBackgroundApiMainRelUriRetriever = localDiskExplorerBackgroundApiMainRelUriRetriever;
         await base.OnInitializedAsync();
     }
 }

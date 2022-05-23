@@ -8,6 +8,10 @@
 
         public const string LOCAL = "local";
         public const string USER = "user";
+        public const string API = "api";
+        public const string BASE = "base";
+        public const string URIS = "uris";
+        public const string MAP = "map";
 
         public const string SELECTED = "selected";
         public const string CURRENT = "current";
@@ -32,6 +36,7 @@
 
         public static readonly string LocalSessionId = GetKey(LOCAL, SESSION, ID);
         public static readonly string UserSessionId = GetKey(USER, SESSION, ID);
+        public static readonly string ApiBaseUrisMap = GetKey(API, BASE, URIS, MAP);
 
         public static string LocalSessionExistsKey(Guid localSessionGuid)
         {

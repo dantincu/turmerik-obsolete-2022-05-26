@@ -17,8 +17,15 @@ namespace Turmerik.Core.Components
         PropertyInfo Prop<TProperty>(
             Expression<Func<TSource, TProperty>> propertyLambda,
             Type type = null, bool checkReflectedType = false);
+
         string Name<TProperty>(
             Expression<Func<TSource, TProperty>> propertyLambda,
+            Type type = null, bool checkReflectedType = false);
+
+        MethodInfo Method<TProperty>(Expression<Func<TSource, TProperty>> methodLambda,
+            Type type = null, bool checkReflectedType = false);
+
+        string MethodName<TProperty>(Expression<Func<TSource, TProperty>> methodLambda,
             Type type = null, bool checkReflectedType = false);
     }
 
@@ -53,6 +60,35 @@ namespace Turmerik.Core.Components
         {
             PropertyInfo propInfo = Prop(propertyLambda, type, checkReflectedType);
             string name = propInfo.Name;
+
+            return name;
+        }
+
+        public MethodInfo Method<TProperty>(Expression<Func<TSource, TProperty>> methodLambda, Type type = null, bool checkReflectedType = false)
+        {
+            type = type ?? typeof(TSource);
+
+            MethodCallExpression member = methodLambda.Body as MethodCallExpression;
+            ThrowErrIfReq(() => member == null, methodLambda);
+
+            MethodInfo methodInfo = member.Method;
+            ThrowErrIfReq(() => methodInfo == null, methodLambda);
+
+            ThrowErrIfReq(
+                () => checkReflectedType && !methodInfo.ReflectedType.IsAssignableFrom(type),
+                methodLambda,
+                () => string.Format(
+                    "Expression '{0}' refers to a method that is not from type {1}.",
+                    methodLambda.ToString(),
+                    type));
+
+            return methodInfo;
+        }
+
+        public string MethodName<TProperty>(Expression<Func<TSource, TProperty>> methodLambda, Type type = null, bool checkReflectedType = false)
+        {
+            MethodInfo methodInfo = Method(methodLambda, type, checkReflectedType);
+            string name = methodInfo.Name;
 
             return name;
         }
