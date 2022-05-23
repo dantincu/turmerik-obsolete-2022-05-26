@@ -5,6 +5,7 @@ using Turmerik.AspNetCore.Services;
 using Turmerik.Core.Services;
 using Turmerik.LocalDiskExplorer.Background.WebApi.App.Hubs;
 using Turmerik.NetCore.Services;
+using Turmerik.Core.Helpers;
 
 namespace Turmerik.LocalDiskExplorer.Background.WebApi.App.Controllers
 {
@@ -13,84 +14,107 @@ namespace Turmerik.LocalDiskExplorer.Background.WebApi.App.Controllers
     public class MainController : ControllerBase, ILocalDiskExplorerBackgroundApi
     {
         private readonly IHubContext<MainHub, ILocalDiskExplorerBackgroundApiClient> mainHubContext;
+        private readonly ILocalDiskExplorerBackgroundApiClientReference localDiskExplorerBackgroundApiClientReference;
 
-        public MainController(IHubContext<MainHub, ILocalDiskExplorerBackgroundApiClient> mainHubContext)
+        public MainController(
+            IHubContext<MainHub, ILocalDiskExplorerBackgroundApiClient> mainHubContext,
+            ILocalDiskExplorerBackgroundApiClientReference localDiskExplorerBackgroundApiClientReference)
         {
             this.mainHubContext = mainHubContext ?? throw new ArgumentNullException(nameof(mainHubContext));
+
+            this.localDiskExplorerBackgroundApiClientReference = localDiskExplorerBackgroundApiClientReference ?? throw new ArgumentNullException(
+                nameof(localDiskExplorerBackgroundApiClientReference));
+        }
+
+        private ILocalDiskExplorerBackgroundApiClient SingleClient
+        {
+            get
+            {
+                var singleClient = localDiskExplorerBackgroundApiClientReference.SingleClient(
+                    mainHubContext.Clients);
+
+                return singleClient;
+            }
         }
 
         [HttpPost]
         public async Task<ApiResponse<object>> OpenFolderInOSFileExplorer([FromBody]FsEntryData fsEntryData)
         {
-            await SingleBackgroundUIAppGroupClients.OpenFolderInOSFileExplorer(fsEntryData);
+            var singleClient = SingleClient;
 
-            var response = new ApiResponse<object>
+            if (singleClient != null)
             {
-                Success = true
-            };
+                await singleClient.OpenFolderInOSFileExplorer(fsEntryData);
+            }
 
+            var response = GetApiResponse();
             return response;
         }
 
         [HttpPost]
         public async Task<ApiResponse<object>> OpenFolderInTrmrkFileExplorer([FromBody] FsEntryData fsEntryData)
         {
-            await SingleBackgroundUIAppGroupClients.OpenFolderInTrmrkFileExplorer(fsEntryData);
+            var singleClient = SingleClient;
 
-            var response = new ApiResponse<object>
+            if (singleClient != null)
             {
-                Success = true
-            };
+                await singleClient.OpenFolderInOSFileExplorer(fsEntryData);
+            }
 
+            var response = GetApiResponse();
             return response;
         }
 
         [HttpPost]
         public async Task<ApiResponse<object>> OpenFileInOSDefaultApp([FromBody] FsEntryData fsEntryData)
         {
-            await SingleBackgroundUIAppGroupClients.OpenFileInOSDefaultApp(fsEntryData);
+            var singleClient = SingleClient;
 
-            var response = new ApiResponse<object>
+            if (singleClient != null)
             {
-                Success = true
-            };
+                await singleClient.OpenFolderInOSFileExplorer(fsEntryData);
+            }
 
+            var response = GetApiResponse();
             return response;
         }
 
         [HttpPost]
         public async Task<ApiResponse<object>> OpenFileInOSDefaultTextEditor([FromBody] FsEntryData fsEntryData)
         {
-            await SingleBackgroundUIAppGroupClients.OpenFileInOSDefaultTextEditor(fsEntryData);
+            var singleClient = SingleClient;
 
-            var response = new ApiResponse<object>
+            if (singleClient != null)
             {
-                Success = true
-            };
+                await singleClient.OpenFolderInOSFileExplorer(fsEntryData);
+            }
 
+            var response = GetApiResponse();
             return response;
         }
 
         [HttpPost]
         public async Task<ApiResponse<object>> OpenFileInOSTrmrkTextEditor([FromBody] FsEntryData fsEntryData)
         {
-            await SingleBackgroundUIAppGroupClients.OpenFileInOSTrmrkTextEditor(fsEntryData);
+            var singleClient = SingleClient;
 
+            if (singleClient != null)
+            {
+                await singleClient.OpenFolderInOSFileExplorer(fsEntryData);
+            }
+
+            var response = GetApiResponse();
+            return response;
+        }
+
+        private ApiResponse<object> GetApiResponse()
+        {
             var response = new ApiResponse<object>
             {
                 Success = true
             };
 
             return response;
-        }
-
-        private ILocalDiskExplorerBackgroundApiClient SingleBackgroundUIAppGroupClients
-        {
-            get
-            {
-                return mainHubContext.Clients.Group(
-                MainHub.SINGLE_BACKGROUND_UI_APP_GROUP);
-            }
         }
     }
 }

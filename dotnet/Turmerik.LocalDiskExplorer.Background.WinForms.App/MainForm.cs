@@ -114,10 +114,6 @@ namespace Turmerik.LocalDiskExplorer.Background.WinForms.App
                 OnOpenFolderInOSFileExplorer);
 
             localDiskExplorerBackgroundApiHubConnection.On<FsEntryData>(
-                localDiskExplorerBackgroundApiClientMethodNameRetriever.OpenFolderInOSFileExplorer.Value,
-                OnOpenFolderInOSFileExplorer);
-
-            localDiskExplorerBackgroundApiHubConnection.On<FsEntryData>(
                 localDiskExplorerBackgroundApiClientMethodNameRetriever.OpenFolderInTrmrkFileExplorer.Value,
                 OnOpenFolderInTrmrkFileExplorer);
 

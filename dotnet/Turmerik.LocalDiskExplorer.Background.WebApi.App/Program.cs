@@ -1,4 +1,5 @@
 using Turmerik.AspNetCore.AppStartup;
+using Turmerik.AspNetCore.Services;
 using Turmerik.LocalDiskExplorer.Background.WebApi.App.Hubs;
 using Turmerik.NetCore.Services;
 
@@ -8,6 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 var helper = new StartupHelperCore();
 
 var appSvcs = helper.RegisterCoreServices(builder.Services, builder.Configuration);
+builder.Services.AddSingleton<ILocalDiskExplorerBackgroundApiClientReference, LocalDiskExplorerBackgroundApiClientReference>();
 
 builder.Services.AddCors(options =>
 {
