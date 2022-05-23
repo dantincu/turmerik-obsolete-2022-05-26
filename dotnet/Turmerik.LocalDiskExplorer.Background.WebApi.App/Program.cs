@@ -1,6 +1,7 @@
 using Turmerik.AspNetCore.AppStartup;
 
-var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+string myAllowSpecificOrigins = "_myAllowSpecificOrigins";
+// string myAllowAllOrigins = "_myAllowAllOrigins";
 
 var builder = WebApplication.CreateBuilder(args);
 var helper = new StartupHelperCore();
@@ -9,10 +10,17 @@ var appSvcs = helper.RegisterCoreServices(builder.Services, builder.Configuratio
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(name: MyAllowSpecificOrigins,
+    /* options.AddPolicy(myAllowAllOrigins, builder =>
+          builder.AllowAnyOrigin()
+                       .AllowAnyMethod()
+                       .AllowAnyHeader()); */
+
+    options.AddPolicy(name: myAllowSpecificOrigins,
         policy =>
         {
-            policy.WithOrigins(appSvcs.TrmrkAppSettings.LocalDiskExplorerAppBaseUrl.TrimEnd('/'));
+            policy.WithOrigins(
+                appSvcs.TrmrkAppSettings.LocalDiskExplorerAppBaseUrl.TrimEnd(
+                    '/')).AllowAnyMethod().AllowAnyHeader().AllowCredentials();
         });
 });
 
@@ -24,9 +32,9 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 
 app.UseHttpsRedirection();
-app.UseCors(MyAllowSpecificOrigins);
+app.UseCors(myAllowSpecificOrigins);
 
 app.UseAuthorization();
-app.MapControllers();
+app.MapControllers().RequireCors(myAllowSpecificOrigins);
 
 app.Run();

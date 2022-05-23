@@ -2,8 +2,8 @@
 {
     public class FsEntryData
     {
-        public string ParentDirPath { get; set; }
-        public string EntryPath { get; set; }
-        public string EntryName { get; set; }
+        public string? ParentDirPath { get; set; }
+        public string? EntryPath { get; set; }
+        public string? EntryName { get; set; }
     }
 }

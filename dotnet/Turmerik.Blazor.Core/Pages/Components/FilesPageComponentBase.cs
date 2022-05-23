@@ -36,11 +36,11 @@ namespace Turmerik.Blazor.Core.Pages.Components
         protected ErrorViewModel ErrorViewModel { get; set; }
         protected DriveExplorerServiceArgs ServiceArgs { get; set; }
 
-        protected ApiCallComponent<bool> OpenFolderInOSFileExplorerApiCall { get; set; }
-        protected ApiCallComponent<bool> OpenFolderInTrmrkFileExplorerApiCall { get; set; }
-        protected ApiCallComponent<bool> OpenFileInOSDefaultAppApiCall { get; set; }
-        protected ApiCallComponent<bool> OpenFileInOSDefaultTextEditorApiCall { get; set; }
-        protected ApiCallComponent<bool> OpenFileInTrmrkTextEditorApiCall { get; set; }
+        protected ApiCallComponent<object> OpenFolderInOSFileExplorerApiCall { get; set; }
+        protected ApiCallComponent<object> OpenFolderInTrmrkFileExplorerApiCall { get; set; }
+        protected ApiCallComponent<object> OpenFileInOSDefaultAppApiCall { get; set; }
+        protected ApiCallComponent<object> OpenFileInOSDefaultTextEditorApiCall { get; set; }
+        protected ApiCallComponent<object> OpenFileInTrmrkTextEditorApiCall { get; set; }
 
         protected bool IsEditingAddressBar { get; set; }
         protected bool IsNavigationEnabled { get; set; }

@@ -4,38 +4,53 @@ using Turmerik.AspNetCore.Services;
 
 namespace Turmerik.LocalDiskExplorer.Background.WebApi.App.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class MainController : ControllerBase, ILocalDiskExplorerBackgroundApiMainController
     {
         [HttpPost]
-        public bool OpenFolderInOSFileExplorer([FromBody]FsEntryData fsEntryData)
+        public ApiResponse<object> OpenFolderInOSFileExplorer([FromBody]FsEntryData fsEntryData)
         {
-            return true;
+            return new ApiResponse<object>
+            {
+                Success = true
+            };
         }
 
         [HttpPost]
-        public bool OpenFolderInTrmrkFileExplorer([FromBody] FsEntryData fsEntryData)
+        public ApiResponse<object> OpenFolderInTrmrkFileExplorer([FromBody] FsEntryData fsEntryData)
         {
-            return true;
+            return new ApiResponse<object>
+            {
+                Success = true
+            };
         }
 
         [HttpPost]
-        public bool OpenFileInOSDefaultApp([FromBody] FsEntryData fsEntryData)
+        public ApiResponse<object> OpenFileInOSDefaultApp([FromBody] FsEntryData fsEntryData)
         {
-            return true;
+            return new ApiResponse<object>
+            {
+                Success = true
+            };
         }
 
         [HttpPost]
-        public bool OpenFileInOSDefaultTextEditor([FromBody] FsEntryData fsEntryData)
+        public ApiResponse<object> OpenFileInOSDefaultTextEditor([FromBody] FsEntryData fsEntryData)
         {
-            return true;
+            return new ApiResponse<object>
+            {
+                Success = true
+            };
         }
 
         [HttpPost]
-        public bool OpenFileInOSTrmrkTextEditor([FromBody] FsEntryData fsEntryData)
+        public ApiResponse<object> OpenFileInOSTrmrkTextEditor([FromBody] FsEntryData fsEntryData)
         {
-            return true;
+            return new ApiResponse<object>
+            {
+                Success = true
+            };
         }
     }
 }

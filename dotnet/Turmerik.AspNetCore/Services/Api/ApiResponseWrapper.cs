@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 
 namespace Turmerik.AspNetCore.Services.Api
 {
-    public class ApiResponse<TData>
+    public class ApiResponseWrapper<TData>
     {
         public bool Success { get; set; }
         public bool ApiBaseUriNotSet { get; set; }
         public string Error { get; set; }
         public Exception Exception { get; set; }
         public HttpStatusCode HttpStatusCode { get; set; }
-        public TData Data { get; set; }
+        public ApiResponse<TData> Response { get; set; }
     }
 }

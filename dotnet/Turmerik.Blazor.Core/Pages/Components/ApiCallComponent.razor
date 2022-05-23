@@ -23,7 +23,7 @@
     public string ApiRelUri { get; set; }
 
     [Parameter]
-    public Func<ApiResponse<DataType>, Task> OnApiResponse { get; set; }
+    public Func<ApiResponseWrapper<DataType>, Task> OnApiResponse { get; set; }
 
     private object RequestData { get; set; }
 
@@ -57,9 +57,9 @@
         }
     }
 
-    private async Task<ApiResponse<DataType>> CallApiCoreAsync()
+    private async Task<ApiResponseWrapper<DataType>> CallApiCoreAsync()
     {
-        var apiResponse = new ApiResponse<DataType>();
+        var apiResponse = new ApiResponseWrapper<DataType>();
 
         try
         {
@@ -78,7 +78,7 @@
                 paramsList.Add(json);
             }
 
-            apiResponse.Data = await jsRuntime.InvokeAsync<DataType>(
+            apiResponse.Response = await jsRuntime.InvokeAsync<ApiResponse<DataType>>(
                 TrmrkJsH.Get(TrmrkJsH.Api.FetchPost),
                 paramsList.ToArray());
 

@@ -3,15 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Turmerik.AspNetCore.Services.Api;
 
 namespace Turmerik.AspNetCore.Services
 {
     public interface ILocalDiskExplorerBackgroundApiMainController
     {
-        bool OpenFolderInOSFileExplorer(FsEntryData fsEntryData);
-        bool OpenFolderInTrmrkFileExplorer(FsEntryData fsEntryData);
-        bool OpenFileInOSDefaultApp(FsEntryData fsEntryData);
-        bool OpenFileInOSDefaultTextEditor(FsEntryData fsEntryData);
-        bool OpenFileInOSTrmrkTextEditor(FsEntryData fsEntryData);
+        ApiResponse<object> OpenFolderInOSFileExplorer(FsEntryData fsEntryData);
+        ApiResponse<object> OpenFolderInTrmrkFileExplorer(FsEntryData fsEntryData);
+        ApiResponse<object> OpenFileInOSDefaultApp(FsEntryData fsEntryData);
+        ApiResponse<object> OpenFileInOSDefaultTextEditor(FsEntryData fsEntryData);
+        ApiResponse<object> OpenFileInOSTrmrkTextEditor(FsEntryData fsEntryData);
     }
 }

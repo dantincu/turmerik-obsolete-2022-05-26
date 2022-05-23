@@ -25,6 +25,20 @@
     },
     hideUIBlockingOverlay: () => {
         trmrk.removeCssClass(trmrk.uiBlockingOverlayId, null, "trmrk-hidden");
+    },
+    strTrimStart: (str, strToTrim) => {
+        while (str.startsWith(strToTrim)) {
+            str = str.substring(strToTrim.length);
+        }
+
+        return str;
+    },
+    strTrimEnd: (str, strToTrim) => {
+        while (str.endsWith(strToTrim)) {
+            str = str.substring(0, str.length - strToTrim.length);
+        }
+
+        return str;
     }
 }
 

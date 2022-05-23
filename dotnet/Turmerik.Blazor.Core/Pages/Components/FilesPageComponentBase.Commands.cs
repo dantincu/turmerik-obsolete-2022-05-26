@@ -19,7 +19,7 @@ namespace Turmerik.Blazor.Core.Pages.Components
 
             var requestData = new FsEntryData
             {
-                EntryPath = ServiceArgs.FolderIdentifier.Path
+                EntryPath = ServiceArgs.FolderIdentifier.Path ?? string.Empty
             };
 
             await OpenFolderInOSFileExplorerApiCall.CallApiAsync(requestData);
@@ -31,7 +31,7 @@ namespace Turmerik.Blazor.Core.Pages.Components
 
             var requestData = new FsEntryData
             {
-                EntryPath = ServiceArgs.FolderIdentifier.Path
+                EntryPath = ServiceArgs.FolderIdentifier.Path ?? string.Empty
             };
 
             await OpenFolderInOSFileExplorerApiCall.CallApiAsync(requestData);
@@ -43,7 +43,7 @@ namespace Turmerik.Blazor.Core.Pages.Components
 
             var requestData = new FsEntryData
             {
-                EntryPath = ServiceArgs.FolderIdentifier.Path
+                EntryPath = ServiceArgs.FolderIdentifier.Path ?? string.Empty
             };
 
             await OpenFolderInTrmrkFileExplorerApiCall.CallApiAsync(requestData);

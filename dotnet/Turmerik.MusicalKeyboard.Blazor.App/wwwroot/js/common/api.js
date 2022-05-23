@@ -35,18 +35,18 @@ trmrk.api = {
     },
     getApiUri: (apiBaseUri, apiRelUri) => {
         apiRelUri = apiRelUri ?? "";
-        apiRelUri = apiRelUri.trim('/');
+        apiRelUri = trmrk.strTrimStart(apiRelUri, '/');
 
-        apiBaseUri = apiBaseUri.trim('/');
-        
+        apiBaseUri = trmrk.strTrimEnd(apiBaseUri, '/');
         let apiUri = apiBaseUri + '/' + apiRelUri;
+
         return apiUri;
     },
     fetch: async (apiKey, apiRelUri, isPost, jsonData) => {
         let apiUri = "";
         let apiBaseUri = trmrk.api.baseUrisMap[apiKey];
 
-        let response = {};
+        let responseWrapper = {};
 
         if (typeof (apiBaseUri) == "string") {
             apiUri = trmrk.api.getApiUri(apiBaseUri, apiRelUri);
@@ -64,15 +64,15 @@ trmrk.api = {
                 }
             }
 
-            response = await fetch(apiUri, init);
-            let data = await response.json();
+            responseWrapper = await fetch(apiUri, init);
 
-            response.data = data;
+            let response = await responseWrapper.json();
+            responseWrapper.response = response;
         } else {
-            response.apiBaseUriNotSet = true;
+            responseWrapper.apiBaseUriNotSet = true;
         }
 
-        return response;
+        return responseWrapper;
     },
     fetchGet: async (apiKey, apiRelUri) => {
         let response = await trmrk.api.fetch(
