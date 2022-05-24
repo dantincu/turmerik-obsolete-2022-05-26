@@ -53,12 +53,19 @@
 
                 if (commandsList != null)
                 {
-                    foreach (var cmd in commandsList)
-                    {
-                        <button type="button" class="btn btn-dark" @onmouseup=@cmd.Action>
-                            @cmd.CommandText
-                        </button>
-                    }
+                    <ul class="@CssClassH.ItemsList">
+                        @foreach (var cmd in commandsList)
+                        {
+                            <li>
+                                <button
+                                    type="button"
+                                    class="btn btn-dark @CssClassH.Btn"
+                                    @onmouseup=@cmd.Action>
+                                    @cmd.CommandText
+                                </button>
+                            </li>
+                        }
+                    </ul>
                 }
             }
         }

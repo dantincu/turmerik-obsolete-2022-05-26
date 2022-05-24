@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Turmerik.AspNetCore.Settings;
 using Turmerik.Core.Components;
+using Turmerik.AspNetCore.Infrastructure;
 
 namespace Turmerik.AspNetCore.Services
 {
@@ -14,12 +15,14 @@ namespace Turmerik.AspNetCore.Services
 
         event Action<bool> OnSideBarSizeChanged;
         event Action OnUIBlockingOverlayChanged;
+        event Func<TextEventArgsWrapper, Task> OnApiBaseUriSet;
 
         void SideBarSizeChanged(bool sideBarLarge);
         void EnableUIBlockingOverlay();
         void DisableUIBlockingOverlay();
         void SetError(ErrorViewModel errorViewModel);
-        void SetApiBaseUriView(SetApiBaseUriViewModel setApiBaseUriViewModel);
+        void SetApiBaseUriView(SetApiBaseUriViewModel setApiBaseUriViewModel, bool? keepUIBlockingOverlay = null);
+        Task ApiBaseUriSet(TextEventArgsWrapper args);
         Task ExecuteWithUIBlockingOverlay(Func<UIBlockingOverlayViewModel, Task> action);
     }
 
@@ -29,6 +32,7 @@ namespace Turmerik.AspNetCore.Services
 
         private Action<bool>? onSideBarSizeChanged;
         private Action onUIBlockingOverlayChanged;
+        private Func<TextEventArgsWrapper, Task> onApiBaseUriSet;
 
         public MainLayoutService(ITrmrkAppSettings appSettings)
         {
@@ -65,6 +69,19 @@ namespace Turmerik.AspNetCore.Services
             remove
             {
                 onUIBlockingOverlayChanged -= value;
+            }
+        }
+
+        public event Func<TextEventArgsWrapper, Task> OnApiBaseUriSet
+        {
+            add
+            {
+                onApiBaseUriSet += value;
+            }
+
+            remove
+            {
+                onApiBaseUriSet -= value;
             }
         }
 
@@ -115,12 +132,18 @@ namespace Turmerik.AspNetCore.Services
             onUIBlockingOverlayChanged?.Invoke();
         }
 
-        public void SetApiBaseUriView(SetApiBaseUriViewModel setApiBaseUriViewModel)
+        public void SetApiBaseUriView(SetApiBaseUriViewModel setApiBaseUriViewModel, bool? keepUIBlockingOverlay = null)
         {
-            UIBlockingOverlayViewModel.SetApiBaseUri = setApiBaseUriViewModel;
-            UIBlockingOverlayViewModel.Enabled = setApiBaseUriViewModel != null;
+            bool uiBlockingOverlayEnabled = keepUIBlockingOverlay ?? setApiBaseUriViewModel != null;
+            UIBlockingOverlayViewModel.Enabled = uiBlockingOverlayEnabled;
 
+            UIBlockingOverlayViewModel.SetApiBaseUri = setApiBaseUriViewModel;
             onUIBlockingOverlayChanged?.Invoke();
+        }
+
+        public async Task ApiBaseUriSet(TextEventArgsWrapper args)
+        {
+            await onApiBaseUriSet.InvokeTextEventAsyncIfReq(args);
         }
     }
 }

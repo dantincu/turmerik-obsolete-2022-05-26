@@ -39,6 +39,7 @@ namespace Turmerik.AspNetCore.Infrastructure
         public const string EXT = "ext";
         public const string ITEM = "item";
         public const string ITEMS = "items";
+        public const string LIST = "list";
         public const string KEYBOARD = "keyboard";
         public const string TEXT = "text";
 
@@ -141,6 +142,7 @@ namespace Turmerik.AspNetCore.Infrastructure
         public static readonly string DriveTabViewPage = Class(DRIVE, TAB, VIEW, PAGE);
         public static readonly string DriveFoldersGrid = Class(DRIVE, FOLDERS, GRID);
         public static readonly string DriveItemsGrid = Class(DRIVE, ITEMS, GRID);
+        public static readonly string ItemsList = Class(ITEMS, LIST);
 
         public static readonly string GridKeyboardGrid = Class(GRID, KEYBOARD, GRID);
 

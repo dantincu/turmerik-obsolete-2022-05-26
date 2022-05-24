@@ -32,32 +32,46 @@
         mainLayoutService.EnableUIBlockingOverlay();
 
         RequestData = requestData;
-        var response = await CallApiCoreAsync();
+        var response = await CallApiCoreAsync(null);
 
-        if (response.Success)
+        /* var response = new ApiResponseWrapper<DataType>
         {
-            mainLayoutService.DisableUIBlockingOverlay();
-            await OnApiResponse.InvokeAsyncIfReq(response);
-        }
-        else if (response.ApiBaseUriNotSet)
+            ApiBaseUriNotSet = true
+        }; */
+
+        if (response.ApiBaseUriNotSet)
         {
+            Action ubsubscribeAction = null;
+
+            Func<TextEventArgsWrapper, Task> onApiBaseUriSet = async args =>
+            {
+                ubsubscribeAction();
+                mainLayoutService.SetApiBaseUriView(null, true);
+
+                response = await CallApiCoreAsync(true);
+            };
+
+            ubsubscribeAction = () =>
+            {
+                mainLayoutService.OnApiBaseUriSet -= onApiBaseUriSet;
+            };
+
+            mainLayoutService.OnApiBaseUriSet += onApiBaseUriSet;
+
             mainLayoutService.SetApiBaseUriView(
                 new SetApiBaseUriViewModel
             {
                 ApiKey = ApiKey
             });
         }
-        else
-        {
-            mainLayoutService.SetError(
-                new ErrorViewModel(
-                    response.Error ?? "An unhandled error ocurred",
-                    response.Exception,
-                    appSettings.IsDevMode));
-        }
     }
 
-    private async Task<ApiResponseWrapper<DataType>> CallApiCoreAsync()
+    protected async override Task OnInitializedAsync()
+    {
+        base.OnInitializedAsync();
+    }
+
+    private async Task<ApiResponseWrapper<DataType>> CallApiCoreAsync(bool? apiBaseUriSet)
     {
         var apiResponse = new ApiResponseWrapper<DataType>();
 
@@ -87,6 +101,20 @@
         catch (Exception exc)
         {
             apiResponse.Exception = exc;
+        }
+
+        if (apiResponse.Success)
+        {
+            mainLayoutService.DisableUIBlockingOverlay();
+            await OnApiResponse.InvokeAsyncIfReq(apiResponse);
+        }
+        else if (!apiResponse.ApiBaseUriNotSet || apiBaseUriSet == true)
+        {
+            mainLayoutService.SetError(
+                new ErrorViewModel(
+                    apiResponse.Error ?? "An unhandled error ocurred",
+                    apiResponse.Exception,
+                    appSettings.IsDevMode));
         }
 
         return apiResponse;

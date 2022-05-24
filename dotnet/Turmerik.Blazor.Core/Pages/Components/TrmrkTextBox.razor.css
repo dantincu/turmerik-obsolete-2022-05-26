@@ -1,3 +1,6 @@
-﻿.trmrk-textbox-wrapper .oi {
+﻿.trmrk-textbox-wrapper ::deep .oi {
     padding: 2px 5px 2px 5px;
+}
+
+.trmrk-textbox-wrapper ::deep .oi.oi-clipboard {
 }

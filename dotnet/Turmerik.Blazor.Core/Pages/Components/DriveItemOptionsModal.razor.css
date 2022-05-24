@@ -1,1 +1,7 @@
-﻿
+﻿.trmrk-items-list {
+    list-style-type: none;
+}
+
+.trmrk-items-list > li > .btn.btn-dark.trmrk-btn {
+    padding: 4px 8px;
+}

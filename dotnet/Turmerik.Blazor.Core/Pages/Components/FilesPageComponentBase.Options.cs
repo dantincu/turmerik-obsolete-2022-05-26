@@ -27,6 +27,9 @@ namespace Turmerik.Blazor.Core.Pages.Components
         private const string DELETE_FOLDER = "Delete folder";
         private const string MOVE_FOLDER = "Move folder";
         private const string COPY_FOLDER = "Copy folder";
+        private const string OPEN = "Open";
+        private const string OPEN_IN_NEW_TAB = "Open in new tab";
+        private const string OPEN_FOLDER_IN_NEW_TAB = "Open in new tab";
 
         protected virtual List<List<IDriveItemCommand>> GetCurrentlyOpenDriveFolderCommandsMx()
         {
@@ -34,6 +37,8 @@ namespace Turmerik.Blazor.Core.Pages.Components
 
             var firstMtblList = new List<DriveItemCommandMtbl>
             {
+                GetDriveItemCommandMtbl(OPEN_IN_NEW_TAB,
+                    OpenCurrentFolderInNewTabFromModalAsync),
                 GetDriveItemCommandMtbl(OPEN_FOLDER_IN_OS_FILE_EXPLORER,
                     OpenCurrentFolderInOSFileExplorerFromModalAsync)
             };
@@ -88,8 +93,10 @@ namespace Turmerik.Blazor.Core.Pages.Components
 
             var firstMtblList = new List<DriveItemCommandMtbl>
             {
-                GetDriveItemCommandMtbl(OPEN_FOLDER_IN_OS_FILE_EXPLORER,
-                    OpenSelectedFolderInOSFileExplorerFromModalAsync)
+                GetDriveItemCommandMtbl(OPEN,
+                    OpenSelectedFolderFromModalAsync),
+                GetDriveItemCommandMtbl(OPEN_IN_NEW_TAB,
+                    OpenSelectedFolderInNewTabFromModalAsync)
             };
 
             if (!IsLocalDiskExplorer)
@@ -139,6 +146,8 @@ namespace Turmerik.Blazor.Core.Pages.Components
 
             var firstMtblList = new List<DriveItemCommandMtbl>
             {
+                GetDriveItemCommandMtbl(OPEN_FOLDER_IN_NEW_TAB,
+                    OpenCurrentFolderInNewTabFromFileModalAsync),
                 GetDriveItemCommandMtbl(OPEN_FOLDER_IN_OS_FILE_EXPLORER,
                     OpenCurrentFolderInOSFileExplorerFromFileModalAsync),
                 GetDriveItemCommandMtbl(OPEN_FILE_IN_OS_DEFAULT_APP,
@@ -304,7 +313,7 @@ namespace Turmerik.Blazor.Core.Pages.Components
             var mtbl = new DriveItemCommandMtbl
             {
                 CommandText = commandText,
-                Action = action
+                Action = async args => await action.InvokeMouseClickAsyncIfLeftBtn(args)
             };
 
             return mtbl;

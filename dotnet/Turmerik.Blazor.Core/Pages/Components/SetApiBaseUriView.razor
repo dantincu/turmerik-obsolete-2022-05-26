@@ -17,16 +17,17 @@
 
     <TrmrkTextBox
         IsEditingEnabled="true"
-        TextValue=@ViewModel.ApiBaseUri
-        IsEditing=IsEditing
+        TextValue=@ApiBaseUri
         OnSubmitTextBox=OnSubmitValue>
     </TrmrkTextBox>
 
-    <div class="@CssClassH.ErrorBlock">@ValidationErrorMessage</div>
+    <div class="@CssClassH.ErrorBlock">
+        @ValidationErrorMessage
+    </div>
 
     <button
         type="button"
-        class="btn btn-dark"
+        class="btn btn-dark @CssClassH.Btn"
         @onmouseup=@OnSaveBtnClickAsync
         disabled=@IsEditing>
         Save
@@ -36,37 +37,74 @@
 @code {
     [Parameter]
     public SetApiBaseUriViewModel ViewModel { get; set; }
-    public Func<TextEventArgsWrapper, Task> OnApiKeySet { get; set; }
+
+    [Parameter]
+    public Func<TextEventArgsWrapper, Task> OnApiBaseUriSet { get; set; }
+
+    private string ApiBaseUri { get; set; }
 
     private bool IsEditing { get; set; }
     private string ValidationErrorMessage { get; set; }
 
+    protected async override Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        ApiBaseUri = ViewModel.ApiBaseUri;
+    }
+
     private async Task OnSubmitValue(TextEventArgsWrapper args)
     {
-        try
+        if (ValidateValue(args.Value))
         {
-            ValidationErrorMessage = null;
-            var uri = new Uri(args.Value);
-
-            if (!uri.IsAbsoluteUri)
-            {
-                ValidationErrorMessage = "Api base uri must be an absolute https uri (must begin with https://)";
-            }
-        }
-        catch (Exception exc)
-        {
-            ValidationErrorMessage = $"Invalid api base uri: {exc.Message}";
+            IsEditing = false;
         }
     }
 
     private async Task OnSaveBtnClickAsync(MouseEventArgs args)
     {
-        if (!IsEditing && ValidationErrorMessage == null)
+        if (!IsEditing && ValidationErrorMessage == null && args.Button.IsLeftMouseButton())
         {
-            await jsRuntime.InvokeVoidAsync(TrmrkJsH.Get(TrmrkJsH.Api.AddBaseUri), ViewModel.ApiBaseUri);
-            var textArgs = new TextEventArgsWrapper(args, ViewModel.ApiBaseUri);
-
-            await OnApiKeySet.InvokeAsyncIfReq(textArgs);
+            var textArgs = new TextEventArgsWrapper(args, ApiBaseUri);
+            await TrySubmitValueAsync(textArgs);
         }
+    }
+
+    private async Task TrySubmitValueAsync(TextEventArgsWrapper args)
+    {
+        if (ValidateValue(args.Value))
+        {
+            await jsRuntime.InvokeVoidAsync(
+                TrmrkJsH.Get(TrmrkJsH.Api.AddBaseUri),
+                ViewModel.ApiKey,
+                ApiBaseUri);
+
+            await OnApiBaseUriSet.InvokeAsyncIfReq(args);
+        }
+    }
+
+    private bool ValidateValue(string value)
+    {
+        bool isValid = true;
+        ApiBaseUri = value;
+
+        try
+        {
+            ValidationErrorMessage = null;
+            var uri = new Uri(value);
+
+            if (!uri.IsAbsoluteUri)
+            {
+                isValid = false;
+                ValidationErrorMessage = "Api base uri must be an absolute https uri (must begin with https://)";
+            }
+        }
+        catch (Exception exc)
+        {
+            isValid = false;
+            ValidationErrorMessage = $"Invalid api base uri: {exc.Message}";
+        }
+
+        StateHasChanged();
+        return isValid;
     }
 }

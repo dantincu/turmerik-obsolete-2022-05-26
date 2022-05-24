@@ -14,6 +14,12 @@ namespace Turmerik.Blazor.Core.Pages.Components
 {
     public partial class FilesPageComponentBase
     {
+        protected async Task OpenCurrentFolderInNewTabFromModalAsync(MouseEventArgs args)
+        {
+            await CloseCurrentFolderOptionsModalAsync();
+            throw new NotImplementedException();
+        }
+
         protected async Task OpenCurrentFolderInOSFileExplorerFromModalAsync(MouseEventArgs args)
         {
             await CloseCurrentFolderOptionsModalAsync();
@@ -24,6 +30,12 @@ namespace Turmerik.Blazor.Core.Pages.Components
             };
 
             await OpenFolderInOSFileExplorerApiCall.CallApiAsync(requestData);
+        }
+
+        protected async Task OpenCurrentFolderInNewTabFromFileModalAsync(MouseEventArgs args)
+        {
+            await CloseDriveItemOptionsModalAsync();
+            throw new NotImplementedException();
         }
 
         protected async Task OpenCurrentFolderInOSFileExplorerFromFileModalAsync(MouseEventArgs args)
@@ -48,6 +60,12 @@ namespace Turmerik.Blazor.Core.Pages.Components
             };
 
             await OpenFolderInTrmrkFileExplorerApiCall.CallApiAsync(requestData);
+        }
+
+        protected async Task OpenSelectedFolderInNewTabFromModalAsync(MouseEventArgs args)
+        {
+            await CloseCurrentFolderOptionsModalAsync();
+            throw new NotImplementedException();
         }
 
         protected async Task OpenSelectedFolderInOSFileExplorerFromModalAsync(MouseEventArgs args)

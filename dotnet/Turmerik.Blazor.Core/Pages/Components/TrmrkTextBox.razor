@@ -52,6 +52,9 @@
 
     private string EditableTextValue { get; set; }
 
+    private static readonly object syncRoot = new object();
+    private volatile int isStartingEditing;
+
     private string ReadonlyTextboxCssClass => IsEditing ? CssClassH.Hidden : string.Empty;
     private string EditableTextboxCssClass => IsEditing ? string.Empty : CssClassH.Hidden;
 
@@ -61,7 +64,17 @@
 
         if (IsEditing)
         {
-            await SelectEditableTextBoxAsync();
+            bool selectTextBox = false;
+
+            lock (syncRoot)
+            {
+                selectTextBox = Interlocked.CompareExchange(ref isStartingEditing, 0, 1) == 1;
+            }
+
+            if (selectTextBox)
+            {
+                await SelectEditableTextBoxAsync();
+            }
         }
     }
 
@@ -102,6 +115,8 @@
     {
         if (IsEditingEnabled)
         {
+            isStartingEditing = 1;
+
             EditableTextValue = TextValue;
             IsEditing = true;
 

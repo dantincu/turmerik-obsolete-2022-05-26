@@ -13,12 +13,15 @@
         }
         else if (ViewModel.SetApiBaseUri != null)
         {
-            <SetApiBaseUriView ViewModel=@ViewModel.SetApiBaseUri></SetApiBaseUriView>
+            <SetApiBaseUriView
+                OnApiBaseUriSet=OnApiBaseUriSet
+                ViewModel=@ViewModel.SetApiBaseUri>
+            </SetApiBaseUriView>
         }
 
         @if (ViewModel.ShowBackBtn && ViewModel.Error != null || ViewModel.SetApiBaseUri != null)
         {
-            <button type="button" class="btn btn-dark" @onmouseup=@OnBtnBackClickAsync>Back</button>
+            <button type="button" class="btn btn-dark @CssClassH.Btn" @onmouseup=@OnBtnBackClickAsync>Back</button>
         }
     </div>
 </div>
@@ -30,6 +33,11 @@
     {
         await base.OnInitializedAsync();
         mainLayoutService.OnUIBlockingOverlayChanged += OnUIBlockingOverlayChanged;
+    }
+
+    private async Task OnApiBaseUriSet(TextEventArgsWrapper args)
+    {
+        await mainLayoutService.ApiBaseUriSet(args);
     }
 
     private string OverlayCssClass
@@ -58,9 +66,12 @@
         StateHasChanged();
     }
 
-    private async Task OnBtnBackClickAsync()
+    private async Task OnBtnBackClickAsync(MouseEventArgs args)
     {
-        ViewModel.Enabled = false;
-        StateHasChanged();
+        if (args.Button.IsLeftMouseButton())
+        {
+            ViewModel.Enabled = false;
+            StateHasChanged();
+        }
     }
 }

@@ -38,3 +38,16 @@
 #ui-blocking-overlay-container.trmrk-hidden {
     display: none;
 }
+
+#ui-blocking-overlay > .btn.btn-dark.trmrk-btn {
+    margin-top: 5px;
+}
+
+::deep .trmrk-popover.popover,
+::deep .trmrk-popover.popover .popover-body {
+    z-index: 3000;
+}
+
+    ::deep .trmrk-popover.popover .popover-arrow {
+        z-index: 3000;
+    }

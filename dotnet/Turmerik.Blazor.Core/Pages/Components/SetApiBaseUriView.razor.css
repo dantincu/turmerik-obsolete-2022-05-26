@@ -1,3 +1,8 @@
-﻿.set-api-key-view {
+﻿.trmrk-set-api-base-uri-view > .btn.btn-dark.trmrk-btn {
+    margin-top: 5px;
+}
 
+.trmrk-error-block {
+    color: #A03000;
+    font-weight: bold;
 }
