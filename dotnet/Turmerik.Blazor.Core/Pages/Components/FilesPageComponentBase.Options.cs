@@ -27,9 +27,12 @@ namespace Turmerik.Blazor.Core.Pages.Components
         private const string DELETE_FOLDER = "Delete folder";
         private const string MOVE_FOLDER = "Move folder";
         private const string COPY_FOLDER = "Copy folder";
+        private const string RENAME_FILE = "Rename file";
+        private const string DELETE_FILE = "Delete file";
+        private const string MOVE_FILE = "Move file";
+        private const string COPY_FILE = "Copy file";
         private const string OPEN = "Open";
-        private const string OPEN_IN_NEW_TAB = "Open in new tab";
-        private const string OPEN_FOLDER_IN_NEW_TAB = "Open in new tab";
+        private const string OPEN_FOLDER_IN_NEW_TAB = "Open folder in new tab";
 
         protected virtual List<List<IDriveItemCommand>> GetCurrentlyOpenDriveFolderCommandsMx()
         {
@@ -37,7 +40,7 @@ namespace Turmerik.Blazor.Core.Pages.Components
 
             var firstMtblList = new List<DriveItemCommandMtbl>
             {
-                GetDriveItemCommandMtbl(OPEN_IN_NEW_TAB,
+                GetDriveItemCommandMtbl(OPEN_FOLDER_IN_NEW_TAB,
                     OpenCurrentFolderInNewTabFromModalAsync),
                 GetDriveItemCommandMtbl(OPEN_FOLDER_IN_OS_FILE_EXPLORER,
                     OpenCurrentFolderInOSFileExplorerFromModalAsync)
@@ -95,8 +98,10 @@ namespace Turmerik.Blazor.Core.Pages.Components
             {
                 GetDriveItemCommandMtbl(OPEN,
                     OpenSelectedFolderFromModalAsync),
-                GetDriveItemCommandMtbl(OPEN_IN_NEW_TAB,
-                    OpenSelectedFolderInNewTabFromModalAsync)
+                GetDriveItemCommandMtbl(OPEN_FOLDER_IN_NEW_TAB,
+                    OpenSelectedFolderInNewTabFromModalAsync),
+                GetDriveItemCommandMtbl(OPEN_FOLDER_IN_OS_FILE_EXPLORER,
+                    OpenSelectedFolderInOSFileExplorerFromModalAsync)
             };
 
             if (!IsLocalDiskExplorer)
@@ -146,14 +151,16 @@ namespace Turmerik.Blazor.Core.Pages.Components
 
             var firstMtblList = new List<DriveItemCommandMtbl>
             {
-                GetDriveItemCommandMtbl(OPEN_FOLDER_IN_NEW_TAB,
-                    OpenCurrentFolderInNewTabFromFileModalAsync),
-                GetDriveItemCommandMtbl(OPEN_FOLDER_IN_OS_FILE_EXPLORER,
-                    OpenCurrentFolderInOSFileExplorerFromFileModalAsync),
+                GetDriveItemCommandMtbl(OPEN,
+                    OpenSelectedDriveItemFromModalAsync),
                 GetDriveItemCommandMtbl(OPEN_FILE_IN_OS_DEFAULT_APP,
                     OpenSelectedDriveItemInOSDefaultAppFromModalAsync),
                 GetDriveItemCommandMtbl(OPEN_FILE_IN_OS_DEFAULT_TEXT_EDITOR,
-                    OpenSelectedDriveItemInOSDefaultTextEditorFromModalAsync)
+                    OpenSelectedDriveItemInOSDefaultTextEditorFromModalAsync),
+                GetDriveItemCommandMtbl(OPEN_FOLDER_IN_NEW_TAB,
+                    OpenCurrentFolderInNewTabFromFileModalAsync),
+                GetDriveItemCommandMtbl(OPEN_FOLDER_IN_OS_FILE_EXPLORER,
+                    OpenCurrentFolderInOSFileExplorerFromFileModalAsync)
             };
 
             if (!IsLocalDiskExplorer)
@@ -167,6 +174,21 @@ namespace Turmerik.Blazor.Core.Pages.Components
 
             AddDriveItemCommandsList(
                 commandsMx,
+                firstMtblList.ToArray());
+
+            AddDriveItemCommandsList(
+                commandsMx,
+                GetDriveItemCommandMtbl(RENAME_FILE,
+                    BeginRenameFileFromModalAsync),
+                GetDriveItemCommandMtbl(DELETE_FILE,
+                    BeginDeleteFileFromModalAsync),
+                GetDriveItemCommandMtbl(COPY_FILE,
+                    BeginCopyFileFromModalAsync),
+                GetDriveItemCommandMtbl(MOVE_FILE,
+                    BeginMoveFileFromModalAsync));
+
+            AddDriveItemCommandsList(
+                commandsMx,
                 GetDriveItemCommandMtbl(CREATE_NEW_FOLDER,
                     BeginCreateNewFolderInCurrentFromModalAsync),
                 GetDriveItemCommandMtbl(CREATE_NEW_TEXT_FILE,
@@ -177,10 +199,6 @@ namespace Turmerik.Blazor.Core.Pages.Components
                     BeginCreateNewMsOfficeExcelFileInCurrentFromModalAsync),
                 GetDriveItemCommandMtbl(CREATE_NEW_MS_OFFICE_POWERPOINT_FILE,
                     BeginCreateNewMsOfficePowerPointFileInCurrentFromModalAsync));
-
-            AddDriveItemCommandsList(
-                commandsMx,
-                firstMtblList.ToArray());
 
             return commandsMx;
         }

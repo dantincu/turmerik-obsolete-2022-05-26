@@ -47,10 +47,8 @@
             }
 
             await JSRuntime.InvokeAsync<int>(
-                TrmrkJsH.Get(TrmrkJsH.ShowPopover),
-                UuidStr,
-                "[data-bs-toggle='popover']",
-                1000);
+                TrmrkJsH.Get(TrmrkJsH.ShowPopover), UuidStr,
+                "[data-bs-toggle='popover']", 1000);
         }
     }
 }

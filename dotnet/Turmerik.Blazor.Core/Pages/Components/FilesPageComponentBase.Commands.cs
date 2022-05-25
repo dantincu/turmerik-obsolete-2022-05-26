@@ -100,6 +100,12 @@ namespace Turmerik.Blazor.Core.Pages.Components
             await OpenDriveFolderAsync(SelectedDriveFolder);
         }
 
+        protected async Task OpenSelectedDriveItemFromModalAsync(MouseEventArgs args)
+        {
+            await CloseDriveItemOptionsModalAsync();
+            await OpenDriveItemAsync(SelectedDriveItem);
+        }
+
         protected async Task OpenSelectedDriveItemInOSDefaultAppFromModalAsync(MouseEventArgs args)
         {
             await CloseDriveItemOptionsModalAsync();
