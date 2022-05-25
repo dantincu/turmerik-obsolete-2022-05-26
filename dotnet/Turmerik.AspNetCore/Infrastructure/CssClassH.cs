@@ -34,6 +34,7 @@ namespace Turmerik.AspNetCore.Infrastructure
         public const string BAR = "bar";
         public const string BRAND = "brand";
         public const string NAME = "name";
+        public const string IDENTIFIER = "identifier";
         public const string LABEL = "label";
         public const string TITLE = "title";
         public const string EXT = "ext";
@@ -155,6 +156,8 @@ namespace Turmerik.AspNetCore.Infrastructure
         public static readonly string Textbox = Class(TEXTBOX);
         public static readonly string TextboxWrapper = Class(TEXTBOX, WRAPPER);
         public static readonly string TextboxReadonly = Class(TEXTBOX, READONLY);
+
+        public static readonly string IdentifierLabel = Class(IDENTIFIER, LABEL);
 
         public static readonly string Rotate90Deg = Class(ROTATE90DEG);
         public static readonly string Opaque = Class(OPAQUE);

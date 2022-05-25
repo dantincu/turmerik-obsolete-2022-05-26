@@ -16,12 +16,12 @@
         <IdentifierLabel
             IdentifierValue=@DriveItemName
             RenderClipboardButton=@(AllowAllToClipboard || AllowDriveItemNameToClipboard)>
-            <AfterIconTemplate Context="afterIconCtx">
+            <BeforeIconTemplate Context="afterIconCtx">
                 <h5 class="modal-title">
                     <span class="oi @IconCssClass"></span>
                     @DriveItemName
                 </h5>
-            </AfterIconTemplate>
+            </BeforeIconTemplate>
         </IdentifierLabel>
     </HeaderTemplate>
     <BodyTemplate Context="bodyCtx">
@@ -29,8 +29,10 @@
             IdentifierValue=@DriveItemAddress
             RenderClipboardButton="true"
             RenderNothing=@(!(AllowAllToClipboard || ShowDriveItemAddress))>
-            <AfterIconTemplate Context="afterIconCtx">
+            <BeforeIconTemplate>
                 <pre>@DriveItemAddress</pre>
+            </BeforeIconTemplate>
+            <AfterIconTemplate Context="afterIconCtx">
                 <hr />
             </AfterIconTemplate>
         </IdentifierLabel>
@@ -42,9 +44,9 @@
             RenderClipboardButton="true"
             RenderNothing=@(!(AllowAllToClipboard || ShowDriveItemUri))>
             <BeforeIconTemplate Context="beforeIconCtx">
+                <pre>@DriveItemUri</pre>
             </BeforeIconTemplate>
             <AfterIconTemplate Context="afterIconCtx">
-                <pre>@DriveItemUri</pre>
             </AfterIconTemplate>
         </IdentifierLabel>
     </BodyTemplate>
@@ -87,5 +89,5 @@
     [Parameter]
     public RenderFragment<object> BodyContentTemplate { get; set; }
 
-    private string IconCssClass => IsFolderItem ? "oi-folder" : "oi-class";
+    private string IconCssClass => IsFolderItem ? "oi-folder" : "oi-file";
 }

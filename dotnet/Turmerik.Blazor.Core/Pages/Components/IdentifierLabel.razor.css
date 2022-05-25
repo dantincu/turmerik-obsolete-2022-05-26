@@ -1,0 +1,13 @@
+﻿.trmrk-identifier-label {
+    display: flex;
+    flex-flow: row;
+}
+
+::deep .oi.oi-clipboard {
+    margin: 0.3rem 0.5rem;
+    color: #F0E0C0;
+}
+
+::deep pre {
+    margin: 0.3rem 0;
+}
