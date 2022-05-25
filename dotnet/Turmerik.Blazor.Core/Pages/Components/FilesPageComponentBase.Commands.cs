@@ -17,7 +17,7 @@ namespace Turmerik.Blazor.Core.Pages.Components
         protected async Task OpenCurrentFolderInNewTabFromModalAsync(MouseEventArgs args)
         {
             await CloseCurrentFolderOptionsModalAsync();
-            throw new NotImplementedException();
+            await OpenCurrentDriveFolderInNewTabAsync();
         }
 
         protected async Task OpenCurrentFolderInOSFileExplorerFromModalAsync(MouseEventArgs args)
@@ -35,7 +35,7 @@ namespace Turmerik.Blazor.Core.Pages.Components
         protected async Task OpenCurrentFolderInNewTabFromFileModalAsync(MouseEventArgs args)
         {
             await CloseDriveItemOptionsModalAsync();
-            throw new NotImplementedException();
+            await OpenCurrentDriveFolderInNewTabAsync();
         }
 
         protected async Task OpenCurrentFolderInOSFileExplorerFromFileModalAsync(MouseEventArgs args)
@@ -65,7 +65,7 @@ namespace Turmerik.Blazor.Core.Pages.Components
         protected async Task OpenSelectedFolderInNewTabFromModalAsync(MouseEventArgs args)
         {
             await CloseCurrentFolderOptionsModalAsync();
-            throw new NotImplementedException();
+            await OpenDriveFolderInNewTabAsync(SelectedDriveFolder);
         }
 
         protected async Task OpenSelectedFolderInOSFileExplorerFromModalAsync(MouseEventArgs args)

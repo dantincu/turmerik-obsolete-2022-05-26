@@ -182,10 +182,13 @@ namespace Turmerik.AspNetCore.Services.DriveItems
             tabPageHeads.Add(newHead);
             args.TabPageUuid = newHead.Uuid;
 
-            args.FolderIdentifier = args.FolderIdentifier ?? new DriveItemIdentifier
+            var idnf = args.FolderIdentifier ?? new DriveItemIdentifier
             {
                 IsRootFolder = true,
             };
+
+            TryNormalizeDriveFolderIdentifier(ref idnf);
+            args.FolderIdentifier = idnf;
 
             await ChangeTabCoreAsync(args);
         }
@@ -215,11 +218,13 @@ namespace Turmerik.AspNetCore.Services.DriveItems
                         var head = tabPageHeads[idx];
 
                         args.TabPageUuid = head.Uuid;
+                        bool isRoot = string.IsNullOrEmpty(head.Id);
 
                         args.FolderIdentifier = new DriveItemIdentifier
                         {
                             Id = head.Id,
-                            Name = head.Name,
+                            Name = isRoot ? string.Empty : head.Name,
+                            IsRootFolder = isRoot,
                         };
 
                         args.FolderIdentifier.Address = GetDriveItemAddress(args.FolderIdentifier);

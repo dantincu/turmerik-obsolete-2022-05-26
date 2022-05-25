@@ -142,6 +142,46 @@ namespace Turmerik.Blazor.Core.Pages.Components
             TabPageUuid);
         }
 
+        protected async Task OpenDriveFolderInNewTabAsync(DriveItem driveFolder)
+        {
+            await NavigateCore(serviceArgs =>
+            {
+                serviceArgs.ActionType = DriveExplorerActionType.NewTab;
+                AssignFolderIdentifier(serviceArgs);
+
+                if (!string.IsNullOrWhiteSpace(driveFolder.Id))
+                {
+                    AssignFolderNavigation(serviceArgs, null, driveFolder.Id);
+                }
+                else
+                {
+                    AssignFolderNavigation(serviceArgs, driveFolder.Name, null);
+                }
+            },
+            TabPageUuid);
+        }
+
+        protected async Task OpenCurrentDriveFolderInNewTabAsync()
+        {
+            await NavigateCore(serviceArgs =>
+            {
+                serviceArgs.ActionType = DriveExplorerActionType.NewTab;
+                AssignFolderIdentifier(serviceArgs);
+
+                var driveFolder = serviceArgs.Data.TabPageItems.CurrentlyOpenFolder;
+
+                if (!string.IsNullOrWhiteSpace(driveFolder.Id))
+                {
+                    AssignFolderNavigation(serviceArgs, null, driveFolder.Id);
+                }
+                else
+                {
+                    AssignFolderNavigation(serviceArgs, driveFolder.Name, null);
+                }
+            },
+            TabPageUuid);
+        }
+
         protected async Task OpenDriveItemAsync(DriveItem driveItem)
         {
             await OpenFileInOSDefaultApp(driveItem);
