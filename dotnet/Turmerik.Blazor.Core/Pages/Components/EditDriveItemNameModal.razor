@@ -1,0 +1,59 @@
+﻿@using Turmerik.AspNetCore.Infrastructure
+@using Turmerik.Core.Services.DriveItems
+
+@inherits EditDriveItemNameModalBase
+
+<DriveItemModal
+    ModalId=@ModalId
+    DriveItemName=@DriveItemName
+    AllowAllToClipboard=@AllowAllToClipboard
+    AllowDriveItemNameToClipboard=@AllowDriveItemNameToClipboard
+    DriveItemAddress=@DriveItemAddress
+    ShowDriveItemAddress=@ShowDriveItemAddress
+    DriveItemUri=@DriveItemUri
+    ShowDriveItemUri=@ShowDriveItemUri
+    DriveItemId=@DriveItemId
+    OnCloseModalAsync=@OnCloseModalAsync>
+    <BodyContentTemplate Context="bodyContentCtx">
+        <input type="hidden" />
+    </BodyContentTemplate>
+</DriveItemModal>
+
+@code {
+    [Parameter]
+    public string ModalId { get; set; }
+
+    [Parameter]
+    public string DriveItemName { get; set; }
+
+    [Parameter]
+    public string DriveItemAddress { get; set; }
+
+    [Parameter]
+    public bool ShowDriveItemAddress { get; set; }
+
+    [Parameter]
+    public string DriveItemUri { get; set; }
+
+    [Parameter]
+    public bool ShowDriveItemUri { get; set; }
+
+    [Parameter]
+    public string DriveItemId { get; set; }
+
+    [Parameter]
+    public bool IsNewItem { get; set; }
+
+    [Parameter]
+    public bool IsFolderItem { get; set; }
+
+    [Parameter]
+    public MsOfficeFileType? MsOfficeFileType { get; set; }
+
+    [Parameter]
+    public Func<Task> OnCloseModalAsync { get; set; }
+
+    private bool AllowDriveItemNameToClipboard => !IsNewItem;
+
+    private bool AllowAllToClipboard => true;
+}

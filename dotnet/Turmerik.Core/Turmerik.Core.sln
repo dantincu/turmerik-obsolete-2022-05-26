@@ -52,7 +52,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turmerik.LocalDiskExplorer.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turmerik.LocalDiskExplorer.Background.WebApi.App", "..\Turmerik.LocalDiskExplorer.Background.WebApi.App\Turmerik.LocalDiskExplorer.Background.WebApi.App.csproj", "{A7E2CF89-6015-4647-897B-F5B880E1C588}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Turmerik.NetCore", "..\Turmerik.NetCore\Turmerik.NetCore.csproj", "{8BC17672-D8FB-4B52-B906-336707480003}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turmerik.NetCore", "..\Turmerik.NetCore\Turmerik.NetCore.csproj", "{8BC17672-D8FB-4B52-B906-336707480003}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

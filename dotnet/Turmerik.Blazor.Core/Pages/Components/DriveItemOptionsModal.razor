@@ -9,29 +9,19 @@
 
 @inject IJSRuntime jsRuntime;
 
-<SimpleModal
-    ModalId="@ModalId"
-    OnCloseModalAsync=OnCloseModalAsync>
-    <HeaderTemplate>
-        <IdentifierLabel
-            IdentifierValue=@DriveItemName
-            RenderClipboardButton=@(AllowAllToClipboard || AllowDriveItemNameToClipboard)>
-            <AfterIconTemplate Context="afterIconCtx">
-                <h5 class="modal-title">@DriveItemName</h5>
-            </AfterIconTemplate>
-        </IdentifierLabel>
-    </HeaderTemplate>
-    <BodyTemplate>
-        <IdentifierLabel
-            IdentifierValue=@DriveItemAddress
-            RenderClipboardButton="true"
-            RenderNothing=@(!(AllowAllToClipboard || ShowDriveItemAddress))>
-            <AfterIconTemplate Context="afterIconCtx">
-                <pre>@DriveItemAddress</pre>
-                <hr />
-            </AfterIconTemplate>
-        </IdentifierLabel>
-
+<DriveItemModal
+    ModalId=@ModalId
+    DriveItemName=@DriveItemName
+    AllowAllToClipboard=@AllowAllToClipboard
+    AllowDriveItemNameToClipboard=@AllowDriveItemNameToClipboard
+    DriveItemAddress=@DriveItemAddress
+    ShowDriveItemAddress=@ShowDriveItemAddress
+    DriveItemUri=@DriveItemUri
+    ShowDriveItemUri=@ShowDriveItemUri
+    DriveItemId=@DriveItemId
+    OnCloseModalAsync=@OnCloseModalAsync
+    IsFolderItem=@IsFolderItem>
+    <BodyContentTemplate Context="bodyContentCtx">
         @{
             bool isFirstGroup = true;
         }
@@ -68,24 +58,14 @@
                     </ul>
                 }
             }
-        }
 
-        <IdentifierLabel
-            IdentifierValue=@DriveItemUri
-            RenderClipboardButton="true"
-            RenderNothing=@(!(AllowAllToClipboard || ShowDriveItemUri))>
-            <BeforeIconTemplate Context="beforeIconCtx">
-                @if (!isFirstGroup)
-                {
-                    <hr />
-                }
-            </BeforeIconTemplate>
-            <AfterIconTemplate Context="afterIconCtx">
-                <pre>@DriveItemUri</pre>
-            </AfterIconTemplate>
-        </IdentifierLabel>
-    </BodyTemplate>
-</SimpleModal>
+            @if (!isFirstGroup)
+            {
+                <hr />
+            }
+        }
+    </BodyContentTemplate>
+</DriveItemModal>
 
 @code {
     [Parameter]
@@ -121,7 +101,6 @@
     [Parameter]
     public Func<Task> OnCloseModalAsync { get; set; }
 
-    protected bool? DriveItemNameClipboardIconAfterTemplate => (AllowAllToClipboard || AllowDriveItemNameToClipboard) ? true : null;
-    protected bool? DriveItemAddressClipboardIconAfterTemplate => (AllowAllToClipboard || ShowDriveItemAddress) ? true : null;
-    protected bool? DriveItemUriClipboardIconAfterTemplate => (AllowAllToClipboard || ShowDriveItemUri) ? true : null;
+    [Parameter]
+    public bool IsFolderItem { get; set; }
 }

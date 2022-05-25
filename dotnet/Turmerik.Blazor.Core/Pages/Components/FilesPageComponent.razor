@@ -124,7 +124,8 @@
             DriveItemUri="@currentlyOpenIdentifier?.Uri"
             ShowDriveItemUri="@(!isRootFolder)"
             DriveItemId="@currentlyOpenFolder?.Id"
-            CommandsMx=CurrentlyOpenDriveFolderCommandsMx>
+            CommandsMx=CurrentlyOpenDriveFolderCommandsMx
+            IsFolderItem="true">
         </DriveItemOptionsModal>
 
         <DriveItemOptionsModal
@@ -135,7 +136,8 @@
             DriveItemUri="@SelectedDriveFolderUri"
             DriveItemId="@SelectedDriveFolderId"
             AllowAllToClipboard="true"
-            CommandsMx=SelectedDriveFolderCommandsMx>
+            CommandsMx=SelectedDriveFolderCommandsMx
+            IsFolderItem="true">
         </DriveItemOptionsModal>
 
         <DriveItemOptionsModal
@@ -146,7 +148,8 @@
             DriveItemUri="@SelectedDriveItemUri"
             DriveItemId="@SelectedDriveItemId"
             AllowAllToClipboard="true"
-            CommandsMx=SelectedDriveItemCommandsMx>
+            CommandsMx=SelectedDriveItemCommandsMx
+            IsFolderItem="false">
         </DriveItemOptionsModal>
     }
     else

@@ -1,0 +1,91 @@
+﻿@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.JSInterop
+@using Turmerik.AspNetCore.Infrastructure
+@using System.Web;
+@using Turmerik.Blazor.Core.Pages.Components
+@using Turmerik.Core.Helpers;
+
+@inherits DriveItemOptionsModalBase
+
+@inject IJSRuntime jsRuntime;
+
+<SimpleModal
+    ModalId="@ModalId"
+    OnCloseModalAsync=OnCloseModalAsync>
+    <HeaderTemplate Context="headerCtx">
+        <IdentifierLabel
+            IdentifierValue=@DriveItemName
+            RenderClipboardButton=@(AllowAllToClipboard || AllowDriveItemNameToClipboard)>
+            <AfterIconTemplate Context="afterIconCtx">
+                <h5 class="modal-title">
+                    <span class="oi @IconCssClass"></span>
+                    @DriveItemName
+                </h5>
+            </AfterIconTemplate>
+        </IdentifierLabel>
+    </HeaderTemplate>
+    <BodyTemplate Context="bodyCtx">
+        <IdentifierLabel
+            IdentifierValue=@DriveItemAddress
+            RenderClipboardButton="true"
+            RenderNothing=@(!(AllowAllToClipboard || ShowDriveItemAddress))>
+            <AfterIconTemplate Context="afterIconCtx">
+                <pre>@DriveItemAddress</pre>
+                <hr />
+            </AfterIconTemplate>
+        </IdentifierLabel>
+
+        @BodyContentTemplate(null)
+
+        <IdentifierLabel
+            IdentifierValue=@DriveItemUri
+            RenderClipboardButton="true"
+            RenderNothing=@(!(AllowAllToClipboard || ShowDriveItemUri))>
+            <BeforeIconTemplate Context="beforeIconCtx">
+            </BeforeIconTemplate>
+            <AfterIconTemplate Context="afterIconCtx">
+                <pre>@DriveItemUri</pre>
+            </AfterIconTemplate>
+        </IdentifierLabel>
+    </BodyTemplate>
+</SimpleModal>
+
+@code {
+    [Parameter]
+    public string ModalId { get; set; }
+
+    [Parameter]
+    public string DriveItemName { get; set; }
+    
+    [Parameter]
+    public bool AllowAllToClipboard { get; set; }
+    
+    [Parameter]
+    public bool AllowDriveItemNameToClipboard { get; set; }
+    
+    [Parameter]
+    public string DriveItemAddress { get; set; }
+    
+    [Parameter]
+    public bool ShowDriveItemAddress { get; set; }
+    
+    [Parameter]
+    public string DriveItemUri { get; set; }
+    
+    [Parameter]
+    public bool ShowDriveItemUri { get; set; }
+
+    [Parameter]
+    public string DriveItemId { get; set; }
+
+    [Parameter]
+    public Func<Task> OnCloseModalAsync { get; set; }
+
+    [Parameter]
+    public bool IsFolderItem { get; set; }
+
+    [Parameter]
+    public RenderFragment<object> BodyContentTemplate { get; set; }
+
+    private string IconCssClass => IsFolderItem ? "oi-folder" : "oi-class";
+}
