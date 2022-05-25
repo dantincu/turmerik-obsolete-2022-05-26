@@ -147,16 +147,14 @@ namespace Turmerik.Blazor.Core.Pages.Components
             await NavigateCore(serviceArgs =>
             {
                 serviceArgs.ActionType = DriveExplorerActionType.NewTab;
-                AssignFolderIdentifier(serviceArgs);
+                bool hasId = !string.IsNullOrEmpty(driveFolder.Id);
 
-                if (!string.IsNullOrWhiteSpace(driveFolder.Id))
+                serviceArgs.FolderIdentifier = new DriveItemIdentifier
                 {
-                    AssignFolderNavigation(serviceArgs, null, driveFolder.Id);
-                }
-                else
-                {
-                    AssignFolderNavigation(serviceArgs, driveFolder.Name, null);
-                }
+                    Id = driveFolder.Id,
+                    Name = hasId ? string.Empty : driveFolder.Name,
+                    ParentId = ServiceArgs.Data.TabPageItems.CurrentlyOpenFolder.Id
+                };
             },
             TabPageUuid);
         }
@@ -220,7 +218,7 @@ namespace Turmerik.Blazor.Core.Pages.Components
 
                         try
                         {
-                            var task = AssureAllModalsAreClosedAsync();
+                            await AssureAllModalsAreClosedAsync();
 
                             argsCallback(serviceArgs);
                             await DriveFolderService.NavigateAsync(serviceArgs);
@@ -236,8 +234,6 @@ namespace Turmerik.Blazor.Core.Pages.Components
                             callback?.Invoke();
 
                             ClearError();
-                            await task;
-
                             CurrentlyOpenDriveFolderCommandsMx = GetCurrentlyOpenDriveFolderCommandsMx();
 
                             SelectedDriveFolderCommandsMx = GetSelectedDriveFolderCommandsMx();
@@ -286,12 +282,13 @@ namespace Turmerik.Blazor.Core.Pages.Components
         private DriveFolder AssignFolderIdentifier(DriveExplorerServiceArgs serviceArgs)
         {
             var currentlyOpenFolder = ServiceArgs.Data.TabPageItems.CurrentlyOpenFolder;
+            bool isRootFolder = currentlyOpenFolder.IsRootFolder ?? false;
 
             serviceArgs.FolderIdentifier = new DriveItemIdentifier
             {
                 Id = currentlyOpenFolder.Id,
-                IsRootFolder = currentlyOpenFolder.IsRootFolder ?? false,
-                Name = currentlyOpenFolder.Name,
+                IsRootFolder = isRootFolder,
+                Name = isRootFolder ? string.Empty : currentlyOpenFolder.Name,
             };
 
             return currentlyOpenFolder;

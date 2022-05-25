@@ -314,14 +314,12 @@ namespace Turmerik.Blazor.Core.Pages.Components
             }
         }
 
-        private Task AssureAllModalsAreClosedAsync()
+        private async Task AssureAllModalsAreClosedAsync()
         {
-            Task.WaitAll(
+            await Task.WhenAll(
                 CloseCurrentFolderOptionsModalAsync(),
                 CloseDriveFolderItemOptionsModalAsync(),
                 CloseDriveItemOptionsModalAsync());
-
-            return Task.CompletedTask;
         }
 
         private DriveItemCommandMtbl GetDriveItemCommandMtbl(

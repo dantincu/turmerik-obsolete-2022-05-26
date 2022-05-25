@@ -16,14 +16,11 @@ namespace Turmerik.Blazor.Core.Pages.Components
     {
         protected async Task OpenCurrentFolderInNewTabFromModalAsync(MouseEventArgs args)
         {
-            await CloseCurrentFolderOptionsModalAsync();
             await OpenCurrentDriveFolderInNewTabAsync();
         }
 
         protected async Task OpenCurrentFolderInOSFileExplorerFromModalAsync(MouseEventArgs args)
         {
-            await CloseCurrentFolderOptionsModalAsync();
-
             var requestData = new FsEntryData
             {
                 EntryPath = ServiceArgs.FolderIdentifier.Path ?? string.Empty
@@ -34,14 +31,11 @@ namespace Turmerik.Blazor.Core.Pages.Components
 
         protected async Task OpenCurrentFolderInNewTabFromFileModalAsync(MouseEventArgs args)
         {
-            await CloseDriveItemOptionsModalAsync();
             await OpenCurrentDriveFolderInNewTabAsync();
         }
 
         protected async Task OpenCurrentFolderInOSFileExplorerFromFileModalAsync(MouseEventArgs args)
         {
-            await CloseDriveItemOptionsModalAsync();
-
             var requestData = new FsEntryData
             {
                 EntryPath = ServiceArgs.FolderIdentifier.Path ?? string.Empty
@@ -52,8 +46,6 @@ namespace Turmerik.Blazor.Core.Pages.Components
 
         protected async Task OpenCurrentFolderInTrmrkFileExplorerFromModalAsync(MouseEventArgs args)
         {
-            await CloseCurrentFolderOptionsModalAsync();
-
             var requestData = new FsEntryData
             {
                 EntryPath = ServiceArgs.FolderIdentifier.Path ?? string.Empty
@@ -64,14 +56,11 @@ namespace Turmerik.Blazor.Core.Pages.Components
 
         protected async Task OpenSelectedFolderInNewTabFromModalAsync(MouseEventArgs args)
         {
-            await CloseCurrentFolderOptionsModalAsync();
             await OpenDriveFolderInNewTabAsync(SelectedDriveFolder);
         }
 
         protected async Task OpenSelectedFolderInOSFileExplorerFromModalAsync(MouseEventArgs args)
         {
-            await CloseDriveFolderItemOptionsModalAsync();
-
             var requestData = new FsEntryData
             {
                 ParentDirPath = ServiceArgs.FolderIdentifier.Path,
@@ -83,8 +72,6 @@ namespace Turmerik.Blazor.Core.Pages.Components
 
         protected async Task OpenSelectedFolderInTrmrkFileExplorerFromModalAsync(MouseEventArgs args)
         {
-            await CloseDriveFolderItemOptionsModalAsync();
-
             var requestData = new FsEntryData
             {
                 ParentDirPath = ServiceArgs.FolderIdentifier.Path,
@@ -102,14 +89,11 @@ namespace Turmerik.Blazor.Core.Pages.Components
 
         protected async Task OpenSelectedDriveItemFromModalAsync(MouseEventArgs args)
         {
-            await CloseDriveItemOptionsModalAsync();
             await OpenDriveItemAsync(SelectedDriveItem);
         }
 
         protected async Task OpenSelectedDriveItemInOSDefaultAppFromModalAsync(MouseEventArgs args)
         {
-            await CloseDriveItemOptionsModalAsync();
-
             var requestData = new FsEntryData
             {
                 ParentDirPath = ServiceArgs.FolderIdentifier.Path,
@@ -121,8 +105,6 @@ namespace Turmerik.Blazor.Core.Pages.Components
 
         protected async Task OpenSelectedDriveItemInOSDefaultTextEditorFromModalAsync(MouseEventArgs args)
         {
-            await CloseDriveItemOptionsModalAsync();
-
             var requestData = new FsEntryData
             {
                 ParentDirPath = ServiceArgs.FolderIdentifier.Path,
@@ -134,8 +116,6 @@ namespace Turmerik.Blazor.Core.Pages.Components
 
         protected async Task OpenSelectedDriveItemInTrmrkTextEditorFromModalAsync(MouseEventArgs args)
         {
-            await CloseDriveItemOptionsModalAsync();
-
             var requestData = new FsEntryData
             {
                 ParentDirPath = ServiceArgs.FolderIdentifier.Path,

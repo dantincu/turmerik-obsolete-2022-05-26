@@ -315,7 +315,6 @@ namespace Turmerik.AspNetCore.Services.DriveItems
             errorMessage = null;
 
             identifier = identifier ?? new DriveItemIdentifier();
-
             string path = identifier.Id;
 
             if (string.IsNullOrWhiteSpace(path))
@@ -331,6 +330,13 @@ namespace Turmerik.AspNetCore.Services.DriveItems
             if (string.IsNullOrWhiteSpace(path))
             {
                 path = identifier.Uri;
+            }
+
+            if (string.IsNullOrWhiteSpace(
+                path) && (!string.IsNullOrEmpty(
+                    identifier.ParentId) && !string.IsNullOrEmpty(identifier.Name)))
+            {
+                path = Path.Combine(identifier.ParentId, identifier.Name);
             }
 
             if (!string.IsNullOrWhiteSpace(path))
