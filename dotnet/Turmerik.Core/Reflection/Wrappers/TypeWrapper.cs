@@ -26,7 +26,12 @@ namespace Turmerik.Core.Reflection.Wrappers
                 () => new InterfaceMappingsCache(Data));
 
             AllProps = new Lazy<IReadOnlyCollection<PropertyWrapper>>(
-                () => data.GetProperties().RdnlC(pi => new PropertyWrapper(pi)));
+                () => data.GetProperties(
+                    BindingFlags.Instance |
+                BindingFlags.Static |
+                BindingFlags.Public |
+                BindingFlags.NonPublic |
+                BindingFlags.FlattenHierarchy).RdnlC(pi => new PropertyWrapper(pi)));
 
             InstGetProps = AllProps.LzRdnlC(pw => pw.Data.PropGetterIs(g => !g.IsStatic));
             InstPubGetProps = InstGetProps.LzRdnlC(pw => pw.Data.PropGetterIs(g => g.IsPublic));

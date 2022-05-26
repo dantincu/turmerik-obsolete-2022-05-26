@@ -56,7 +56,7 @@ namespace Turmerik.Blazor.Core.Pages.Components
 
         protected async Task OpenSelectedFolderInNewTabFromModalAsync(MouseEventArgs args)
         {
-            await OpenDriveFolderInNewTabAsync(SelectedDriveFolder);
+            await OpenDriveFolderInNewTabAsync(SelectedDriveFolderItem);
         }
 
         protected async Task OpenSelectedFolderInOSFileExplorerFromModalAsync(MouseEventArgs args)
@@ -84,7 +84,7 @@ namespace Turmerik.Blazor.Core.Pages.Components
         protected async Task OpenSelectedFolderFromModalAsync(MouseEventArgs args)
         {
             await CloseDriveFolderItemOptionsModalAsync();
-            await OpenDriveFolderAsync(SelectedDriveFolder);
+            await OpenDriveFolderAsync(SelectedDriveFolderItem);
         }
 
         protected async Task OpenSelectedDriveItemFromModalAsync(MouseEventArgs args)

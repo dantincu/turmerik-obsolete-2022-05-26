@@ -102,7 +102,11 @@ namespace Turmerik.AspNetCore.Services.LocalSessionStorage
                 value = updateFunc(value);
             }
 
-            await Service.SetItemAsync(key, value);
+            if (value != null)
+            {
+                await Service.SetItemAsync(key, value);
+            }
+
             return value;
         }
 
@@ -126,7 +130,11 @@ namespace Turmerik.AspNetCore.Services.LocalSessionStorage
                 value = await updateFunc(value);
             }
 
-            await Service.SetItemAsync(key, value);
+            if (value != null)
+            {
+                await Service.SetItemAsync(key, value);
+            }
+            
             return value;
         }
 

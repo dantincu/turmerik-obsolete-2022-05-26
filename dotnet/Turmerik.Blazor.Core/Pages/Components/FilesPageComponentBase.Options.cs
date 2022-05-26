@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Turmerik.AspNetCore.Infrastructure;
 using Turmerik.Core.Services.DriveItems;
 using Turmerik.Core.Helpers;
+using System.Reflection;
 
 namespace Turmerik.Blazor.Core.Pages.Components
 {
@@ -221,98 +222,91 @@ namespace Turmerik.Blazor.Core.Pages.Components
             return commandsList;
         }
 
-        private async Task OpenCurrentFolderOptionsModalAsync()
-        {
-            CurrentlyOpenDriveFolderOptionsModelIsOpen = true;
+        private Task OpenCurrentFolderOptionsModalAsync() => OpenModalAsync(
+            ModalIds.CURRENTLY_OPEN_DRIVE_FOLDER_OPTIONS,
+            nameof(CurrentlyOpenDriveFolderOptionsModalIsOpen));
 
-            await JSRuntime.InvokeVoidAsync(
-                TrmrkJsH.Get(TrmrkJsH.OpenModal),
-                ModalIds.CURRENTLY_OPEN_DRIVE_FOLDER_OPTIONS);
-        }
-
-        private async Task OpenDriveFolderOptionsModalAsync(DriveItem driveFolder)
-        {
-            DriveFolderItemOptionsModelIsOpen = true;
-
-            var identifier = new DriveItemIdentifier
+        private Task OpenDriveFolderOptionsModalAsync(DriveItem driveFolder) => OpenModalAsync(
+            ModalIds.DRIVE_FOLDER_OPTIONS,
+            nameof(DriveFolderItemOptionsModalIsOpen),
+            () =>
             {
-                Id = driveFolder.Id,
-                Name = driveFolder.Name,
-                ParentId = ServiceArgs.Data.TabPageItems.CurrentlyOpenFolder.Id,
-            };
+                var identifier = new DriveItemIdentifier
+                {
+                    Id = driveFolder.Id,
+                    Name = driveFolder.Name,
+                    ParentId = ServiceArgs.Data.TabPageItems.CurrentlyOpenFolder.Id,
+                };
 
-            SelectedDriveFolder = driveFolder;
-            SelectedDriveFolderName = driveFolder.Name;
-            SelectedDriveFolderId = DriveFolderService.GetDriveItemId(identifier);
-            SelectedDriveFolderAddress = DriveFolderService.GetDriveItemAddress(identifier);
-            SelectedDriveFolderUri = DriveFolderService.GetDriveItemUri(identifier);
+                SelectedDriveFolderItem = driveFolder;
+                SelectedDriveFolderName = driveFolder.Name;
+                SelectedDriveFolderId = DriveFolderService.GetDriveItemId(identifier);
+                SelectedDriveFolderAddress = DriveFolderService.GetDriveItemAddress(identifier);
+                SelectedDriveFolderUri = DriveFolderService.GetDriveItemUri(identifier);
 
-            StateHasChanged();
+                StateHasChanged();
+            });
 
-            await JSRuntime.InvokeVoidAsync(
-                TrmrkJsH.Get(TrmrkJsH.OpenModal),
-                ModalIds.DRIVE_FOLDER_OPTIONS);
-        }
-
-        private async Task OpenDriveItemOptionsModalAsync(DriveItem driveItem)
-        {
-            DriveItemOptionsModelIsOpen = true;
-
-            var identifier = new DriveItemIdentifier
+        private Task OpenDriveItemOptionsModalAsync(DriveItem driveItem) => OpenModalAsync(
+            ModalIds.DRIVE_ITEM_OPTIONS,
+            nameof(DriveItemOptionsModalIsOpen),
+            () =>
             {
-                Id = driveItem.Id,
-                Name = driveItem.Name,
-                ParentId = ServiceArgs.Data.TabPageItems.CurrentlyOpenFolder.Id,
-            };
+                var identifier = new DriveItemIdentifier
+                {
+                    Id = driveItem.Id,
+                    Name = driveItem.Name,
+                    ParentId = ServiceArgs.Data.TabPageItems.CurrentlyOpenFolder.Id,
+                };
 
-            SelectedDriveItem = driveItem;
-            SelectedDriveItemName = driveItem.Name;
-            SelectedDriveItemId = DriveFolderService.GetDriveItemId(identifier);
-            SelectedDriveItemAddress = DriveFolderService.GetDriveItemAddress(identifier);
-            SelectedDriveItemUri = DriveFolderService.GetDriveItemUri(identifier);
+                SelectedDriveItem = driveItem;
+                SelectedDriveItemName = driveItem.Name;
+                SelectedDriveItemId = DriveFolderService.GetDriveItemId(identifier);
+                SelectedDriveItemAddress = DriveFolderService.GetDriveItemAddress(identifier);
+                SelectedDriveItemUri = DriveFolderService.GetDriveItemUri(identifier);
 
-            StateHasChanged();
+                StateHasChanged();
+            });
 
-            await JSRuntime.InvokeVoidAsync(
-                TrmrkJsH.Get(TrmrkJsH.OpenModal),
-                ModalIds.DRIVE_ITEM_OPTIONS);
-        }
+        private Task CloseCurrentFolderOptionsModalAsync() => CloseModalAsync(
+            ModalIds.CURRENTLY_OPEN_DRIVE_FOLDER_OPTIONS,
+            nameof(CurrentlyOpenDriveFolderOptionsModalIsOpen));
 
-        private async Task CloseCurrentFolderOptionsModalAsync()
-        {
-            if (CurrentlyOpenDriveFolderOptionsModelIsOpen)
-            {
-                await JSRuntime.InvokeVoidAsync(
-                    TrmrkJsH.Get(TrmrkJsH.CloseModal),
-                    ModalIds.CURRENTLY_OPEN_DRIVE_FOLDER_OPTIONS);
+        private Task CloseDriveFolderItemOptionsModalAsync() => CloseModalAsync(
+            ModalIds.DRIVE_FOLDER_OPTIONS,
+            nameof(DriveFolderItemOptionsModalIsOpen));
 
-                CurrentlyOpenDriveFolderOptionsModelIsOpen = false;
-            }
-        }
+        private Task CloseDriveItemOptionsModalAsync() => CloseModalAsync(
+            ModalIds.DRIVE_ITEM_OPTIONS,
+            nameof(DriveItemOptionsModalIsOpen));
 
-        private async Task CloseDriveFolderItemOptionsModalAsync()
-        {
-            if (DriveFolderItemOptionsModelIsOpen)
-            {
-                await JSRuntime.InvokeVoidAsync(
-                    TrmrkJsH.Get(TrmrkJsH.CloseModal),
-                    ModalIds.DRIVE_FOLDER_OPTIONS);
+        private Task CloseRenameCurrentlyOpenFolderModalAsync() => CloseModalAsync(
+            ModalIds.RENAME_CURRENTLY_OPEN_FOLDER,
+            nameof(RenameCurrentlyOpenFolderModalIsOpen));
 
-                DriveFolderItemOptionsModelIsOpen = false;
-            }
-        }
+        private Task CloseRenameSelectedFolderModalAsync() => CloseModalAsync(
+            ModalIds.RENAME_SELECTED_FOLDER,
+            nameof(RenameSelectedFolderModalIsOpen));
 
-        private async Task CloseDriveItemOptionsModalAsync()
-        {
-            if (DriveItemOptionsModelIsOpen)
-            {
-                await JSRuntime.InvokeVoidAsync(
-                    TrmrkJsH.Get(TrmrkJsH.CloseModal),
-                    ModalIds.DRIVE_ITEM_OPTIONS);
+        private Task CloseRenameSelectedFileModalAsync() => CloseModalAsync(
+            ModalIds.RENAME_SELECTED_FILE,
+            nameof(RenameSelectedFileModalIsOpen));
 
-                DriveItemOptionsModelIsOpen = false;
-            }
-        }
+        private Task CloseCreateNewFolderInCurrentModalAsync() => CloseModalAsync(
+            ModalIds.CREATE_NEW_FOLDER_IN_CURRENT,
+            nameof(CreateNewFolderInCurrentModalIsOpen));
+
+        private Task CloseCreateNewFileInCurrentModalAsync() => CloseModalAsync(
+            ModalIds.CREATE_NEW_FILE_IN_CURRENT,
+            nameof(CreateNewFileInCurrentModalIsOpen));
+
+        private Task CloseCreateNewFolderInSelectedModalAsync() => CloseModalAsync(
+            ModalIds.CREATE_NEW_FOLDER_IN_SELECTED,
+            nameof(CreateNewFolderInSelectedModalIsOpen));
+
+        private Task CloseCreateNewFileInSelectedModalAsync() => CloseModalAsync(
+            ModalIds.CREATE_NEW_FILE_IN_SELECTED,
+            nameof(CreateNewFileInSelectedModalIsOpen));
 
         private async Task AssureAllModalsAreClosedAsync()
         {
@@ -333,6 +327,71 @@ namespace Turmerik.Blazor.Core.Pages.Components
             };
 
             return mtbl;
+        }
+
+        private async Task OpenModalAsync(
+            string modalId,
+            string propName,
+            Action callback = null)
+        {
+            var propInfo = GetPropInfo(propName);
+            bool condition = (bool)propInfo.GetValue(this);
+
+            if (condition)
+            {
+                propInfo.SetValue(this, true);
+                callback?.Invoke();
+
+                await JSRuntime.InvokeVoidAsync(
+                    TrmrkJsH.Get(TrmrkJsH.OpenModal),
+                    modalId);
+            }
+        }
+
+        private async Task OpenModalAsync(
+            string modalId,
+            string propName,
+            Func<Task> callback)
+        {
+            var propInfo = GetPropInfo(propName);
+            bool condition = (bool)propInfo.GetValue(this);
+
+            if (condition)
+            {
+                propInfo.SetValue(this, true);
+                await callback();
+
+                await JSRuntime.InvokeVoidAsync(
+                    TrmrkJsH.Get(TrmrkJsH.OpenModal),
+                    modalId);
+            }
+        }
+
+        private async Task CloseModalAsync(
+            string modalId,
+            string propName)
+        {
+            var propInfo = GetPropInfo(propName);
+            bool condition = (bool)propInfo.GetValue(this);
+
+            if (condition)
+            {
+                await JSRuntime.InvokeVoidAsync(
+                    TrmrkJsH.Get(TrmrkJsH.CloseModal),
+                    modalId);
+
+                propInfo.SetValue(this, false);
+            }
+        }
+
+        private PropertyInfo GetPropInfo(string propName)
+        {
+            var allProps = ThisTypeWrapper.InstFamGetProps.Value;
+
+            var propInfo = allProps.Single(
+                pi => pi.Name == propName).Data;
+
+            return propInfo;
         }
     }
 }

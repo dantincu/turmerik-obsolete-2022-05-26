@@ -25,6 +25,12 @@
 
     [Parameter]
     public string DriveItemName { get; set; }
+    
+    [Parameter]
+    public bool AllowAllToClipboard { get; set; }
+    
+    [Parameter]
+    public bool AllowDriveItemNameToClipboard { get; set; }
 
     [Parameter]
     public string DriveItemAddress { get; set; }
@@ -42,6 +48,9 @@
     public string DriveItemId { get; set; }
 
     [Parameter]
+    public DriveFolder ParentFolder { get; set; }
+
+    [Parameter]
     public bool IsNewItem { get; set; }
 
     [Parameter]
@@ -52,8 +61,4 @@
 
     [Parameter]
     public Func<Task> OnCloseModalAsync { get; set; }
-
-    private bool AllowDriveItemNameToClipboard => !IsNewItem;
-
-    private bool AllowAllToClipboard => true;
 }

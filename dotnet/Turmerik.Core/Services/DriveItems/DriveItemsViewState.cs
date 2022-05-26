@@ -13,7 +13,7 @@ namespace Turmerik.Core.Services.DriveItems
         public DriveItemsViewState(DriveItemsViewState src)
         {
             Header = src.Header;
-            CurrentlyOpenFolder = src.CurrentlyOpenFolder;
+            CurrentlyOpenFolderTuple = src.CurrentlyOpenFolderTuple;
             CurrentAddress = src.CurrentAddress;
             GoBackButtonEnabled = src.GoBackButtonEnabled;
             GoForwardButtonEnabled = src.GoForwardButtonEnabled;
@@ -21,7 +21,8 @@ namespace Turmerik.Core.Services.DriveItems
         }
 
         public TabHeaderViewState Header { get; set; }
-        public DriveFolder CurrentlyOpenFolder { get; set; }
+        public Tuple<Exception, DriveFolder> CurrentlyOpenFolderTuple { get; set; }
+        public DriveFolder CurrentlyOpenFolder => CurrentlyOpenFolderTuple.Item2;
         public string CurrentAddress { get; set; }
         public bool GoBackButtonEnabled { get; set; }
         public bool GoForwardButtonEnabled { get; set; }

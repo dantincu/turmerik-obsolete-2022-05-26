@@ -35,7 +35,7 @@ namespace Turmerik.AspNetCore.Services.DriveItems
 
             args.FolderIdentifier = folderIdentifier;
 
-            args.Data.TabPageItems.CurrentlyOpenFolder = await GetDriveFolderAsync(
+            args.Data.TabPageItems.CurrentlyOpenFolderTuple = await GetDriveFolderTupleAsync(
                 args.FolderIdentifier,
                 args.CacheKeyGuid,
                 false);
@@ -57,9 +57,9 @@ namespace Turmerik.AspNetCore.Services.DriveItems
                     var pageHead = new TabPageHead
                     {
                         IsCurrent = true,
-                        Name = args.Data.TabPageItems.CurrentlyOpenFolder.Name,
+                        Name = args.Data.TabPageItems.CurrentlyOpenFolder?.Name ?? args.FolderIdentifier.Name,
                         Uuid = args.TabPageUuid ?? Guid.NewGuid(),
-                        Id = args.Data.TabPageItems.CurrentlyOpenFolder.Id
+                        Id = args.Data.TabPageItems.CurrentlyOpenFolder?.Id
                     };
 
                     tabPageHeads.Add(pageHead);
@@ -97,7 +97,7 @@ namespace Turmerik.AspNetCore.Services.DriveItems
                 args.FolderIdentifier = identifier;
             }
 
-            args.Data.TabPageItems.CurrentlyOpenFolder = await GetDriveFolderAsync(
+            args.Data.TabPageItems.CurrentlyOpenFolderTuple = await GetDriveFolderTupleAsync(
                 args.FolderIdentifier, args.CacheKeyGuid, true);
         }
 
@@ -276,14 +276,14 @@ namespace Turmerik.AspNetCore.Services.DriveItems
 
             var tabPageItems = args.Data.TabPageItems;
 
-            args.Data.TabPageItems.CurrentlyOpenFolder = await GetDriveFolderAsync(
+            args.Data.TabPageItems.CurrentlyOpenFolderTuple = await GetDriveFolderTupleAsync(
                 args.FolderIdentifier, args.CacheKeyGuid, args.RefreshCache);
 
             var pageHead = tabPageItems.Header.TabPageHeads.Single(
                 head => head.IsCurrent == true);
 
-            pageHead.Name = tabPageItems.CurrentlyOpenFolder.Name;
-            pageHead.Id = tabPageItems.CurrentlyOpenFolder.Id;
+            pageHead.Name = tabPageItems.CurrentlyOpenFolder?.Name ?? args.FolderIdentifier?.Name;
+            pageHead.Id = tabPageItems.CurrentlyOpenFolder?.Id;
 
             await AddOrUpdateTabPageHistoryAsync(args,
                 async history => history);
@@ -320,11 +320,11 @@ namespace Turmerik.AspNetCore.Services.DriveItems
 
             try
             {
-                tabPageItems.CurrentlyOpenFolder = await GetDriveFolderAsync(
+                tabPageItems.CurrentlyOpenFolderTuple = await GetDriveFolderTupleAsync(
                     args.FolderIdentifier, args.CacheKeyGuid, args.RefreshCache);
 
-                pageHead.Id = tabPageItems.CurrentlyOpenFolder.Id;
-                pageHead.Name = tabPageItems.CurrentlyOpenFolder.Name;
+                pageHead.Id = tabPageItems.CurrentlyOpenFolder?.Id;
+                pageHead.Name = tabPageItems.CurrentlyOpenFolder?.Name ?? args.FolderIdentifier?.Name;
             }
             catch
             {
@@ -387,67 +387,21 @@ namespace Turmerik.AspNetCore.Services.DriveItems
             return identifier;
         }
 
-        private async Task<DriveFolder> GetDriveFolderAsync(
+        private async Task<Tuple<Exception, DriveFolder>> GetDriveFolderTupleAsync(
             DriveItemIdentifier identifier,
             Guid localSessionGuid,
             bool refreshCache)
         {
-            DriveFolder driveFolder;
+            Tuple<Exception, DriveFolder> driveFolder;
 
             if (identifier.IsRootFolder || string.IsNullOrWhiteSpace(identifier.Id))
             {
-                driveFolder = await GetRootDriveFolderAsync(localSessionGuid, refreshCache);
+                driveFolder = await GetRootDriveFolderTupleAsync(localSessionGuid, refreshCache);
             }
             else
             {
-                driveFolder = await GetDriveFolderAsync(identifier.Id, localSessionGuid, refreshCache);
-                identifier.ParentId = driveFolder.ParentFolderId;
-            }
-
-            return driveFolder;
-        }
-
-        private async Task<DriveFolder> GetDriveFolderAsync(
-            string driveItemId,
-            Guid localSessionGuid,
-            bool refreshCache)
-        {
-            string key = LocalStorageKeys.DriveFolderKey(
-                localSessionGuid,
-                driveItemId);
-
-            DriveFolder driveFolder;
-
-            if (refreshCache)
-            {
-                driveFolder = await GetDriveFolderCoreAsync(driveItemId);
-                await WebStorage.Service.SetItemAsync(key, driveFolder);
-            }
-            else
-            {
-                driveFolder = await WebStorage.GetOrCreateAsync(
-                    key, async () => await GetDriveFolderCoreAsync(driveItemId));
-            }
-
-            return driveFolder;
-        }
-
-        private async Task<DriveFolder> GetRootDriveFolderAsync(
-            Guid localSessionGuid,
-            bool refreshCache)
-        {
-            string key = LocalStorageKeys.RootDriveFolderKey(localSessionGuid);
-            DriveFolder driveFolder;
-
-            if (refreshCache)
-            {
-                driveFolder = await GetRootDriveFolderCoreAsync();
-                await WebStorage.Service.SetItemAsync(key, driveFolder);
-            }
-            else
-            {
-                driveFolder = await WebStorage.GetOrCreateAsync(
-                    key, async () => await GetRootDriveFolderCoreAsync());
+                driveFolder = await GetDriveFolderTupleAsync(identifier.Id, localSessionGuid, refreshCache);
+                identifier.ParentId = driveFolder.Item2?.ParentFolderId;
             }
 
             return driveFolder;

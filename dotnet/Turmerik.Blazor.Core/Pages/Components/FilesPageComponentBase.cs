@@ -13,6 +13,7 @@ using Turmerik.Core.Components;
 using Turmerik.AspNetCore.Services;
 using Microsoft.AspNetCore.Components;
 using Turmerik.NetCore.Services;
+using Turmerik.Core.Reflection.Wrappers;
 
 namespace Turmerik.Blazor.Core.Pages.Components
 {
@@ -28,6 +29,9 @@ namespace Turmerik.Blazor.Core.Pages.Components
         [Parameter]
         public bool IsLocalDiskExplorer { get; set; }
 
+        protected TypeWrapper ThisTypeWrapper { get; set; }
+
+        protected ITypesStaticDataCache TypesStaticDataCache { get; set; }
         protected ILocalStorageWrapper LocalStorage { get; set; }
         protected ISessionStorageWrapper SessionStorage { get; set; }
         protected IDriveExplorerService DriveFolderService { get; set; }
@@ -45,15 +49,24 @@ namespace Turmerik.Blazor.Core.Pages.Components
 
         protected bool IsEditingAddressBar { get; set; }
         protected bool IsNavigationEnabled { get; set; }
-        protected bool CurrentlyOpenDriveFolderOptionsModelIsOpen { get; set; }
-        protected bool DriveFolderItemOptionsModelIsOpen { get; set; }
-        protected bool DriveItemOptionsModelIsOpen { get; set; }
+
+        protected bool CurrentlyOpenDriveFolderOptionsModalIsOpen { get; set; }
+        protected bool DriveFolderItemOptionsModalIsOpen { get; set; }
+        protected bool DriveItemOptionsModalIsOpen { get; set; }
+        protected bool RenameCurrentlyOpenFolderModalIsOpen { get; set; }
+        protected bool RenameSelectedFolderModalIsOpen { get; set; }
+        protected bool RenameSelectedFileModalIsOpen { get; set; }
+        protected bool CreateNewFolderInCurrentModalIsOpen { get; set; }
+        protected bool CreateNewFileInCurrentModalIsOpen { get; set; }
+        protected bool CreateNewFolderInSelectedModalIsOpen { get; set; }
+        protected bool CreateNewFileInSelectedModalIsOpen { get; set; }
 
         protected List<List<IDriveItemCommand>> CurrentlyOpenDriveFolderCommandsMx { get; set; }
         protected List<List<IDriveItemCommand>> SelectedDriveFolderCommandsMx { get; set; }
         protected List<List<IDriveItemCommand>> SelectedDriveItemCommandsMx { get; set; }
 
-        protected DriveItem SelectedDriveFolder { get; set; }
+        protected DriveFolder SelectedDriveParentFolder { get; set; }
+        protected DriveItem SelectedDriveFolderItem { get; set; }
         protected string SelectedDriveFolderId { get; set; }
         protected string SelectedDriveFolderName { get; set; }
         protected string SelectedDriveFolderAddress { get; set; }
@@ -64,6 +77,14 @@ namespace Turmerik.Blazor.Core.Pages.Components
         protected string SelectedDriveItemName { get; set; }
         protected string SelectedDriveItemAddress { get; set; }
         protected string SelectedDriveItemUri { get; set; }
+
+        protected string CurrentlyOpenFolderNameEditable { get; set; }
+        protected string SelectedFolderNameEditable { get; set; }
+        protected string SelectedFileNameEditable { get; set; }
+        protected string NewFolderNameInCurrent { get; set; }
+        protected string NewFileNameInCurrent { get; set; }
+        protected string NewFolderNameInSelected { get; set; }
+        protected string NewFileNameInSelected { get; set; }
 
         protected Guid? TabPageUuid => NavManager.QueryStrings.GetNullableValue(
             QsKeys.TAB_PAGE_UUID, (StringValues str, out Guid value) => Guid.TryParse(str, out value));
@@ -233,11 +254,20 @@ namespace Turmerik.Blazor.Core.Pages.Components
                             ServiceArgs = serviceArgs;
                             callback?.Invoke();
 
-                            ClearError();
-                            CurrentlyOpenDriveFolderCommandsMx = GetCurrentlyOpenDriveFolderCommandsMx();
+                            var exc = serviceArgs.Data.TabPageItems.CurrentlyOpenFolderTuple.Item1;
 
-                            SelectedDriveFolderCommandsMx = GetSelectedDriveFolderCommandsMx();
-                            SelectedDriveItemCommandsMx = GetSelectedDriveItemCommandsMx();
+                            if (exc != null || serviceArgs.Data.TabPageItems.CurrentlyOpenFolder == null)
+                            {
+                                SetError("An unhandled error ocurred", exc);
+                            }
+                            else
+                            {
+                                ClearError();
+                                CurrentlyOpenDriveFolderCommandsMx = GetCurrentlyOpenDriveFolderCommandsMx();
+
+                                SelectedDriveFolderCommandsMx = GetSelectedDriveFolderCommandsMx();
+                                SelectedDriveItemCommandsMx = GetSelectedDriveItemCommandsMx();
+                            }
                         }
                         catch (Exception ex)
                         {

@@ -14,6 +14,7 @@
 
 @inherits FilesPageComponentBase
 
+@inject ITypesStaticDataCache typesStaticDataCache;
 @inject ICloneableMapper mapper;
 @inject INavManager navManager;
 @inject ILocalStorageWrapper localStorage;
@@ -151,6 +152,95 @@
             CommandsMx=SelectedDriveItemCommandsMx
             IsFolderItem="false">
         </DriveItemOptionsModal>
+
+        <EditDriveItemNameModal
+            ModalId="@ModalIds.RENAME_CURRENTLY_OPEN_FOLDER"
+            OnCloseModalAsync=OnRenameCurrentlyOpenFolderModalClosedAsync
+            DriveItemName=@CurrentlyOpenFolderNameEditable
+            AllowDriveItemNameToClipboard="@(!isRootFolder)"
+            DriveItemAddress="@currentlyOpenIdentifier?.Address"
+            ShowDriveItemAddress="@(!isRootFolder)"
+            DriveItemUri="@currentlyOpenIdentifier?.Uri"
+            ShowDriveItemUri="@(!isRootFolder)"
+            DriveItemId="@currentlyOpenFolder?.Id"
+            IsFolderItem="true">
+        </EditDriveItemNameModal>
+
+        <EditDriveItemNameModal
+            ModalId="@ModalIds.RENAME_SELECTED_FOLDER"
+            OnCloseModalAsync=OnRenameSelectedFolderModalClosedAsync
+            DriveItemName=@SelectedFolderNameEditable
+            AllowAllToClipboard="true"
+            DriveItemAddress="@SelectedDriveFolderAddress"
+            ShowDriveItemAddress="true"
+            DriveItemUri="@SelectedDriveFolderUri"
+            ShowDriveItemUri="true"
+            DriveItemId="@SelectedDriveFolderId"
+            IsFolderItem="true">
+        </EditDriveItemNameModal>
+
+        <EditDriveItemNameModal
+            ModalId="@ModalIds.RENAME_SELECTED_FILE"
+            OnCloseModalAsync=OnRenameSelectedFileModalClosedAsync
+            DriveItemName=@SelectedFileNameEditable
+            AllowAllToClipboard="true"
+            DriveItemAddress="@SelectedDriveItemAddress"
+            ShowDriveItemAddress="true"
+            DriveItemUri="@SelectedDriveItemUri"
+            ShowDriveItemUri="true"
+            DriveItemId="@SelectedDriveItemId"
+            IsFolderItem="true">
+        </EditDriveItemNameModal>
+
+        <EditDriveItemNameModal
+            ModalId="@ModalIds.CREATE_NEW_FOLDER_IN_CURRENT"
+            OnCloseModalAsync=OnCreateNewFolderInCurrentModalClosedAsync
+            DriveItemName=@NewFolderNameInCurrent
+            AllowDriveItemNameToClipboard="@(!isRootFolder)"
+            DriveItemAddress="@currentlyOpenIdentifier?.Address"
+            ShowDriveItemAddress="@(!isRootFolder)"
+            DriveItemUri="@currentlyOpenIdentifier?.Uri"
+            ShowDriveItemUri="@(!isRootFolder)"
+            DriveItemId="@currentlyOpenFolder?.Id"
+            IsFolderItem="true">
+        </EditDriveItemNameModal>
+
+        <EditDriveItemNameModal
+            ModalId="@ModalIds.CREATE_NEW_FILE_IN_CURRENT"
+            OnCloseModalAsync=OnCreateNewFileInCurrentModalClosedAsync
+            DriveItemName=@NewFileNameInCurrent
+            AllowDriveItemNameToClipboard="@(!isRootFolder)"
+            DriveItemAddress="@currentlyOpenIdentifier?.Address"
+            ShowDriveItemAddress="@(!isRootFolder)"
+            DriveItemUri="@currentlyOpenIdentifier?.Uri"
+            ShowDriveItemUri="@(!isRootFolder)"
+            DriveItemId="@currentlyOpenFolder?.Id"
+            IsFolderItem="true">
+        </EditDriveItemNameModal>
+
+        <EditDriveItemNameModal
+            ModalId="@ModalIds.CREATE_NEW_FOLDER_IN_SELECTED"
+            OnCloseModalAsync=OnCreateNewFolderInSelectedModalClosedAsync
+            DriveItemName=@NewFolderNameInSelected
+            DriveItemAddress="@SelectedDriveFolderAddress"
+            ShowDriveItemAddress="true"
+            DriveItemUri="@SelectedDriveFolderUri"
+            ShowDriveItemUri="true"
+            DriveItemId="@SelectedDriveFolderId"
+            IsFolderItem="true">
+        </EditDriveItemNameModal>
+
+        <EditDriveItemNameModal
+            ModalId="@ModalIds.CREATE_NEW_FILE_IN_SELECTED"
+            OnCloseModalAsync=OnCreateNewFileInSelectedModalClosedAsync
+            DriveItemName=@NewFileNameInSelected
+            DriveItemAddress="@SelectedDriveFolderAddress"
+            ShowDriveItemAddress="true"
+            DriveItemUri="@SelectedDriveFolderUri"
+            ShowDriveItemUri="true"
+            DriveItemId="@SelectedDriveFolderId"
+            IsFolderItem="true">
+        </EditDriveItemNameModal>
     }
     else
     {
@@ -206,17 +296,52 @@
 
     protected async Task OnCurrentlyOpenDriveFolderItemOptionsModalClosedAsync()
     {
-        CurrentlyOpenDriveFolderOptionsModelIsOpen = false;
+        CurrentlyOpenDriveFolderOptionsModalIsOpen = false;
     }
 
     protected async Task OnDriveFolderItemOptionsModalClosedAsync()
     {
-        DriveFolderItemOptionsModelIsOpen = false;
+        DriveFolderItemOptionsModalIsOpen = false;
     }
 
     protected async Task OnDriveItemOptionsModalClosedAsync()
     {
-        DriveItemOptionsModelIsOpen = false;
+        DriveItemOptionsModalIsOpen = false;
+    }
+
+    protected async Task OnRenameCurrentlyOpenFolderModalClosedAsync()
+    {
+        RenameCurrentlyOpenFolderModalIsOpen = false;
+    }
+
+    protected async Task OnRenameSelectedFolderModalClosedAsync()
+    {
+        RenameSelectedFolderModalIsOpen = false;
+    }
+
+    protected async Task OnRenameSelectedFileModalClosedAsync()
+    {
+        RenameSelectedFileModalIsOpen = false;
+    }
+
+    protected async Task OnCreateNewFolderInCurrentModalClosedAsync()
+    {
+        CreateNewFolderInCurrentModalIsOpen = false;
+    }
+
+    protected async Task OnCreateNewFileInCurrentModalClosedAsync()
+    {
+        CreateNewFileInCurrentModalIsOpen = false;
+    }
+
+    protected async Task OnCreateNewFolderInSelectedModalClosedAsync()
+    {
+        CreateNewFolderInSelectedModalIsOpen = false;
+    }
+
+    protected async Task OnCreateNewFileInSelectedModalClosedAsync()
+    {
+        CreateNewFileInSelectedModalIsOpen = false;
     }
 
     protected async Task OnAddressEditing(bool isAddressEditing)
@@ -226,6 +351,9 @@
 
     protected override async Task OnInitializedAsync()
     {
+        TypesStaticDataCache = typesStaticDataCache;
+        ThisTypeWrapper = typesStaticDataCache.Get(this.GetType());
+
         Mapper = mapper;
         NavManager = navManager;
 

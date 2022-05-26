@@ -21,22 +21,42 @@ namespace Turmerik.AspNetCore.Services.DriveItems
         protected abstract Task CopyFolderCoreAsync(string folderId, string newParentFolderId, string newFolderName);
         protected abstract Task CopyFileCoreAsync(string fileId, string newParentFolderId, string newFileName);
 
-        private async Task CreateNewFolderAsync(DriveExplorerServiceArgs args)
+        private async Task CreateNewFolderInCurrentAsync(DriveExplorerServiceArgs args)
         {
 
         }
 
-        private async Task CreateNewTextFileAsync(DriveExplorerServiceArgs args)
+        private async Task CreateNewFolderInSelectedAsync(DriveExplorerServiceArgs args)
         {
 
         }
 
-        private async Task CreateNewMsOfficeFileAsync(DriveExplorerServiceArgs args)
+        private async Task CreateNewTextFileInCurrentAsync(DriveExplorerServiceArgs args)
         {
 
         }
 
-        private async Task DeleteFolderAsync(DriveExplorerServiceArgs args)
+        private async Task CreateNewTextFileInSelectedAsync(DriveExplorerServiceArgs args)
+        {
+
+        }
+
+        private async Task CreateNewMsOfficeFileInCurrentAsync(DriveExplorerServiceArgs args)
+        {
+
+        }
+
+        private async Task CreateNewMsOfficeFileInSelectedAsync(DriveExplorerServiceArgs args)
+        {
+
+        }
+
+        private async Task DeleteCurrentFolderAsync(DriveExplorerServiceArgs args)
+        {
+
+        }
+
+        private async Task DeleteSelectedFolderAsync(DriveExplorerServiceArgs args)
         {
 
         }
@@ -46,7 +66,12 @@ namespace Turmerik.AspNetCore.Services.DriveItems
 
         }
 
-        private async Task RenameFolderAsync(DriveExplorerServiceArgs args)
+        private async Task RenameCurrentFolderAsync(DriveExplorerServiceArgs args)
+        {
+
+        }
+
+        private async Task RenameSelectedFolderAsync(DriveExplorerServiceArgs args)
         {
 
         }
@@ -56,7 +81,12 @@ namespace Turmerik.AspNetCore.Services.DriveItems
 
         }
 
-        private async Task MoveFolderAsync(DriveExplorerServiceArgs args)
+        private async Task MoveCurrentFolderAsync(DriveExplorerServiceArgs args)
+        {
+
+        }
+
+        private async Task MoveSelectedFolderAsync(DriveExplorerServiceArgs args)
         {
 
         }
@@ -66,7 +96,12 @@ namespace Turmerik.AspNetCore.Services.DriveItems
 
         }
 
-        private async Task CopyFolderAsync(DriveExplorerServiceArgs args)
+        private async Task CopyCurrentFolderAsync(DriveExplorerServiceArgs args)
+        {
+
+        }
+
+        private async Task CopySelectedFolderAsync(DriveExplorerServiceArgs args)
         {
 
         }

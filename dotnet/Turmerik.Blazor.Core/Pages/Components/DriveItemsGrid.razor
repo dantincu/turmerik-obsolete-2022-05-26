@@ -42,43 +42,46 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var driveItem in DriveItems)
+            @if (DriveItems != null)
             {
-                var dvItem = driveItem as DriveItem;
+                @foreach (var driveItem in DriveItems)
+                {
+                    var dvItem = driveItem as DriveItem;
 
-                <tr disabled=@(!IsNavigationEnabled)>
-                    <th scope="row" @onclick=@OnDriveItemClickEventHandler(dvItem)>
-                        <span class="oi @IconCssClass" aria-hidden="true"></span>
-                    </th>
-                    <td @onclick=@OnDriveItemClickEventHandler(dvItem)>
-                        <span class="@CssClassH.CellName">@dvItem.Name</span>&nbsp;
-                        @if (!string.IsNullOrWhiteSpace(dvItem.Label))
-                        {
-                            <span class="@CssClassH.CellLabel">@dvItem.Label</span>
-                        }
-                     </td>
-                    <td title="Options">
-                        <i class="oi oi-ellipses trmrk-rotate90deg" @onclick=@OnDriveItemOptionsClickEventHandler(dvItem)></i>
-                    </td>
-                    @if (SpecificRowCells != null)
-                    {
-                        @SpecificRowCells(dvItem)
-                    }
-
-                    @if (!SideBarLarge)
-                    {
-                        @foreach (var dt in new DateTime?[]
+                    <tr disabled=@(!IsNavigationEnabled)>
+                        <th scope="row" @onclick=@OnDriveItemClickEventHandler(dvItem)>
+                            <span class="oi @IconCssClass" aria-hidden="true"></span>
+                        </th>
+                        <td @onclick=@OnDriveItemClickEventHandler(dvItem)>
+                            <span class="@CssClassH.CellName">@dvItem.Name</span>&nbsp;
+                            @if (!string.IsNullOrWhiteSpace(dvItem.Label))
                             {
-                                dvItem.LastAccessTime,
-                                dvItem.LastWriteTime,
-                                dvItem.CreationTime
-                            })
+                                <span class="@CssClassH.CellLabel">@dvItem.Label</span>
+                            }
+                         </td>
+                        <td title="Options">
+                            <i class="oi oi-ellipses trmrk-rotate90deg" @onclick=@OnDriveItemOptionsClickEventHandler(dvItem)></i>
+                        </td>
+                        @if (SpecificRowCells != null)
                         {
-                            string ts = FormatDateTimeExact(dt);
-                            <td title="@ts" data-trmrk-date-time="@ts">@ts</td>
+                            @SpecificRowCells(dvItem)
                         }
-                    }
-                </tr>
+
+                        @if (!SideBarLarge)
+                        {
+                            @foreach (var dt in new DateTime?[]
+                                {
+                                    dvItem.LastAccessTime,
+                                    dvItem.LastWriteTime,
+                                    dvItem.CreationTime
+                                })
+                            {
+                                string ts = FormatDateTimeExact(dt);
+                                <td title="@ts" data-trmrk-date-time="@ts">@ts</td>
+                            }
+                        }
+                    </tr>
+                }
             }
         </tbody>
     </table>

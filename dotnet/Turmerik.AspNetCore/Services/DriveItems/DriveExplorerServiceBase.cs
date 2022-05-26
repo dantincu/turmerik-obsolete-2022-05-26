@@ -54,6 +54,60 @@ namespace Turmerik.AspNetCore.Services.DriveItems
                 });
         }
 
+        public async Task<Tuple<Exception, DriveFolder>> GetDriveFolderTupleAsync(
+            string driveItemId,
+            Guid localSessionGuid,
+            bool refreshCache)
+        {
+            string key = LocalStorageKeys.DriveFolderKey(
+                localSessionGuid,
+                driveItemId);
+
+            Tuple<Exception, DriveFolder> driveFolderTuple = await GetDriveFolderTupleAsync(
+                key, refreshCache, () => GetDriveFolderTupleCoreAsync(driveItemId));
+
+            return driveFolderTuple;
+        }
+
+        private async Task<Tuple<Exception, DriveFolder>> GetRootDriveFolderTupleAsync(
+            Guid localSessionGuid,
+            bool refreshCache)
+        {
+            string key = LocalStorageKeys.RootDriveFolderKey(localSessionGuid);
+
+            Tuple<Exception, DriveFolder> driveFolderTuple = await GetDriveFolderTupleAsync(
+                key, refreshCache, GetRootDriveFolderTupleCoreAsync);
+
+            return driveFolderTuple;
+        }
+
+        private async Task<Tuple<Exception, DriveFolder>> GetDriveFolderTupleAsync(
+            string key, bool refreshCache,
+            Func<Task<Tuple<Exception, DriveFolder>>> tupleFactory)
+        {
+            Tuple<Exception, DriveFolder> driveFolderTuple = null;
+
+            if (refreshCache)
+            {
+                driveFolderTuple = await tupleFactory();
+                await WebStorage.Service.SetItemAsync(key, driveFolderTuple);
+            }
+            else
+            {
+                var driveFolder = await WebStorage.GetOrCreateAsync(
+                    key, async () =>
+                    {
+                        driveFolderTuple = await tupleFactory();
+                        return driveFolderTuple.Item2;
+                    });
+
+                driveFolderTuple = driveFolderTuple ?? new Tuple<Exception, DriveFolder>(
+                    null, driveFolder);
+            }
+
+            return driveFolderTuple;
+        }
+
         public abstract string GetDriveItemId(DriveItemIdentifier identifier);
         public abstract string GetDriveItemAddress(DriveItemIdentifier identifier);
         public abstract string GetDriveItemPath(DriveItemIdentifier identifier);
@@ -87,6 +141,22 @@ namespace Turmerik.AspNetCore.Services.DriveItems
             {
                 throw new InvalidOperationException(errorMessage);
             }
+        }
+
+        protected async Task<Tuple<Exception, DriveFolder>> GetDriveFolderTupleCoreAsync(string driveItemId)
+        {
+            var tuple = await GetDriveFolderTupleCoreAsync(
+                () => GetDriveFolderCoreAsync(driveItemId));
+
+            return tuple;
+        }
+
+        protected async Task<Tuple<Exception, DriveFolder>> GetRootDriveFolderTupleCoreAsync()
+        {
+            var tuple = await GetDriveFolderTupleCoreAsync(
+                GetRootDriveFolderCoreAsync);
+
+            return tuple;
         }
 
         private void TryNormalizeDriveFolderNavigation(
@@ -135,35 +205,56 @@ namespace Turmerik.AspNetCore.Services.DriveItems
                 case DriveExplorerActionType.CloseTab:
                     await CloseTabAsync(args);
                     break;
-                case DriveExplorerActionType.CreateNewFolder:
-                    await CreateNewFolderAsync(args);
+                case DriveExplorerActionType.CreateNewFolderInCurrent:
+                    await CreateNewFolderInCurrentAsync(args);
                     break;
-                case DriveExplorerActionType.CreateNewTextFile:
-                    await CreateNewTextFileAsync(args);
+                case DriveExplorerActionType.CreateNewFolderInSelected:
+                    await CreateNewFolderInSelectedAsync(args);
                     break;
-                case DriveExplorerActionType.CreateNewMsOfficeFile:
-                    await CreateNewMsOfficeFileAsync(args);
+                case DriveExplorerActionType.CreateNewTextFileInCurrent:
+                    await CreateNewTextFileInCurrentAsync(args);
                     break;
-                case DriveExplorerActionType.DeleteFolder:
-                    await DeleteFolderAsync(args);
+                case DriveExplorerActionType.CreateNewTextFileInSelected:
+                    await CreateNewTextFileInSelectedAsync(args);
+                    break;
+                case DriveExplorerActionType.CreateNewMsOfficeFileInCurrent:
+                    await CreateNewMsOfficeFileInCurrentAsync(args);
+                    break;
+                case DriveExplorerActionType.CreateNewMsOfficeFileInSelected:
+                    await CreateNewMsOfficeFileInSelectedAsync(args);
+                    break;
+                case DriveExplorerActionType.DeleteCurrentFolder:
+                    await DeleteCurrentFolderAsync(args);
+                    break;
+                case DriveExplorerActionType.DeleteSelectedFolder:
+                    await DeleteSelectedFolderAsync(args);
                     break;
                 case DriveExplorerActionType.DeleteFile:
                     await DeleteFileAsync(args);
                     break;
-                case DriveExplorerActionType.RenameFolder:
-                    await RenameFolderAsync(args);
+                case DriveExplorerActionType.RenameCurrentFolder:
+                    await RenameCurrentFolderAsync(args);
+                    break;
+                case DriveExplorerActionType.RenameSelectedFolder:
+                    await RenameSelectedFolderAsync(args);
                     break;
                 case DriveExplorerActionType.RenameFile:
                     await RenameFileAsync(args);
                     break;
-                case DriveExplorerActionType.MoveFolder:
-                    await MoveFolderAsync(args);
+                case DriveExplorerActionType.MoveCurrentFolder:
+                    await MoveCurrentFolderAsync(args);
+                    break;
+                case DriveExplorerActionType.MoveSelectedFolder:
+                    await MoveSelectedFolderAsync(args);
                     break;
                 case DriveExplorerActionType.MoveFile:
                     await MoveFileAsync(args);
                     break;
-                case DriveExplorerActionType.CopyFolder:
-                    await CopyFolderAsync(args);
+                case DriveExplorerActionType.CopyCurrentFolder:
+                    await CopyCurrentFolderAsync(args);
+                    break;
+                case DriveExplorerActionType.CopySelectedFolder:
+                    await CopySelectedFolderAsync(args);
                     break;
                 case DriveExplorerActionType.CopyFile:
                     await CopyFileAsync(args);
@@ -171,6 +262,26 @@ namespace Turmerik.AspNetCore.Services.DriveItems
                 default:
                     throw new NotSupportedException();
             }
+        }
+
+        protected async Task<Tuple<Exception, DriveFolder>> GetDriveFolderTupleCoreAsync(
+            Func<Task<DriveFolder>> factory)
+        {
+            DriveFolder driveFolder = null;
+            Exception exception = null;
+
+            try
+            {
+                driveFolder = await factory();
+            }
+            catch (Exception exc)
+            {
+                exception = exc;
+            }
+
+            return new Tuple<Exception, DriveFolder>(
+                exception,
+                driveFolder);
         }
     }
 }

@@ -9,6 +9,12 @@ namespace Turmerik.Core.Services.DriveItems
     public interface IDriveExplorerService
     {
         Task NavigateAsync(DriveExplorerServiceArgs args);
+
+        Task<Tuple<Exception, DriveFolder>> GetDriveFolderTupleAsync(
+            string driveItemId,
+            Guid localSessionGuid,
+            bool refreshCache);
+
         string GetDriveItemId(DriveItemIdentifier identifier);
         string GetDriveItemAddress(DriveItemIdentifier identifier);
         string GetDriveItemPath(DriveItemIdentifier identifier);

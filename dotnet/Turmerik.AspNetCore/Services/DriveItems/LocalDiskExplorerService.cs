@@ -112,8 +112,16 @@ namespace Turmerik.AspNetCore.Services.DriveItems
                     pathParts.Insert(0, history.InitialId);
                 }
 
-                path = Path.Combine(pathParts.ToArray());
-                name = pathParts.Last();
+                if (pathParts.Any())
+                {
+                    path = Path.Combine(pathParts.ToArray());
+                    name = pathParts.Last();
+                }
+                else
+                {
+                    path = string.Empty;
+                    name = string.Empty;
+                }
             }
 
             var folderIdentifier = new DriveItemIdentifier

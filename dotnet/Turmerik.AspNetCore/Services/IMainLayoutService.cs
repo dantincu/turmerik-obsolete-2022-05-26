@@ -36,7 +36,7 @@ namespace Turmerik.AspNetCore.Services
 
         public MainLayoutService(ITrmrkAppSettings appSettings)
         {
-            appSettings = appSettings ?? throw new ArgumentNullException(nameof(appSettings));
+            this.appSettings = appSettings ?? throw new ArgumentNullException(nameof(appSettings));
 
             UIBlockingOverlayViewModel = new UIBlockingOverlayViewModel
             {
@@ -44,7 +44,7 @@ namespace Turmerik.AspNetCore.Services
             };
         }
 
-        public UIBlockingOverlayViewModel UIBlockingOverlayViewModel { get; set; }
+        public UIBlockingOverlayViewModel UIBlockingOverlayViewModel { get; }
 
         public event Action<bool> OnSideBarSizeChanged
         {
