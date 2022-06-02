@@ -8,7 +8,7 @@ namespace FsUtilsConsoleApp
 {
     internal class ProgramComponentArgs
     {
-        public string CurrentDir { get; set; }
+        public string ParentDirPath { get; set; }
         public string DirName { get; set; }
     }
 }

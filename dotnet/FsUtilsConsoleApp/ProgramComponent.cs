@@ -16,7 +16,7 @@ namespace FsUtilsConsoleApp
         public void Run(ProgramComponentArgs args)
         {
             string[] currentEntries = Directory.GetFileSystemEntries(
-                args.CurrentDir).Select(
+                args.ParentDirPath).Select(
                 e => Path.GetFileName(e)).ToArray();
 
             int i = 1;
@@ -30,8 +30,8 @@ namespace FsUtilsConsoleApp
 
             string fullDirName = string.Join(' ', shortDirName, args.DirName);
 
-            string shortDirPath = Path.Combine(args.CurrentDir, shortDirName);
-            string fullDirPath = Path.Combine(args.CurrentDir, fullDirName);
+            string shortDirPath = Path.Combine(args.ParentDirPath, shortDirName);
+            string fullDirPath = Path.Combine(args.ParentDirPath, fullDirName);
 
             Directory.CreateDirectory(shortDirPath);
             Directory.CreateDirectory(fullDirPath);

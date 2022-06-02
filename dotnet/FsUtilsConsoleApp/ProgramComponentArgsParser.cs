@@ -16,17 +16,26 @@ namespace FsUtilsConsoleApp
             var d = new ProgramComponentArgs();
             var list = new List<Tuple<string, Action<ProgramComponentArgs, string>>>();
 
+            AddPropParser(list, nameof(d.ParentDirPath), (args, str) =>
+            {
+                if (string.IsNullOrWhiteSpace(str))
+                {
+                    args.ParentDirPath = Environment.CurrentDirectory;
+                }
+                else
+                {
+                    args.ParentDirPath = str;
+                }
+            });
+
             AddPropParser(list, nameof(d.DirName), (args, str) => args.DirName = str);
+
             propParsers = new ReadOnlyCollection<Tuple<string, Action<ProgramComponentArgs, string>>>(list.ToArray());
         }
 
         public ProgramComponentArgs Parse(string[] args)
         {
-            var parsedArgs = new ProgramComponentArgs
-            {
-                CurrentDir = Environment.CurrentDirectory
-            };
-
+            var parsedArgs = new ProgramComponentArgs();
             int propParsersCount = propParsers.Count;
 
             for (int i = 0; i < propParsersCount; i++)
